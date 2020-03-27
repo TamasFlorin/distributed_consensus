@@ -1,3 +1,5 @@
+use crate::event;
+
 pub trait EventualLeaderDetector {}
 
 pub struct ElectLowerEpoch {
