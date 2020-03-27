@@ -1,16 +1,16 @@
 use serde::{Deserialize, Serialize};
-
+use std::net::SocketAddr;
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct NodeConfig {
+pub struct Node {
     pub name: String,
     pub host: String,
     pub port: u16,
     pub id: u16,
 }
 
-impl NodeConfig {
+impl Node {
     pub fn new(name: String, host: String, port: u16, id: u16) -> Self {
-        NodeConfig {
+        Node {
             name,
             host,
             port,
@@ -19,17 +19,28 @@ impl NodeConfig {
     }
 }
 
-#[derive(Deserialize, Debug)]
-pub struct NodeConfigs {
-    nodes: Vec<NodeConfig>,
+impl From<Node> for SocketAddr {
+    fn from(node: Node) -> Self { 
+        let address = format!("{}:{}", node.host, node.port);
+        let address: SocketAddr = address.parse().expect("Unable to parse socket address");
+        address
+    }
 }
 
-impl NodeConfigs {
-    pub fn find(&self, id: u16) -> Option<NodeConfig> {
-        let found: Option<&NodeConfig> = self.nodes.iter().find(|node| node.id == id);
-        match found {
-            Some(node) => Some(node.clone()),
-            _ => None,
-        }
+impl std::fmt::Display for Node {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result { 
+        f.write_fmt(format_args!("Id: {0}, Name: {1}, Host: {2}, Port: {3}", self.id, self.name, self.host, self.port))
     }
+}
+
+impl PartialEq<Node> for Node {
+    fn eq(&self, other: &Node) -> bool {
+        self.id == other.id
+    }
+}
+
+#[derive(Debug)]
+pub enum Nodes {
+    Current(Node),
+    Other(Vec<Node>)
 }

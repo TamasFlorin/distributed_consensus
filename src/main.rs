@@ -11,7 +11,7 @@ use event::EventQueue;
 use protobuf::parse_from_bytes;
 pub mod node;
 use clap::{App, Arg};
-use node::NodeConfigs;
+use node::Node;
 use serde_json;
 use std::fs;
 use std::path::Path;
@@ -24,11 +24,11 @@ impl EventHandler for MyEventHandler {
     }
 }
 
-fn read_config<P: AsRef<Path>>(path: &P) -> Result<NodeConfigs, Box<dyn Error>> {
+fn read_config<P: AsRef<Path>>(path: &P) -> Result<Vec<Node>, Box<dyn Error>> {
     let mut file = fs::File::open(path.as_ref())?;
     let mut contents = String::new();
     let _ = file.read_to_string(&mut contents)?;
-    let nodes: NodeConfigs = serde_json::from_str(&contents)?;
+    let nodes: Vec<Node> = serde_json::from_str(&contents)?;
     Ok(nodes)
 }
 
@@ -55,13 +55,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     let file_name = matches.value_of("config").unwrap();
     let my_id = matches.value_of("id").unwrap().parse::<u16>()?;
     let nodes = read_config(&file_name)?;
+    let current_node = nodes.iter().find(|node| node.id == my_id).unwrap().clone();
+    let nodes = nodes.iter().filter(|node| node.id != my_id)
+        .map(|node| node.clone()).collect::<Vec<Node>>();
 
-    run(my_id, nodes)
+    run(current_node, nodes)
 }
 
-fn run(id: u16, nodes: NodeConfigs) -> Result<(), Box<dyn Error>> {
-    let current_node = nodes.find(id).unwrap();
-    println!("{:?}", current_node);
+fn run(current_node: Node, nodes: Vec<Node>) -> Result<(), Box<dyn Error>> {
+    println!("Listening on Node: {}", current_node);
     let mut event_queue = EventQueue::default();
     event_queue.register_handler(MyEventHandler {});
     event_queue.run();
@@ -69,8 +71,8 @@ fn run(id: u16, nodes: NodeConfigs) -> Result<(), Box<dyn Error>> {
     let listener = TcpListener::bind(address)?;
     loop {
         match listener.accept() {
-            Ok((mut stream, _)) => {
-                println!("connected");
+            Ok((mut stream, client)) => {
+                println!("client connected: {}", client);
                 let mut buffer = [0; 2048];
                 let num_bytes = stream.read(&mut buffer)?;
                 match num_bytes {
