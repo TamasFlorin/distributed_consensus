@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct NodeConfig {
@@ -10,7 +10,12 @@ pub struct NodeConfig {
 
 impl NodeConfig {
     pub fn new(name: String, host: String, port: u16, id: u16) -> Self {
-        NodeConfig {name, host, port, id}
+        NodeConfig {
+            name,
+            host,
+            port,
+            id,
+        }
     }
 }
 

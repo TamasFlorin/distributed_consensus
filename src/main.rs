@@ -10,10 +10,9 @@ use event::EventHandler;
 use event::EventQueue;
 use protobuf::parse_from_bytes;
 pub mod node;
-use clap::{App, Arg, SubCommand};
+use clap::{App, Arg};
 use node::NodeConfigs;
 use serde_json;
-use std::env;
 use std::fs;
 use std::path::Path;
 
@@ -52,10 +51,16 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .required(true),
         )
         .get_matches();
+
     let file_name = matches.value_of("config").unwrap();
     let my_id = matches.value_of("id").unwrap().parse::<u16>()?;
     let nodes = read_config(&file_name)?;
-    let current_node = nodes.find(my_id).unwrap();
+
+    run(my_id, nodes)
+}
+
+fn run(id: u16, nodes: NodeConfigs) -> Result<(), Box<dyn Error>> {
+    let current_node = nodes.find(id).unwrap();
     println!("{:?}", current_node);
     let mut event_queue = EventQueue::default();
     event_queue.register_handler(MyEventHandler {});
