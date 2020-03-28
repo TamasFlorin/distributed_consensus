@@ -12,13 +12,25 @@ use protobuf::parse_from_bytes;
 pub mod node;
 use clap::{App, Arg};
 use node::Node;
+use node::NodeInfo;
 use serde_json;
 use std::fs;
 use std::path::Path;
+use std::rc;
 
 struct MyEventHandler {}
 
 impl EventHandler for MyEventHandler {
+    fn handle(&mut self, msg: &Message) {
+        println!("I am a handler and I have been summoned with msg {:?}", msg);
+    }
+}
+
+struct MySecondEventHandler {
+
+}
+
+impl EventHandler for MySecondEventHandler {
     fn handle(&mut self, msg: &Message) {
         println!("I am a handler and I have been summoned with msg {:?}", msg);
     }
@@ -58,12 +70,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     let current_node = nodes.iter().find(|node| node.id == my_id).unwrap().clone();
     let nodes = nodes.iter().filter(|node| node.id != my_id)
         .map(|node| node.clone()).collect::<Vec<Node>>();
+    let node_info = rc::Rc::new(node::NodeInfo{current_node, nodes});
+    
+    let eld = eld::ElectLowerEpoch::new(node_info.clone());
 
-    run(current_node, nodes)
+    run(node_info)
 }
 
-fn run(current_node: Node, nodes: Vec<Node>) -> Result<(), Box<dyn Error>> {
-    println!("Listening on Node: {}", current_node);
+fn run(node_info: rc::Rc<NodeInfo>) -> Result<(), Box<dyn Error>> {
+    println!("Listening on Node: {}", node_info.current_node);
     let mut event_queue = EventQueue::default();
     event_queue.register_handler(MyEventHandler {});
     event_queue.run();

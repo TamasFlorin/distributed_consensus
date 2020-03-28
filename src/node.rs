@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq)]
 pub struct Node {
     pub name: String,
     pub host: String,
@@ -39,8 +39,31 @@ impl PartialEq<Node> for Node {
     }
 }
 
-#[derive(Debug)]
-pub enum Nodes {
-    Current(Node),
-    Other(Vec<Node>)
+impl PartialOrd<Node> for Node {
+    fn partial_cmp(&self, other: &Node) -> Option<std::cmp::Ordering> {
+        if self.id == other.id {
+            Some(std::cmp::Ordering::Equal)
+        } else if self.id > other.id {
+            Some(std::cmp::Ordering::Greater)
+        } else {
+            Some(std::cmp::Ordering::Less)
+        }
+    }
+}
+
+impl Ord for Node {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering { 
+        if self.id == other.id {
+            std::cmp::Ordering::Equal
+        } else if self.id > other.id {
+            std::cmp::Ordering::Greater
+        } else {
+            std::cmp::Ordering::Less
+        }
+    }
+}
+
+pub struct NodeInfo {
+    pub current_node: Node,
+    pub nodes: Vec<Node>,
 }
