@@ -4,7 +4,7 @@ use std::ops::DerefMut;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex};
 use std::thread;
-use crate::node::Node;
+use crate::node::NodeId;
 //type EventHandler = dyn Fn(Message);
 
 pub trait EventHandler {
@@ -12,22 +12,9 @@ pub trait EventHandler {
 }
 
 #[derive(Debug, Clone)]
-pub struct InternalMessageData {
-    pub from: Node,
-    pub to: Node,
-}
-
-impl InternalMessageData {
-    pub fn new(from: Node, to: Node) -> Self {
-        Self {from, to}
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum InternalMessage {
-    Timeout(InternalMessageData),
-    Recovery(InternalMessageData),
-    Init(InternalMessageData),
+    Timeout(NodeId),
+    Recovery(NodeId),
     Trust(EldTrust),
 }
 
@@ -43,6 +30,7 @@ pub struct EventQueue<> {
     cvar: Arc<Condvar>,
     is_running: Arc<AtomicBool>,
     handle: Mutex<Option<thread::JoinHandle<()>>>,
+    element_added: Arc<Mutex<bool>>,
 }
 
 impl Default for EventQueue {
@@ -53,27 +41,17 @@ impl Default for EventQueue {
             cvar: Arc::new(Condvar::default()),
             is_running: Arc::new(AtomicBool::new(false)),
             handle: Mutex::new(None),
+            element_added: Arc::new(Mutex::new(false)),
         }
     }
 }
-
-/*impl Deref for EventQueue {
-    type Target = EventQueue;
-    fn deref(&self) -> &Self::Target { 
-        &self
-    }
-}
-
-impl DerefMut for EventQueue {
-    fn deref_mut(&mut self) -> &mut Self::Target { 
-        &mut self
-    }
-}*/
 
 impl EventQueue {
     pub fn push(&self, message: EventData) {
         let mut queue = self.queue.lock().unwrap();
         queue.push_back(message);
+        let mut guard = self.element_added.lock().unwrap();
+        *guard = true;
         self.cvar.notify_one();
     }
 
@@ -86,14 +64,19 @@ impl EventQueue {
         let cvar = Arc::clone(&self.cvar);
         let queue = Arc::clone(&self.queue);
         let is_running = Arc::clone(&self.is_running);
-
+        let element_added = Arc::clone(&self.element_added);
         self.handle = Mutex::new(Some(thread::spawn(move || {
             is_running.store(true, Ordering::SeqCst);
 
             loop {
                 let mut q = queue.lock().unwrap();
-                while !q.is_empty() {
-                    let first = q.pop_front().unwrap();
+                let mut queue_items: VecDeque<EventData> = q.iter().cloned().collect();
+                // unlock the queue since we are done with it
+                q.clear();
+                std::mem::drop(q);
+
+                while !queue_items.is_empty() {
+                    let first = queue_items.pop_front().unwrap();
                     println!("Processing message {:?}", first);
 
                     // we are sending the message to everyone for now...
@@ -104,18 +87,20 @@ impl EventQueue {
                         event_handler.handle(&first);
                     }
                 }
-                // unlock the queue since we are done with it
-                std::mem::drop(q);
+
 
                 if !is_running.load(Ordering::SeqCst) {
                     break;
                 }
 
-                // sleep until we get some other work to do
-                let guard = queue.lock().unwrap();
-                let _ = cvar
-                    .wait_while(guard, |q| q.is_empty() && is_running.load(Ordering::SeqCst))
-                    .unwrap();
+                {
+                    // sleep until we get some other work to do
+                    let guard = element_added.lock().unwrap();
+                    let mut guard = cvar.wait_while(guard, |added| !*added && is_running.load(Ordering::SeqCst)).unwrap();
+
+                    // we woke up because there was some work to do...now we can reset that
+                    *guard = false;
+                }
             }
         })));
     }
@@ -124,7 +109,7 @@ impl EventQueue {
         let mut handle = self.handle.lock().unwrap();
         if handle.is_some() {
             self.is_running.store(false, Ordering::SeqCst);
-            let _ = self.queue.lock().unwrap();
+            let _ = self.element_added.lock().unwrap();
             self.cvar.notify_one();
             let _ = handle.take().unwrap().join();
         }

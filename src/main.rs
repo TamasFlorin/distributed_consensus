@@ -17,7 +17,7 @@ use node::NodeInfo;
 use serde_json;
 use std::fs;
 use std::path::Path;
-pub mod extensions;
+use timer;
 
 struct MyEventHandler {}
 
@@ -79,15 +79,16 @@ fn main() -> Result<(), Box<dyn Error>> {
 fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     println!("Listening on Node: {}", node_info.current_node);
     let event_queue = std::sync::Arc::new(std::sync::Mutex::new(EventQueue::default()));
-    
     let mut eld = eld::EventualLeaderDetector::new(node_info, event_queue.clone());
-    eld.init();
+    let timer = timer::Timer::new();
+    eld.init(&timer);
 
-    event_queue.lock().unwrap().register_handler(Box::new(MySecondEventHandler {}));
-    event_queue.lock().unwrap().run();
+    {
+        let mut queue = event_queue.lock().unwrap();
+        queue.register_handler(Box::new(eld));
+        queue.run();
+    }
     
-
-
     let address = SocketAddr::from(([127, 0, 0, 1], 1337));
     let listener = TcpListener::bind(address)?;
     loop {

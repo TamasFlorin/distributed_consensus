@@ -1,12 +1,15 @@
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use crate::protos::message;
+
+pub type NodeId = u16;
+
 #[derive(Deserialize, Serialize, Debug, Clone, Eq)]
 pub struct Node {
     pub name: String,
     pub host: String,
     pub port: u16,
-    pub id: u16,
+    pub id: NodeId,
 }
 
 impl Node {
@@ -102,6 +105,7 @@ impl Ord for Node {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NodeInfo {
     pub current_node: Node,
     pub nodes: Vec<Node>,
