@@ -44,6 +44,7 @@ pub struct EventualLeaderDetector {
     delay: chrono::Duration,
     timer_guard: Option<Guard>,
     leader: Option<Node>,
+    timer: Timer,
 }
 
 impl EventualLeaderDetector {
@@ -56,15 +57,16 @@ impl EventualLeaderDetector {
             delay: chrono::Duration::milliseconds(DELTA),
             timer_guard: None,
             leader: None,
+            timer: Timer::new(),
         }
     }
 
-    pub fn init(&mut self, timer: &Timer) {
+    pub fn init(&mut self) {
         // recovery procedure completes the initialization
-        self.recovery(timer);
+        self.recovery();
     }
 
-    pub fn recovery(&mut self, timer: &Timer) {
+    pub fn recovery(&mut self) {
         // select the leader based on the maximum rank
         self.leader = Some(self.maxrank().clone());
         self.trust(&self.leader.as_ref().unwrap());
@@ -73,24 +75,24 @@ impl EventualLeaderDetector {
             .store(self.epoch.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
 
         // now we need to send a heartbeat to each node from our configuration
-        for _ in self.node_info.nodes.iter() {
-            // send message to the node.
+        for node in self.node_info.nodes.iter() {
+            self.send_heartbeat(node);
         }
 
-        self.start_timer(timer);
+        self.start_timer();
     }
 
-    fn start_timer(&mut self, timer: &Timer) {
+    fn start_timer(&mut self) {
         let queue = Arc::clone(&self.event_queue);
         let from = self.node_info.current_node.id;
-        self.timer_guard = Some(timer.schedule_repeating(self.delay, move || {
+
+        // TODO: add support for chaning the delay here...
+        self.timer_guard = Some(self.timer.schedule_with_delay(self.delay, move || {
             // we just need to send the timeout message to ourselvles.
             let message = InternalMessage::Timeout(from);
             let event_data = EventData::Internal(message);
-            {
-                let queue = queue.lock().unwrap();
-                queue.push(event_data);
-            }
+            let queue = queue.lock().unwrap();
+            queue.push(event_data);
         }));
     }
 
@@ -100,7 +102,7 @@ impl EventualLeaderDetector {
         // at this point we should already have a leader
         let current_leader = self.leader.as_ref().unwrap();
         if &new_leader.node != current_leader {
-            // This guarantees that if leaders keep changing because the timeout delay is too short with
+            // Changing the delay guarantees that if leaders keep changing because the timeout delay is too short with
             // respect to communication delays, the delay will continue to increase, until it eventually
             // becomes large enough for the leader to stabilize when the system becomes synchronous.
             self.delay = self.delay + chrono::Duration::milliseconds(DELTA);
@@ -111,8 +113,53 @@ impl EventualLeaderDetector {
             self.trust(&self.leader.as_ref().unwrap());
         }
 
+        // now we need to send a heartbeat to each node from our configuration
+        for node in self.node_info.nodes.iter() {
+            self.send_heartbeat(node);
+        }
+
+        {
+            let mut candidates = self.candidates.write().unwrap();
+            candidates.clear();
+        }
+
+        self.start_timer();
+    }
+
+    fn send_heartbeat(&self, node: &Node) {
+        let mut heartbeat = EldHeartbeat_::new();
+        heartbeat.set_epoch(self.epoch.load(Ordering::SeqCst) as i32);
+        let mut message = Message::new();
+        message.set_eldHeartbeat(heartbeat);
+        message.set_field_type(Message_Type::ELD_HEARTBEAT);
+        let internal_msg = InternalMessage::Send(node.clone(), message);
+        let event_data = EventData::Internal(internal_msg);
+        let queue = self.event_queue.lock().unwrap();
+        queue.push(event_data);
+    }
+
+    fn recv_heartbeat(&self, heartbeat: &EldHeartbeat_) {
+        let process = heartbeat.get_from();
+        let index = process.get_index() as u16;
+        let epoch = heartbeat.get_epoch() as u32;
+
+        // TODO: remove expct from here
+        let node = self
+            .node_info
+            .nodes
+            .iter()
+            .find(|node| node.id == index)
+            .expect("Message must be from one of the known nodes.");
+
         let mut candidates = self.candidates.write().unwrap();
-        candidates.clear();
+        let mut candidate = candidates
+            .iter_mut()
+            .find(|c| c.node.id == node.id && c.epoch < epoch);
+
+        match candidate.as_deref_mut() {
+            Some(value) => value.epoch = epoch,
+            _ => candidates.push(Candidate::new(node.clone(), epoch)),
+        }
     }
 
     fn trust(&self, leader: &Node) {
@@ -186,7 +233,16 @@ impl EventHandler for EventualLeaderDetector {
                 InternalMessage::Trust(leader) => println!("New leader: {:?}", leader),
                 _ => (),
             },
-            EventData::External(_) => (),
+            EventData::External(msg) => match msg {
+                Message {
+                    field_type: Message_Type::ELD_HEARTBEAT,
+                    ..
+                } => {
+                    println!("Received heartbeat {:?}", msg);
+                    self.recv_heartbeat(msg.get_eldHeartbeat());
+                }
+                _ => (),
+            },
         };
     }
 }

@@ -31,6 +31,14 @@ impl From<Node> for SocketAddr {
     }
 }
 
+impl From<&Node> for SocketAddr {
+    fn from(node: &Node) -> Self {
+        let address = format!("{}:{}", node.host, node.port);
+        let address: SocketAddr = address.parse().expect("Unable to parse socket address");
+        address
+    }
+}
+
 impl From<Node> for message::ProcessId {
     fn from(node: Node) -> Self {
         let mut proc_id = message::ProcessId::new();

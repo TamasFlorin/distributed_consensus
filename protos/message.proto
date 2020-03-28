@@ -95,6 +95,7 @@ message EldTrust {
 
 message EldHeartbeat_ {
     int32 epoch = 1;
+    ProcessId from = 2;
 }
 
 message PlSend {
@@ -112,6 +113,7 @@ message Message {
         EC_START_EPOCH = 1;
         EP_ABORT = 2;
         EP_PROPOSE = 3;
+        ELD_HEARTBEAT = 4;
     }
 
     Type type = 1;
@@ -124,6 +126,7 @@ message Message {
     EpDecide epDecide = 7;
     UcDecide ucDecide = 8;
     BebBroadcast bebBroadcast = 9;
+    EldHeartbeat_ eldHeartbeat = 10;
 }
 
 // 5

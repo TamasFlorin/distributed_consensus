@@ -17,7 +17,9 @@ use node::NodeInfo;
 use serde_json;
 use std::fs;
 use std::path::Path;
-use timer;
+pub mod perfect_link;
+
+const MAX_BUFFER: usize = 2048;
 
 struct MyEventHandler {}
 
@@ -72,6 +74,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .filter(|node| node.id != my_id)
         .map(|node| node.clone())
         .collect::<Vec<Node>>();
+
     let node_info = std::sync::Arc::new(node::NodeInfo {
         current_node,
         nodes,
@@ -83,23 +86,25 @@ fn main() -> Result<(), Box<dyn Error>> {
 fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     println!("Listening on Node: {}", node_info.current_node);
     let event_queue = std::sync::Arc::new(std::sync::Mutex::new(EventQueue::default()));
-    let mut eld = eld::EventualLeaderDetector::new(node_info, event_queue.clone());
-    let timer = timer::Timer::new();
-    eld.init(&timer);
+    let perfect_link = perfect_link::PerfectLink::default();
+    let node = std::sync::Arc::clone(&node_info);
+    let mut eld = eld::EventualLeaderDetector::new(node, event_queue.clone());
+    eld.init();
 
     {
         let mut queue = event_queue.lock().unwrap();
+        queue.register_handler(Box::new(perfect_link));
         queue.register_handler(Box::new(eld));
         queue.run();
     }
 
-    let address = SocketAddr::from(([127, 0, 0, 1], 1337));
+    let address: SocketAddr = node_info.current_node.clone().into(); 
     let listener = TcpListener::bind(address)?;
     loop {
         match listener.accept() {
             Ok((mut stream, client)) => {
                 println!("client connected: {}", client);
-                let mut buffer = [0; 2048];
+                let mut buffer = [0; MAX_BUFFER];
                 let num_bytes = stream.read(&mut buffer)?;
                 match num_bytes {
                     1 => break,
@@ -127,6 +132,5 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
             }
         };
     }
-    event_queue.lock().unwrap().close();
     Ok(())
 }

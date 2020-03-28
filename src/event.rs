@@ -1,11 +1,10 @@
-use crate::node::NodeId;
+use crate::node::{Node, NodeId};
 use crate::protos::message::{EldTrust, Message};
 use std::collections::VecDeque;
 use std::ops::DerefMut;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex};
 use std::thread;
-//type EventHandler = dyn Fn(Message);
 
 pub trait EventHandler {
     fn handle(&mut self, message: &EventData);
@@ -14,8 +13,8 @@ pub trait EventHandler {
 #[derive(Debug, Clone)]
 pub enum InternalMessage {
     Timeout(NodeId),
-    Recovery(NodeId),
     Trust(EldTrust),
+    Send(Node, Message),
 }
 
 #[derive(Debug, Clone)]
@@ -25,7 +24,7 @@ pub enum EventData {
 }
 
 pub struct EventQueue {
-    handlers: Arc<Mutex<Vec<Box<dyn EventHandler + Send + Sync>>>>,
+    handlers: Arc<Mutex<Vec<Box<dyn EventHandler + Send>>>>,
     queue: Arc<Mutex<VecDeque<EventData>>>,
     cvar: Arc<Condvar>,
     is_running: Arc<AtomicBool>,
@@ -106,7 +105,7 @@ impl EventQueue {
         })));
     }
 
-    pub fn close(&mut self) {
+    fn close(&mut self) {
         let mut handle = self.handle.lock().unwrap();
         if handle.is_some() {
             self.is_running.store(false, Ordering::SeqCst);
@@ -118,8 +117,14 @@ impl EventQueue {
         }
     }
 
-    pub fn register_handler(&mut self, event_handler: Box<dyn EventHandler + Send + Sync>) {
+    pub fn register_handler(&mut self, event_handler: Box<dyn EventHandler + Send>) {
         let mut handlers = self.handlers.lock().unwrap();
         handlers.push(event_handler);
+    }
+}
+
+impl Drop for EventQueue {
+    fn drop(&mut self) {
+        self.close();
     }
 }

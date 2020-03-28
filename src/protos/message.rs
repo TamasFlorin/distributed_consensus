@@ -3317,6 +3317,7 @@ impl ::protobuf::reflect::ProtobufValue for EldTrust {
 pub struct EldHeartbeat_ {
     // message fields
     pub epoch: i32,
+    pub from: ::protobuf::SingularPtrField<ProcessId>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -3347,10 +3348,48 @@ impl EldHeartbeat_ {
     pub fn set_epoch(&mut self, v: i32) {
         self.epoch = v;
     }
+
+    // .ProcessId from = 2;
+
+
+    pub fn get_from(&self) -> &ProcessId {
+        self.from.as_ref().unwrap_or_else(|| ProcessId::default_instance())
+    }
+    pub fn clear_from(&mut self) {
+        self.from.clear();
+    }
+
+    pub fn has_from(&self) -> bool {
+        self.from.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_from(&mut self, v: ProcessId) {
+        self.from = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_from(&mut self) -> &mut ProcessId {
+        if self.from.is_none() {
+            self.from.set_default();
+        }
+        self.from.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_from(&mut self) -> ProcessId {
+        self.from.take().unwrap_or_else(|| ProcessId::new())
+    }
 }
 
 impl ::protobuf::Message for EldHeartbeat_ {
     fn is_initialized(&self) -> bool {
+        for v in &self.from {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
         true
     }
 
@@ -3364,6 +3403,9 @@ impl ::protobuf::Message for EldHeartbeat_ {
                     }
                     let tmp = is.read_int32()?;
                     self.epoch = tmp;
+                },
+                2 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.from)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -3380,6 +3422,10 @@ impl ::protobuf::Message for EldHeartbeat_ {
         if self.epoch != 0 {
             my_size += ::protobuf::rt::value_size(1, self.epoch, ::protobuf::wire_format::WireTypeVarint);
         }
+        if let Some(ref v) = self.from.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
@@ -3388,6 +3434,11 @@ impl ::protobuf::Message for EldHeartbeat_ {
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
         if self.epoch != 0 {
             os.write_int32(1, self.epoch)?;
+        }
+        if let Some(ref v) = self.from.as_ref() {
+            os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
         }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -3433,6 +3484,11 @@ impl ::protobuf::Message for EldHeartbeat_ {
                     |m: &EldHeartbeat_| { &m.epoch },
                     |m: &mut EldHeartbeat_| { &mut m.epoch },
                 ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
+                    "from",
+                    |m: &EldHeartbeat_| { &m.from },
+                    |m: &mut EldHeartbeat_| { &mut m.from },
+                ));
                 ::protobuf::reflect::MessageDescriptor::new::<EldHeartbeat_>(
                     "EldHeartbeat_",
                     fields,
@@ -3453,6 +3509,7 @@ impl ::protobuf::Message for EldHeartbeat_ {
 impl ::protobuf::Clear for EldHeartbeat_ {
     fn clear(&mut self) {
         self.epoch = 0;
+        self.from.clear();
         self.unknown_fields.clear();
     }
 }
@@ -3837,6 +3894,7 @@ pub struct Message {
     pub epDecide: ::protobuf::SingularPtrField<EpDecide>,
     pub ucDecide: ::protobuf::SingularPtrField<UcDecide>,
     pub bebBroadcast: ::protobuf::SingularPtrField<BebBroadcast>,
+    pub eldHeartbeat: ::protobuf::SingularPtrField<EldHeartbeat_>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -4131,6 +4189,39 @@ impl Message {
     pub fn take_bebBroadcast(&mut self) -> BebBroadcast {
         self.bebBroadcast.take().unwrap_or_else(|| BebBroadcast::new())
     }
+
+    // .EldHeartbeat_ eldHeartbeat = 10;
+
+
+    pub fn get_eldHeartbeat(&self) -> &EldHeartbeat_ {
+        self.eldHeartbeat.as_ref().unwrap_or_else(|| EldHeartbeat_::default_instance())
+    }
+    pub fn clear_eldHeartbeat(&mut self) {
+        self.eldHeartbeat.clear();
+    }
+
+    pub fn has_eldHeartbeat(&self) -> bool {
+        self.eldHeartbeat.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_eldHeartbeat(&mut self, v: EldHeartbeat_) {
+        self.eldHeartbeat = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_eldHeartbeat(&mut self) -> &mut EldHeartbeat_ {
+        if self.eldHeartbeat.is_none() {
+            self.eldHeartbeat.set_default();
+        }
+        self.eldHeartbeat.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_eldHeartbeat(&mut self) -> EldHeartbeat_ {
+        self.eldHeartbeat.take().unwrap_or_else(|| EldHeartbeat_::new())
+    }
 }
 
 impl ::protobuf::Message for Message {
@@ -4175,6 +4266,11 @@ impl ::protobuf::Message for Message {
                 return false;
             }
         };
+        for v in &self.eldHeartbeat {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
         true
     }
 
@@ -4208,6 +4304,9 @@ impl ::protobuf::Message for Message {
                 },
                 9 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.bebBroadcast)?;
+                },
+                10 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.eldHeartbeat)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -4253,6 +4352,10 @@ impl ::protobuf::Message for Message {
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         if let Some(ref v) = self.bebBroadcast.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.eldHeartbeat.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
@@ -4302,6 +4405,11 @@ impl ::protobuf::Message for Message {
         }
         if let Some(ref v) = self.bebBroadcast.as_ref() {
             os.write_tag(9, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.eldHeartbeat.as_ref() {
+            os.write_tag(10, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
@@ -4389,6 +4497,11 @@ impl ::protobuf::Message for Message {
                     |m: &Message| { &m.bebBroadcast },
                     |m: &mut Message| { &mut m.bebBroadcast },
                 ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EldHeartbeat_>>(
+                    "eldHeartbeat",
+                    |m: &Message| { &m.eldHeartbeat },
+                    |m: &mut Message| { &mut m.eldHeartbeat },
+                ));
                 ::protobuf::reflect::MessageDescriptor::new::<Message>(
                     "Message",
                     fields,
@@ -4417,6 +4530,7 @@ impl ::protobuf::Clear for Message {
         self.epDecide.clear();
         self.ucDecide.clear();
         self.bebBroadcast.clear();
+        self.eldHeartbeat.clear();
         self.unknown_fields.clear();
     }
 }
@@ -4439,6 +4553,7 @@ pub enum Message_Type {
     EC_START_EPOCH = 1,
     EP_ABORT = 2,
     EP_PROPOSE = 3,
+    ELD_HEARTBEAT = 4,
 }
 
 impl ::protobuf::ProtobufEnum for Message_Type {
@@ -4452,6 +4567,7 @@ impl ::protobuf::ProtobufEnum for Message_Type {
             1 => ::std::option::Option::Some(Message_Type::EC_START_EPOCH),
             2 => ::std::option::Option::Some(Message_Type::EP_ABORT),
             3 => ::std::option::Option::Some(Message_Type::EP_PROPOSE),
+            4 => ::std::option::Option::Some(Message_Type::ELD_HEARTBEAT),
             _ => ::std::option::Option::None
         }
     }
@@ -4462,6 +4578,7 @@ impl ::protobuf::ProtobufEnum for Message_Type {
             Message_Type::EC_START_EPOCH,
             Message_Type::EP_ABORT,
             Message_Type::EP_PROPOSE,
+            Message_Type::ELD_HEARTBEAT,
         ];
         values
     }
@@ -4514,21 +4631,23 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     ge\x18\x01\x20\x01(\x0b2\x08.MessageR\x07message\"0\n\nBebDeliver\x12\"\
     \n\x07message\x18\x01\x20\x01(\x0b2\x08.MessageR\x07message\"\r\n\x0bEld\
     Recovery\"4\n\x08EldTrust\x12(\n\tprocessId\x18\x01\x20\x01(\x0b2\n.Proc\
-    essIdR\tprocessId\"%\n\rEldHeartbeat_\x12\x14\n\x05epoch\x18\x01\x20\x01\
-    (\x05R\x05epoch\",\n\x06PlSend\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\
-    \x08.MessageR\x07message\"/\n\tPlDeliver\x12\"\n\x07message\x18\x01\x20\
-    \x01(\x0b2\x08.MessageR\x07message\"\xcc\x03\n\x07Message\x12!\n\x04type\
-    \x18\x01\x20\x01(\x0e2\r.Message.TypeR\x04type\x12(\n\tucPropose\x18\x02\
-    \x20\x01(\x0b2\n.UcProposeR\tucPropose\x121\n\x0cecStartEpoch\x18\x03\
-    \x20\x01(\x0b2\r.EcStartEpochR\x0cecStartEpoch\x12\"\n\x07epAbort\x18\
-    \x04\x20\x01(\x0b2\x08.EpAbortR\x07epAbort\x12(\n\tepAborted\x18\x05\x20\
-    \x01(\x0b2\n.EpAbortedR\tepAborted\x12(\n\tepPropose\x18\x06\x20\x01(\
-    \x0b2\n.EpProposeR\tepPropose\x12%\n\x08epDecide\x18\x07\x20\x01(\x0b2\t\
-    .EpDecideR\x08epDecide\x12%\n\x08ucDecide\x18\x08\x20\x01(\x0b2\t.UcDeci\
-    deR\x08ucDecide\x121\n\x0cbebBroadcast\x18\t\x20\x01(\x0b2\r.BebBroadcas\
-    tR\x0cbebBroadcast\"H\n\x04Type\x12\x0e\n\nUC_PROPOSE\x10\0\x12\x12\n\
-    \x0eEC_START_EPOCH\x10\x01\x12\x0c\n\x08EP_ABORT\x10\x02\x12\x0e\n\nEP_P\
-    ROPOSE\x10\x03b\x06proto3\
+    essIdR\tprocessId\"E\n\rEldHeartbeat_\x12\x14\n\x05epoch\x18\x01\x20\x01\
+    (\x05R\x05epoch\x12\x1e\n\x04from\x18\x02\x20\x01(\x0b2\n.ProcessIdR\x04\
+    from\",\n\x06PlSend\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\x08.Message\
+    R\x07message\"/\n\tPlDeliver\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\
+    \x08.MessageR\x07message\"\x93\x04\n\x07Message\x12!\n\x04type\x18\x01\
+    \x20\x01(\x0e2\r.Message.TypeR\x04type\x12(\n\tucPropose\x18\x02\x20\x01\
+    (\x0b2\n.UcProposeR\tucPropose\x121\n\x0cecStartEpoch\x18\x03\x20\x01(\
+    \x0b2\r.EcStartEpochR\x0cecStartEpoch\x12\"\n\x07epAbort\x18\x04\x20\x01\
+    (\x0b2\x08.EpAbortR\x07epAbort\x12(\n\tepAborted\x18\x05\x20\x01(\x0b2\n\
+    .EpAbortedR\tepAborted\x12(\n\tepPropose\x18\x06\x20\x01(\x0b2\n.EpPropo\
+    seR\tepPropose\x12%\n\x08epDecide\x18\x07\x20\x01(\x0b2\t.EpDecideR\x08e\
+    pDecide\x12%\n\x08ucDecide\x18\x08\x20\x01(\x0b2\t.UcDecideR\x08ucDecide\
+    \x121\n\x0cbebBroadcast\x18\t\x20\x01(\x0b2\r.BebBroadcastR\x0cbebBroadc\
+    ast\x122\n\x0celdHeartbeat\x18\n\x20\x01(\x0b2\x0e.EldHeartbeat_R\x0celd\
+    Heartbeat\"[\n\x04Type\x12\x0e\n\nUC_PROPOSE\x10\0\x12\x12\n\x0eEC_START\
+    _EPOCH\x10\x01\x12\x0c\n\x08EP_ABORT\x10\x02\x12\x0e\n\nEP_PROPOSE\x10\
+    \x03\x12\x11\n\rELD_HEARTBEAT\x10\x04b\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy::INIT;
