@@ -1,10 +1,10 @@
-use crate::protos::message::{Message, EldTrust};
+use crate::node::NodeId;
+use crate::protos::message::{EldTrust, Message};
 use std::collections::VecDeque;
 use std::ops::DerefMut;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex};
 use std::thread;
-use crate::node::NodeId;
 //type EventHandler = dyn Fn(Message);
 
 pub trait EventHandler {
@@ -21,10 +21,10 @@ pub enum InternalMessage {
 #[derive(Debug, Clone)]
 pub enum EventData {
     Internal(InternalMessage),
-    External(Message)
+    External(Message),
 }
 
-pub struct EventQueue<> {
+pub struct EventQueue {
     handlers: Arc<Mutex<Vec<Box<dyn EventHandler + Send + Sync>>>>,
     queue: Arc<Mutex<VecDeque<EventData>>>,
     cvar: Arc<Condvar>,
@@ -71,10 +71,12 @@ impl EventQueue {
             loop {
                 let mut q = queue.lock().unwrap();
                 let mut queue_items: VecDeque<EventData> = q.iter().cloned().collect();
-                // unlock the queue since we are done with it
                 q.clear();
                 std::mem::drop(q);
 
+                // We need to parse a copy of the original items since our event handlers
+                // might in turn use the event queue to send other messages.
+                // This means that we cannot hold a lock on the queue here.
                 while !queue_items.is_empty() {
                     let first = queue_items.pop_front().unwrap();
                     println!("Processing message {:?}", first);
@@ -88,19 +90,18 @@ impl EventQueue {
                     }
                 }
 
-
                 if !is_running.load(Ordering::SeqCst) {
                     break;
                 }
 
-                {
-                    // sleep until we get some other work to do
-                    let guard = element_added.lock().unwrap();
-                    let mut guard = cvar.wait_while(guard, |added| !*added && is_running.load(Ordering::SeqCst)).unwrap();
+                let guard = element_added.lock().unwrap();
+                let mut guard = cvar
+                    .wait_while(guard, |added| !*added && is_running.load(Ordering::SeqCst))
+                    .unwrap();
 
-                    // we woke up because there was some work to do...now we can reset that
-                    *guard = false;
-                }
+                // we woke up because there was some work to do, now we can reset the work variable to false
+                // since we are going to do the work that we were woken up about.
+                *guard = false;
             }
         })));
     }

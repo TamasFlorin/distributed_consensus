@@ -1,6 +1,6 @@
+use crate::protos::message;
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
-use crate::protos::message;
 
 pub type NodeId = u16;
 
@@ -24,7 +24,7 @@ impl Node {
 }
 
 impl From<Node> for SocketAddr {
-    fn from(node: Node) -> Self { 
+    fn from(node: Node) -> Self {
         let address = format!("{}:{}", node.host, node.port);
         let address: SocketAddr = address.parse().expect("Unable to parse socket address");
         address
@@ -70,8 +70,11 @@ impl From<&Node> for message::EldTrust {
 }
 
 impl std::fmt::Display for Node {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result { 
-        f.write_fmt(format_args!("Id: {0}, Name: {1}, Host: {2}, Port: {3}", self.id, self.name, self.host, self.port))
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_fmt(format_args!(
+            "Id: {0}, Name: {1}, Host: {2}, Port: {3}",
+            self.id, self.name, self.host, self.port
+        ))
     }
 }
 
@@ -94,7 +97,7 @@ impl PartialOrd<Node> for Node {
 }
 
 impl Ord for Node {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering { 
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         if self.id == other.id {
             std::cmp::Ordering::Equal
         } else if self.id > other.id {

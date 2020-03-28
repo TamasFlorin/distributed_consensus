@@ -6,9 +6,9 @@ use std::io::prelude::*;
 use std::net::SocketAddr;
 use std::net::TcpListener;
 pub mod event;
+use event::EventData;
 use event::EventHandler;
 use event::EventQueue;
-use event::EventData;
 use protobuf::parse_from_bytes;
 pub mod node;
 use clap::{App, Arg};
@@ -27,9 +27,7 @@ impl EventHandler for MyEventHandler {
     }
 }
 
-struct MySecondEventHandler {
-
-}
+struct MySecondEventHandler {}
 
 impl EventHandler for MySecondEventHandler {
     fn handle(&mut self, msg: &EventData) {
@@ -69,9 +67,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     let my_id = matches.value_of("id").unwrap().parse::<u16>()?;
     let nodes = read_config(&file_name)?;
     let current_node = nodes.iter().find(|node| node.id == my_id).unwrap().clone();
-    let nodes = nodes.iter().filter(|node| node.id != my_id)
-        .map(|node| node.clone()).collect::<Vec<Node>>();
-    let node_info = std::sync::Arc::new(node::NodeInfo{current_node, nodes});
+    let nodes = nodes
+        .iter()
+        .filter(|node| node.id != my_id)
+        .map(|node| node.clone())
+        .collect::<Vec<Node>>();
+    let node_info = std::sync::Arc::new(node::NodeInfo {
+        current_node,
+        nodes,
+    });
 
     run(node_info)
 }
@@ -88,7 +92,7 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
         queue.register_handler(Box::new(eld));
         queue.run();
     }
-    
+
     let address = SocketAddr::from(([127, 0, 0, 1], 1337));
     let listener = TcpListener::bind(address)?;
     loop {
@@ -105,7 +109,7 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
                             Ok(msg) => {
                                 let message = EventData::External(msg);
                                 event_queue.lock().unwrap().push(message);
-                            },
+                            }
                             _ => {
                                 let mut msg = Message::new();
                                 msg.set_field_type(protos::message::Message_Type::UC_PROPOSE);

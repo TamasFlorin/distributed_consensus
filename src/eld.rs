@@ -2,13 +2,13 @@ use crate::event::*;
 use crate::node::*;
 use crate::protos::message::*;
 use chrono;
-use timer::Timer;
-use timer::Guard;
-use std::sync::Arc;
-use std::sync::Mutex;
 use std::sync::atomic::AtomicU32;
 use std::sync::atomic::Ordering;
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::sync::RwLock;
+use timer::Guard;
+use timer::Timer;
 
 const DELTA: i64 = 5000;
 
@@ -20,7 +20,7 @@ pub struct Candidate {
 
 impl Candidate {
     pub fn new(node: Node, epoch: u32) -> Self {
-        Candidate {node, epoch}
+        Candidate { node, epoch }
     }
 }
 
@@ -69,8 +69,9 @@ impl EventualLeaderDetector {
         self.leader = Some(self.maxrank().clone());
         self.trust(&self.leader.as_ref().unwrap());
 
-        self.epoch.store(self.epoch.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
-        
+        self.epoch
+            .store(self.epoch.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
+
         // now we need to send a heartbeat to each node from our configuration
         for _ in self.node_info.nodes.iter() {
             // send message to the node.
@@ -136,12 +137,18 @@ impl EventualLeaderDetector {
         let min = candidates.iter().min();
         match min {
             Some(value) => {
-                let min_by_epoch: Vec<Candidate> = 
-                    candidates.iter().filter(|c| c.epoch == value.epoch).cloned().collect();
+                let min_by_epoch: Vec<Candidate> = candidates
+                    .iter()
+                    .filter(|c| c.epoch == value.epoch)
+                    .cloned()
+                    .collect();
                 let max_by_rank = min_by_epoch.iter().max().unwrap().clone();
                 max_by_rank
-            },
-            None => Candidate::new(self.node_info.current_node.clone(), self.epoch.load(Ordering::SeqCst)),
+            }
+            None => Candidate::new(
+                self.node_info.current_node.clone(),
+                self.epoch.load(Ordering::SeqCst),
+            ),
         }
     }
 
@@ -150,23 +157,34 @@ impl EventualLeaderDetector {
         let max_rank_node = self.node_info.nodes.iter().max();
         let current_node = &self.node_info.current_node;
         match max_rank_node {
-            Some(node) => if node > current_node {node} else {current_node},
-            None => current_node
+            Some(node) => {
+                if node > current_node {
+                    node
+                } else {
+                    current_node
+                }
+            }
+            None => current_node,
         }
     }
 }
 
 impl EventHandler for EventualLeaderDetector {
     fn handle(&mut self, event_data: &EventData) {
-        println!("I am a handler and I have been summoned with event {:?}", event_data);
+        println!(
+            "I am a handler and I have been summoned with event {:?}",
+            event_data
+        );
 
         match event_data {
-            EventData::Internal(msg) => {
-                match msg {
-                    InternalMessage::Timeout(id) => if id == &self.node_info.current_node.id { self.timeout(); }
-                    InternalMessage::Trust(leader) => println!("New leader: {:?}", leader),
-                    _ => (),
+            EventData::Internal(msg) => match msg {
+                InternalMessage::Timeout(id) => {
+                    if id == &self.node_info.current_node.id {
+                        self.timeout();
+                    }
                 }
+                InternalMessage::Trust(leader) => println!("New leader: {:?}", leader),
+                _ => (),
             },
             EventData::External(_) => (),
         };
