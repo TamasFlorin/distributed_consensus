@@ -7,9 +7,8 @@ use std::net::SocketAddr;
 use std::net::TcpListener;
 pub mod event;
 use event::EventData;
-use event::EventHandler;
 use event::EventQueue;
-use protobuf::parse_from_bytes;
+use protobuf::parse_from_reader;
 pub mod node;
 use clap::{App, Arg};
 use node::Node;
@@ -18,24 +17,7 @@ use serde_json;
 use std::fs;
 use std::path::Path;
 pub mod perfect_link;
-
-const MAX_BUFFER: usize = 2048;
-
-struct MyEventHandler {}
-
-impl EventHandler for MyEventHandler {
-    fn handle(&mut self, msg: &EventData) {
-        println!("I am a handler and I have been summoned with msg {:?}", msg);
-    }
-}
-
-struct MySecondEventHandler {}
-
-impl EventHandler for MySecondEventHandler {
-    fn handle(&mut self, msg: &EventData) {
-        println!("I am a handler and I have been summoned with msg {:?}", msg);
-    }
-}
+use log::{info, warn};
 
 fn read_config<P: AsRef<Path>>(path: &P) -> Result<Vec<Node>, Box<dyn Error>> {
     let mut file = fs::File::open(path.as_ref())?;
@@ -46,6 +28,8 @@ fn read_config<P: AsRef<Path>>(path: &P) -> Result<Vec<Node>, Box<dyn Error>> {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    env_logger::init();
+
     let matches = App::new("Distributed Consensus")
         .version("1.0")
         .author("Florin T. <tamasflorin@live.com>")
@@ -84,7 +68,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
-    println!("Listening on Node: {}", node_info.current_node);
+    info!("Listening on Node: {}", node_info.current_node);
     let event_queue = std::sync::Arc::new(std::sync::Mutex::new(EventQueue::default()));
     let perfect_link = perfect_link::PerfectLink::default();
     let node = std::sync::Arc::clone(&node_info);
@@ -98,39 +82,25 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
         queue.run();
     }
 
-    let address: SocketAddr = node_info.current_node.clone().into(); 
+    let address: SocketAddr = node_info.current_node.clone().into();
     let listener = TcpListener::bind(address)?;
     loop {
         match listener.accept() {
             Ok((mut stream, client)) => {
-                println!("client connected: {}", client);
-                let mut buffer = [0; MAX_BUFFER];
-                let num_bytes = stream.read(&mut buffer)?;
-                match num_bytes {
-                    1 => break,
-                    _ => {
-                        let message = parse_from_bytes::<Message>(&buffer);
-                        match message {
-                            Ok(msg) => {
-                                let message = EventData::External(msg);
-                                event_queue.lock().unwrap().push(message);
-                            }
-                            _ => {
-                                let mut msg = Message::new();
-                                msg.set_field_type(protos::message::Message_Type::UC_PROPOSE);
-                                let message = EventData::External(msg);
-                                event_queue.lock().unwrap().push(message);
-                                println!("Reveived unknown message: {:?}", &buffer[0..num_bytes]);
-                            }
-                        };
+                info!("Client connected: {}", client);
+                let message = parse_from_reader::<Message>(&mut stream);
+
+                match message {
+                    Ok(msg) => {
+                        let message = EventData::External(msg);
+                        event_queue.lock().unwrap().push(message);
                     }
-                }
+                    Err(e) => {
+                        warn!("Failed to parse message with error: {}", e);
+                    }
+                };
             }
-            Err(e) => {
-                println!("{:?}", e);
-                break;
-            }
-        };
+            Err(e) => return Err(Box::new(e)),
+        }
     }
-    Ok(())
 }

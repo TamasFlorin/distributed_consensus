@@ -5,8 +5,8 @@ then
 elif [ $1 = "debug" ];
 then
     cargo build
-    ./target/debug/distributed_consensus $2 --config nodes.json
+    RUST_LOG=distributed_consensus ./target/debug/distributed_consensus $2 --config nodes.json
 else
     cargo build --release
-    ./target/release/distributed_consensus $2 --config nodes.json  
+    RUST_LOG=info ./target/release/distributed_consensus $2 --config nodes.json  
 fi

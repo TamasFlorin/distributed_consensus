@@ -78,7 +78,6 @@ impl EventQueue {
                 // This means that we cannot hold a lock on the queue here.
                 while !queue_items.is_empty() {
                     let first = queue_items.pop_front().unwrap();
-                    println!("Processing message {:?}", first);
 
                     // we are sending the message to everyone for now...
                     // they will need to filter it themselvles.

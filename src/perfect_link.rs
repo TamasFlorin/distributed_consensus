@@ -3,7 +3,6 @@ use crate::node::Node;
 use crate::protos::message;
 use protobuf::Message;
 use std::error::Error;
-use std::io::Write;
 use std::net::{SocketAddr, TcpStream};
 
 pub struct PerfectLink {}
@@ -20,11 +19,9 @@ impl PerfectLink {
     }
 
     fn send(&self, dest: &Node, message: &message::Message) -> Result<(), Box<dyn Error>> {
-        println!("Sending message {:?} to {:?}", message, dest);
         let address_to: SocketAddr = dest.into();
         let mut stream = TcpStream::connect(address_to)?;
-        let bytes = message.write_to_bytes()?;
-        let _ = stream.write(&bytes)?;
+        let _ = message.write_to_writer(&mut stream)?;
         Ok(())
     }
 }

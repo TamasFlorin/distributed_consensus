@@ -9,6 +9,7 @@ use std::sync::Mutex;
 use std::sync::RwLock;
 use timer::Guard;
 use timer::Timer;
+use log::{trace, info};
 
 const DELTA: i64 = 5000;
 
@@ -127,8 +128,11 @@ impl EventualLeaderDetector {
     }
 
     fn send_heartbeat(&self, node: &Node) {
+        let current_node = &self.node_info.current_node;
+        let process: ProcessId = current_node.into();
         let mut heartbeat = EldHeartbeat_::new();
         heartbeat.set_epoch(self.epoch.load(Ordering::SeqCst) as i32);
+        heartbeat.set_from(process);
         let mut message = Message::new();
         message.set_eldHeartbeat(heartbeat);
         message.set_field_type(Message_Type::ELD_HEARTBEAT);
@@ -143,7 +147,7 @@ impl EventualLeaderDetector {
         let index = process.get_index() as u16;
         let epoch = heartbeat.get_epoch() as u32;
 
-        // TODO: remove expct from here
+        // TODO: remove expect from here
         let node = self
             .node_info
             .nodes
@@ -218,8 +222,8 @@ impl EventualLeaderDetector {
 
 impl EventHandler for EventualLeaderDetector {
     fn handle(&mut self, event_data: &EventData) {
-        println!(
-            "I am a handler and I have been summoned with event {:?}",
+        trace!(
+            "Handler summoned with event {:?}",
             event_data
         );
 
@@ -230,7 +234,7 @@ impl EventHandler for EventualLeaderDetector {
                         self.timeout();
                     }
                 }
-                InternalMessage::Trust(leader) => println!("New leader: {:?}", leader),
+                InternalMessage::Trust(leader) => info!("A new leader has been set: {:?}", leader),
                 _ => (),
             },
             EventData::External(msg) => match msg {
@@ -238,7 +242,6 @@ impl EventHandler for EventualLeaderDetector {
                     field_type: Message_Type::ELD_HEARTBEAT,
                     ..
                 } => {
-                    println!("Received heartbeat {:?}", msg);
                     self.recv_heartbeat(msg.get_eldHeartbeat());
                 }
                 _ => (),
