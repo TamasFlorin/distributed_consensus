@@ -8,6 +8,7 @@ use std::net::TcpListener;
 pub mod event;
 use event::EventHandler;
 use event::EventQueue;
+use event::EventData;
 use protobuf::parse_from_bytes;
 pub mod node;
 use clap::{App, Arg};
@@ -16,12 +17,12 @@ use node::NodeInfo;
 use serde_json;
 use std::fs;
 use std::path::Path;
-use std::rc;
+pub mod extensions;
 
 struct MyEventHandler {}
 
 impl EventHandler for MyEventHandler {
-    fn handle(&mut self, msg: &Message) {
+    fn handle(&mut self, msg: &EventData) {
         println!("I am a handler and I have been summoned with msg {:?}", msg);
     }
 }
@@ -31,7 +32,7 @@ struct MySecondEventHandler {
 }
 
 impl EventHandler for MySecondEventHandler {
-    fn handle(&mut self, msg: &Message) {
+    fn handle(&mut self, msg: &EventData) {
         println!("I am a handler and I have been summoned with msg {:?}", msg);
     }
 }
@@ -70,18 +71,23 @@ fn main() -> Result<(), Box<dyn Error>> {
     let current_node = nodes.iter().find(|node| node.id == my_id).unwrap().clone();
     let nodes = nodes.iter().filter(|node| node.id != my_id)
         .map(|node| node.clone()).collect::<Vec<Node>>();
-    let node_info = rc::Rc::new(node::NodeInfo{current_node, nodes});
-    
-    let eld = eld::ElectLowerEpoch::new(node_info.clone());
+    let node_info = std::sync::Arc::new(node::NodeInfo{current_node, nodes});
 
     run(node_info)
 }
 
-fn run(node_info: rc::Rc<NodeInfo>) -> Result<(), Box<dyn Error>> {
+fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     println!("Listening on Node: {}", node_info.current_node);
-    let mut event_queue = EventQueue::default();
-    event_queue.register_handler(MyEventHandler {});
-    event_queue.run();
+    let event_queue = std::sync::Arc::new(std::sync::Mutex::new(EventQueue::default()));
+    
+    let mut eld = eld::EventualLeaderDetector::new(node_info, event_queue.clone());
+    eld.init();
+
+    event_queue.lock().unwrap().register_handler(Box::new(MySecondEventHandler {}));
+    event_queue.lock().unwrap().run();
+    
+
+
     let address = SocketAddr::from(([127, 0, 0, 1], 1337));
     let listener = TcpListener::bind(address)?;
     loop {
@@ -95,11 +101,15 @@ fn run(node_info: rc::Rc<NodeInfo>) -> Result<(), Box<dyn Error>> {
                     _ => {
                         let message = parse_from_bytes::<Message>(&buffer);
                         match message {
-                            Ok(msg) => event_queue.push(msg),
+                            Ok(msg) => {
+                                let message = EventData::External(msg);
+                                event_queue.lock().unwrap().push(message);
+                            },
                             _ => {
                                 let mut msg = Message::new();
                                 msg.set_field_type(protos::message::Message_Type::UC_PROPOSE);
-                                event_queue.push(msg);
+                                let message = EventData::External(msg);
+                                event_queue.lock().unwrap().push(message);
                                 println!("Reveived unknown message: {:?}", &buffer[0..num_bytes]);
                             }
                         };
@@ -112,6 +122,6 @@ fn run(node_info: rc::Rc<NodeInfo>) -> Result<(), Box<dyn Error>> {
             }
         };
     }
-    event_queue.close();
+    event_queue.lock().unwrap().close();
     Ok(())
 }

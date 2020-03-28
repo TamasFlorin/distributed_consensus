@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
+use crate::protos::message;
 #[derive(Deserialize, Serialize, Debug, Clone, Eq)]
 pub struct Node {
     pub name: String,
@@ -24,6 +25,44 @@ impl From<Node> for SocketAddr {
         let address = format!("{}:{}", node.host, node.port);
         let address: SocketAddr = address.parse().expect("Unable to parse socket address");
         address
+    }
+}
+
+impl From<Node> for message::ProcessId {
+    fn from(node: Node) -> Self {
+        let mut proc_id = message::ProcessId::new();
+        proc_id.set_host(node.host);
+        proc_id.set_index(node.id as i32);
+        proc_id.set_port(node.port as i32);
+        proc_id
+    }
+}
+
+impl From<&Node> for message::ProcessId {
+    fn from(node: &Node) -> Self {
+        let mut proc_id = message::ProcessId::new();
+        proc_id.set_host(node.host.clone());
+        proc_id.set_index(node.id as i32);
+        proc_id.set_port(node.port as i32);
+        proc_id
+    }
+}
+
+impl From<Node> for message::EldTrust {
+    fn from(node: Node) -> Self {
+        let proc_id = message::ProcessId::from(node);
+        let mut eld_trust = message::EldTrust::new();
+        eld_trust.set_processId(proc_id);
+        eld_trust
+    }
+}
+
+impl From<&Node> for message::EldTrust {
+    fn from(node: &Node) -> Self {
+        let proc_id = message::ProcessId::from(node);
+        let mut eld_trust = message::EldTrust::new();
+        eld_trust.set_processId(proc_id);
+        eld_trust
     }
 }
 
