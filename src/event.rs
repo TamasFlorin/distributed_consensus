@@ -113,6 +113,8 @@ impl EventQueue {
             let _ = self.element_added.lock().unwrap();
             self.cvar.notify_one();
             let _ = handle.take().unwrap().join();
+        } else {
+            panic!("The queue has been already closed");
         }
     }
 
