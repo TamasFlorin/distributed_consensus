@@ -2,6 +2,7 @@ use crate::event::*;
 use crate::node::*;
 use crate::protos::message::*;
 use chrono;
+use log::{info, trace};
 use std::sync::atomic::AtomicU32;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -9,7 +10,6 @@ use std::sync::Mutex;
 use std::sync::RwLock;
 use timer::Guard;
 use timer::Timer;
-use log::{trace, info};
 
 const DELTA: i64 = 5000;
 
@@ -44,8 +44,8 @@ pub struct EventualLeaderDetector {
     event_queue: Arc<Mutex<EventQueue>>,
     delay: chrono::Duration,
     timer_guard: Option<Guard>,
-    leader: Option<Node>,
     timer: Timer,
+    leader: Option<Node>,
 }
 
 impl EventualLeaderDetector {
@@ -53,12 +53,12 @@ impl EventualLeaderDetector {
         Self {
             epoch: AtomicU32::new(0),
             candidates: Arc::new(RwLock::new(Vec::new())),
-            node_info: node_info.clone(),
+            node_info,
             event_queue,
             delay: chrono::Duration::milliseconds(DELTA),
             timer_guard: None,
-            leader: None,
             timer: Timer::new(),
+            leader: None,
         }
     }
 
@@ -222,10 +222,7 @@ impl EventualLeaderDetector {
 
 impl EventHandler for EventualLeaderDetector {
     fn handle(&mut self, event_data: &EventData) {
-        trace!(
-            "Handler summoned with event {:?}",
-            event_data
-        );
+        trace!("Handler summoned with event {:?}", event_data);
 
         match event_data {
             EventData::Internal(msg) => match msg {

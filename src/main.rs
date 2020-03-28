@@ -18,6 +18,8 @@ use std::fs;
 use std::path::Path;
 pub mod perfect_link;
 use log::{info, warn};
+pub mod beb;
+pub mod ec;
 
 fn read_config<P: AsRef<Path>>(path: &P) -> Result<Vec<Node>, Box<dyn Error>> {
     let mut file = fs::File::open(path.as_ref())?;
@@ -71,14 +73,18 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     info!("Listening on Node: {}", node_info.current_node);
     let event_queue = std::sync::Arc::new(std::sync::Mutex::new(EventQueue::default()));
     let perfect_link = perfect_link::PerfectLink::default();
-    let node = std::sync::Arc::clone(&node_info);
-    let mut eld = eld::EventualLeaderDetector::new(node, event_queue.clone());
+    let mut eld = eld::EventualLeaderDetector::new(node_info.clone(), event_queue.clone());
+    let beb = beb::BestEffortBroadcast::new(node_info.clone(), event_queue.clone());
+    let ec = ec::EpochChange::new(node_info.clone(), event_queue.clone());
+
     eld.init();
 
     {
         let mut queue = event_queue.lock().unwrap();
         queue.register_handler(Box::new(perfect_link));
         queue.register_handler(Box::new(eld));
+        queue.register_handler(Box::new(beb));
+        queue.register_handler(Box::new(ec));
         queue.run();
     }
 

@@ -114,6 +114,8 @@ message Message {
         EP_ABORT = 2;
         EP_PROPOSE = 3;
         ELD_HEARTBEAT = 4;
+        BEB_BROADCAST = 5;
+        EC_NEW_EPOCH = 6;
     }
 
     Type type = 1;
@@ -127,6 +129,7 @@ message Message {
     UcDecide ucDecide = 8;
     BebBroadcast bebBroadcast = 9;
     EldHeartbeat_ eldHeartbeat = 10;
+    EcNewEpoch_ ecNewEpoch = 11;
 }
 
 // 5

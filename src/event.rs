@@ -15,6 +15,8 @@ pub enum InternalMessage {
     Timeout(NodeId),
     Trust(EldTrust),
     Send(Node, Message),
+    Broadcast(Message),
+    Deliver(Node, Message),
 }
 
 #[derive(Debug, Clone)]
