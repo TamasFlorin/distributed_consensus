@@ -45,7 +45,8 @@ impl BestEffortBroadcast {
     }
 
     fn deliver(&self, sender: &Node, receiver: &Node, message: &message::Message) {
-        let message = InternalMessage::Deliver(sender.clone(), receiver.clone(), message.clone());
+        let message =
+            InternalMessage::BebDeliver(sender.clone(), receiver.clone(), message.clone());
         let event_data = EventData::Internal(message);
         let queue = self.event_queue.lock().unwrap();
         queue.push(event_data);
@@ -59,10 +60,10 @@ impl EventHandler for BestEffortBroadcast {
         match event_data {
             EventData::Internal(data) => match data {
                 InternalMessage::Broadcast(msg) => self.broadcast(msg),
-                InternalMessage::Sent(sender, receiver, message) => {
+                InternalMessage::PlDeliver(sender, receiver, msg) => {
                     // we sent a message via the perfect link and now we've received a notification
                     if sender == &self.node_info.current_node {
-                        self.deliver(sender, receiver, message);
+                        self.deliver(sender, receiver, msg);
                     }
                 }
                 _ => (),

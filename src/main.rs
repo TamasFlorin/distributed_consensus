@@ -78,7 +78,8 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     let local_storage = storage::LocalStorage::new(node_path);
     let event_queue = std::sync::Arc::new(std::sync::Mutex::new(EventQueue::default()));
     let perfect_link = perfect_link::PerfectLink::new(event_queue.clone());
-    let mut eld = eld::EventualLeaderDetector::new(node_info.clone(), event_queue.clone(), local_storage);
+    let mut eld =
+        eld::EventualLeaderDetector::new(node_info.clone(), event_queue.clone(), local_storage);
     let beb = beb::BestEffortBroadcast::new(node_info.clone(), event_queue.clone());
     let ec = ec::EpochChange::new(node_info.clone(), event_queue.clone());
 

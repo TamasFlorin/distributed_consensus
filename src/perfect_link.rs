@@ -12,12 +12,15 @@ pub struct PerfectLink {
 
 impl PerfectLink {
     pub fn new(event_queue: sync::Arc<sync::Mutex<EventQueue>>) -> Self {
-        PerfectLink {
-            event_queue,
-        }
+        PerfectLink { event_queue }
     }
 
-    fn send(&self, from: &Node,  dest: &Node, message: &message::Message) -> Result<(), Box<dyn Error>> {
+    fn send(
+        &self,
+        from: &Node,
+        dest: &Node,
+        message: &message::Message,
+    ) -> Result<(), Box<dyn Error>> {
         let address_to: SocketAddr = dest.into();
         let mut stream = TcpStream::connect(address_to)?;
         message.write_to_writer(&mut stream)?;
@@ -29,7 +32,8 @@ impl PerfectLink {
     }
 
     fn notify_sender(&self, sender: &Node, recv: &Node, message: &message::Message) {
-        let sent_message = InternalMessage::Sent(sender.clone(), recv.clone(), message.clone());
+        let sent_message =
+            InternalMessage::PlDeliver(sender.clone(), recv.clone(), message.clone());
         let event_data = EventData::Internal(sent_message);
         let queue = self.event_queue.lock().unwrap();
         queue.push(event_data);

@@ -1,9 +1,9 @@
 use serde;
-use std::path;
+use serde::de;
+use std::error;
 use std::fs;
 use std::io::Write;
-use std::error;
-use serde::de;
+use std::path;
 
 pub trait Storage<T: serde::Serialize + de::DeserializeOwned> {
     fn write(&self, value: &T) -> Result<usize, Box<dyn error::Error>>;
@@ -16,14 +16,14 @@ pub struct LocalStorage<P: AsRef<path::Path>> {
 
 impl<P: AsRef<path::Path>> LocalStorage<P> {
     pub fn new(path: P) -> Self {
-        LocalStorage {
-            path
-        }
+        LocalStorage { path }
     }
 }
 
-impl<T: serde::Serialize + de::DeserializeOwned, P: AsRef<path::Path>> Storage<T> for LocalStorage<P> {
-    fn write(&self, value: &T) -> Result<usize, Box<dyn error::Error>>{ 
+impl<T: serde::Serialize + de::DeserializeOwned, P: AsRef<path::Path>> Storage<T>
+    for LocalStorage<P>
+{
+    fn write(&self, value: &T) -> Result<usize, Box<dyn error::Error>> {
         let buffer = serde_json::to_string(value)?;
         let mut file = fs::File::create(&self.path)?;
         let bytes_read = file.write(buffer.as_ref())?;
@@ -32,7 +32,7 @@ impl<T: serde::Serialize + de::DeserializeOwned, P: AsRef<path::Path>> Storage<T
 
     fn read(&self) -> Result<T, Box<dyn error::Error>> {
         let file = fs::File::open(&self.path)?;
-        let value= serde_json::from_reader(file)?;
+        let value = serde_json::from_reader(file)?;
         Ok(value)
     }
 }

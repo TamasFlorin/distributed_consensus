@@ -1,6 +1,6 @@
 use crate::event::*;
 use crate::node::{Node, NodeInfo};
-use crate::protos::message::{Message, EcNewEpoch_, EcStartEpoch, Message_Type, ProcessId};
+use crate::protos::message::{EcNewEpoch_, Message, Message_Type};
 use log::trace;
 use std::sync::{Arc, Mutex};
 
@@ -41,44 +41,33 @@ impl EpochChange {
             self.last_ts = new_ts;
             self.start_epoch(node, new_ts);
         } else {
-            self.send_nack(node);
+            self.pl_send_nack(node);
         }
     }
 
     fn new_epoch(&self, ts: u32) {
         let mut new_epoch_msg = EcNewEpoch_::new();
         new_epoch_msg.set_timestamp(ts as i32);
-        
+
         let mut message = Message::new();
         message.set_ecNewEpoch(new_epoch_msg);
         message.set_field_type(Message_Type::EC_NEW_EPOCH);
-        
+
         let internal_msg = InternalMessage::Broadcast(message);
         let event_data = EventData::Internal(internal_msg);
-        
+
         let queue = self.event_queue.lock().unwrap();
         queue.push(event_data);
     }
 
     fn start_epoch(&mut self, node: &Node, ts: u32) {
-        let leader: ProcessId = node.into();
-        
-        let mut new_epoch_msg = EcStartEpoch::new();
-        new_epoch_msg.set_newLeader(leader);
-        new_epoch_msg.set_newTimestamp(ts as i32);
-
-        let mut message = Message::new();
-        message.set_ecStartEpoch(new_epoch_msg);
-        message.set_field_type(Message_Type::EC_NEW_EPOCH);
-        
-        let internal_msg = InternalMessage::Broadcast(message);
-        let event_data = EventData::Internal(internal_msg);
-        
+        let message = InternalMessage::EcStartEpoch(node.clone(), ts);
+        let event_data = EventData::Internal(message);
         let queue = self.event_queue.lock().unwrap();
         queue.push(event_data);
     }
 
-    fn send_nack(&self, node: &Node) {
+    fn pl_send_nack(&self, node: &Node) {
         let from = self.node_info.current_node.clone();
         let nack_msg = InternalMessage::Nack(from, node.clone());
         let event_data = EventData::Internal(nack_msg);
@@ -86,7 +75,7 @@ impl EpochChange {
         queue.push(event_data);
     }
 
-    fn deliver_nack(&mut self, node: &Node) {
+    fn pl_deliver(&mut self, _: &Node) {
         let trusted = self.trusted.as_ref().unwrap();
         if trusted == &self.node_info.current_node {
             self.ts += N;
@@ -100,18 +89,37 @@ impl EventHandler for EpochChange {
         trace!("Handler summoned with event {:?}", event_data);
 
         match event_data {
-            EventData::External(external_data) => (),
+            EventData::External(_) => (),
             EventData::Internal(internal_data) => {
                 match internal_data {
-                    InternalMessage::Trust(trusted_node) => self.eld_trust(trusted_node),
-                    InternalMessage::Deliver(from, to, message) => {
-                        if from == &self.node_info.current_node {
-                            self.beb_deliver(to, 0);
+                    InternalMessage::EldTrust(trusted_node) => self.eld_trust(trusted_node),
+                    InternalMessage::BebDeliver(from, to, msg) => {
+                        match msg {
+                            // TODO: change proto to use snake case.
+                            #![allow(non_snake_case)]
+                            Message{field_type: Message_Type::EC_NEW_EPOCH, ecNewEpoch, ..} => {
+                                if from == &self.node_info.current_node {
+                                    let new_ts = ecNewEpoch.as_ref().expect("We should have a valid epoch object.").get_timestamp();
+                                    self.beb_deliver(to, new_ts as u32);
+                                }
+                            }
+                            _ => (),
                         }
                     }
+                    InternalMessage::PlDeliver(from, to, msg) => match msg {
+                        Message {
+                            field_type: Message_Type::EC_NACK,
+                            ..
+                        } => {
+                            if from == &self.node_info.current_node {
+                                self.pl_deliver(to);
+                            }
+                        }
+                        _ => (),
+                    },
                     _ => (),
                 }
-            },
+            }
         }
     }
 }

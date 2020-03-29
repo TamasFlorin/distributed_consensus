@@ -4,14 +4,12 @@ use crate::protos::message::*;
 use crate::storage::Storage;
 use chrono;
 use log::{info, trace};
-use std::sync::atomic::AtomicU32;
-use std::sync::atomic::Ordering;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use std::sync::Mutex;
 use std::sync::RwLock;
 use timer::Guard;
 use timer::Timer;
-use serde::{Serialize, Deserialize};
 
 const DELTA: i64 = 5000;
 const INITIAL_EPOCH: u32 = 0;
@@ -41,25 +39,13 @@ impl Ord for Candidate {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct EldState/*<S: Storage<Self>>*/ {
+pub struct EldState /*<S: Storage<Self>>*/ {
     epoch: u32,
-
-    /*#[serde(skip_deserializing, skip_serializing)]
-    storage: Mutex<S>,*/
 }
 
-/*impl<S: Storage<Self>> EldState<S> {
-    pub fn new(epoch: u32, storage: S) -> Self {
-        EldState {epoch, storage: Mutex::new(storage)}
-    }
-
-    pub fn load_epoch() -> u32 {
-
-    }
-}*/
 impl EldState {
     pub fn new(epoch: u32) -> Self {
-        EldState {epoch}
+        EldState { epoch }
     }
 }
 
@@ -100,8 +86,8 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
 
         // TODO: store the epoch inside of a local storage.
         //self.epoch
-            //.store(self.epoch.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
-        
+        //.store(self.epoch.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
+
         self.update_epoch();
 
         // now we need to send a heartbeat to each node from our configuration
@@ -117,16 +103,20 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         match storage.read() {
             Ok(state) => {
                 let new_state = EldState::new(state.epoch + 1);
-                storage.write(&new_state).expect("Epoch should be updated on storage.");
-            },
+                storage
+                    .write(&new_state)
+                    .expect("Epoch should be updated on storage.");
+            }
             Err(_) => {
                 let state = EldState::new(0);
-                storage.write(&state).expect("Epoch should be updated on storage.");
+                storage
+                    .write(&state)
+                    .expect("Epoch should be updated on storage.");
             }
         }
     }
 
-    fn load_epoch(&self) -> u32{
+    fn load_epoch(&self) -> u32 {
         let storage = self.storage.lock().unwrap();
         match storage.read() {
             Ok(state) => state.epoch,
@@ -220,7 +210,7 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
 
     fn trust(&self, leader: &Node) {
         // at this point we should already have a leader
-        let message = InternalMessage::Trust(leader.clone());
+        let message = InternalMessage::EldTrust(leader.clone());
         let event_queue = self.event_queue.lock().unwrap();
         event_queue.push(EventData::Internal(message));
     }
@@ -245,10 +235,7 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
                 let max_by_rank = min_by_epoch.iter().max().unwrap().clone();
                 max_by_rank
             }
-            None => Candidate::new(
-                self.node_info.current_node.clone(),
-                self.load_epoch(),
-            ),
+            None => Candidate::new(self.node_info.current_node.clone(), self.load_epoch()),
         }
     }
 
@@ -280,7 +267,9 @@ impl<S: Storage<EldState>> EventHandler for EventualLeaderDetector<S> {
                         self.timeout();
                     }
                 }
-                InternalMessage::Trust(leader) => info!("A new leader has been set: {:?}", leader),
+                InternalMessage::EldTrust(leader) => {
+                    info!("A new leader has been set: {:?}", leader)
+                }
                 _ => (),
             },
             EventData::External(msg) => match msg {

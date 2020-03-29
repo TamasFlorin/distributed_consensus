@@ -1,5 +1,5 @@
 use crate::node::{Node, NodeId};
-use crate::protos::message::{EldTrust, Message};
+use crate::protos::message::Message;
 use std::collections::VecDeque;
 use std::ops::DerefMut;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -13,12 +13,13 @@ pub trait EventHandler {
 #[derive(Debug, Clone)]
 pub enum InternalMessage {
     Timeout(NodeId),
-    Trust(Node),
-    Send(Node, Node, Message), //(from, to, msg)
-    Sent(Node, Node, Message), // (from, to, msg)
+    EldTrust(Node),
+    Send(Node, Node, Message),      //(from, to, msg)
+    PlDeliver(Node, Node, Message), // (from, to, msg)
     Broadcast(Message),
-    Deliver(Node, Node, Message),
+    BebDeliver(Node, Node, Message),
     Nack(Node, Node), // (from, to)
+    EcStartEpoch(Node, u32)
 }
 
 #[derive(Debug, Clone)]
