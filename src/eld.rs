@@ -1,6 +1,7 @@
 use crate::event::*;
 use crate::node::*;
 use crate::protos::message::*;
+use crate::storage::Storage;
 use chrono;
 use log::{info, trace};
 use std::sync::atomic::AtomicU32;
@@ -10,8 +11,10 @@ use std::sync::Mutex;
 use std::sync::RwLock;
 use timer::Guard;
 use timer::Timer;
+use serde::{Serialize, Deserialize};
 
 const DELTA: i64 = 5000;
+const INITIAL_EPOCH: u32 = 0;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Candidate {
@@ -37,8 +40,30 @@ impl Ord for Candidate {
     }
 }
 
-pub struct EventualLeaderDetector {
-    epoch: AtomicU32,
+#[derive(Debug, Serialize, Deserialize)]
+pub struct EldState/*<S: Storage<Self>>*/ {
+    epoch: u32,
+
+    /*#[serde(skip_deserializing, skip_serializing)]
+    storage: Mutex<S>,*/
+}
+
+/*impl<S: Storage<Self>> EldState<S> {
+    pub fn new(epoch: u32, storage: S) -> Self {
+        EldState {epoch, storage: Mutex::new(storage)}
+    }
+
+    pub fn load_epoch() -> u32 {
+
+    }
+}*/
+impl EldState {
+    pub fn new(epoch: u32) -> Self {
+        EldState {epoch}
+    }
+}
+
+pub struct EventualLeaderDetector<S: Storage<EldState>> {
     candidates: Arc<RwLock<Vec<Candidate>>>,
     node_info: Arc<NodeInfo>,
     event_queue: Arc<Mutex<EventQueue>>,
@@ -46,12 +71,12 @@ pub struct EventualLeaderDetector {
     timer_guard: Option<Guard>,
     timer: Timer,
     leader: Option<Node>,
+    storage: Mutex<S>,
 }
 
-impl EventualLeaderDetector {
-    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<Mutex<EventQueue>>) -> Self {
+impl<S: Storage<EldState>> EventualLeaderDetector<S> {
+    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<Mutex<EventQueue>>, storage: S) -> Self {
         Self {
-            epoch: AtomicU32::new(0),
             candidates: Arc::new(RwLock::new(Vec::new())),
             node_info,
             event_queue,
@@ -59,6 +84,7 @@ impl EventualLeaderDetector {
             timer_guard: None,
             timer: Timer::new(),
             leader: None,
+            storage: Mutex::new(storage),
         }
     }
 
@@ -72,8 +98,11 @@ impl EventualLeaderDetector {
         self.leader = Some(self.maxrank().clone());
         self.trust(&self.leader.as_ref().unwrap());
 
-        self.epoch
-            .store(self.epoch.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
+        // TODO: store the epoch inside of a local storage.
+        //self.epoch
+            //.store(self.epoch.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
+        
+        self.update_epoch();
 
         // now we need to send a heartbeat to each node from our configuration
         for node in self.node_info.nodes.iter() {
@@ -81,6 +110,28 @@ impl EventualLeaderDetector {
         }
 
         self.start_timer();
+    }
+
+    fn update_epoch(&self) {
+        let storage = self.storage.lock().unwrap();
+        match storage.read() {
+            Ok(state) => {
+                let new_state = EldState::new(state.epoch + 1);
+                storage.write(&new_state).expect("Epoch should be updated on storage.");
+            },
+            Err(_) => {
+                let state = EldState::new(0);
+                storage.write(&state).expect("Epoch should be updated on storage.");
+            }
+        }
+    }
+
+    fn load_epoch(&self) -> u32{
+        let storage = self.storage.lock().unwrap();
+        match storage.read() {
+            Ok(state) => state.epoch,
+            Err(_) => INITIAL_EPOCH,
+        }
     }
 
     fn start_timer(&mut self) {
@@ -131,12 +182,13 @@ impl EventualLeaderDetector {
         let current_node = &self.node_info.current_node;
         let process: ProcessId = current_node.into();
         let mut heartbeat = EldHeartbeat_::new();
-        heartbeat.set_epoch(self.epoch.load(Ordering::SeqCst) as i32);
+        heartbeat.set_epoch(self.load_epoch() as i32);
         heartbeat.set_from(process);
         let mut message = Message::new();
         message.set_eldHeartbeat(heartbeat);
         message.set_field_type(Message_Type::ELD_HEARTBEAT);
-        let internal_msg = InternalMessage::Send(node.clone(), message);
+        let from = self.node_info.current_node.clone();
+        let internal_msg = InternalMessage::Send(from, node.clone(), message);
         let event_data = EventData::Internal(internal_msg);
         let queue = self.event_queue.lock().unwrap();
         queue.push(event_data);
@@ -168,10 +220,7 @@ impl EventualLeaderDetector {
 
     fn trust(&self, leader: &Node) {
         // at this point we should already have a leader
-        let process_id: ProcessId = leader.into();
-        let mut trust = EldTrust::new();
-        trust.set_processId(process_id);
-        let message = InternalMessage::Trust(trust);
+        let message = InternalMessage::Trust(leader.clone());
         let event_queue = self.event_queue.lock().unwrap();
         event_queue.push(EventData::Internal(message));
     }
@@ -198,7 +247,7 @@ impl EventualLeaderDetector {
             }
             None => Candidate::new(
                 self.node_info.current_node.clone(),
-                self.epoch.load(Ordering::SeqCst),
+                self.load_epoch(),
             ),
         }
     }
@@ -220,7 +269,7 @@ impl EventualLeaderDetector {
     }
 }
 
-impl EventHandler for EventualLeaderDetector {
+impl<S: Storage<EldState>> EventHandler for EventualLeaderDetector<S> {
     fn handle(&mut self, event_data: &EventData) {
         trace!("Handler summoned with event {:?}", event_data);
 
@@ -243,6 +292,6 @@ impl EventHandler for EventualLeaderDetector {
                 }
                 _ => (),
             },
-        };
+        }
     }
 }

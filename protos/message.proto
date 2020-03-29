@@ -116,6 +116,7 @@ message Message {
         ELD_HEARTBEAT = 4;
         BEB_BROADCAST = 5;
         EC_NEW_EPOCH = 6;
+        EC_NACK = 7;
     }
 
     Type type = 1;
@@ -130,6 +131,7 @@ message Message {
     BebBroadcast bebBroadcast = 9;
     EldHeartbeat_ eldHeartbeat = 10;
     EcNewEpoch_ ecNewEpoch = 11;
+    EcNack_ ecNack = 12;
 }
 
 // 5

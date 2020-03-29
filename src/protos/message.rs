@@ -3896,6 +3896,7 @@ pub struct Message {
     pub bebBroadcast: ::protobuf::SingularPtrField<BebBroadcast>,
     pub eldHeartbeat: ::protobuf::SingularPtrField<EldHeartbeat_>,
     pub ecNewEpoch: ::protobuf::SingularPtrField<EcNewEpoch_>,
+    pub ecNack: ::protobuf::SingularPtrField<EcNack_>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -4256,6 +4257,39 @@ impl Message {
     pub fn take_ecNewEpoch(&mut self) -> EcNewEpoch_ {
         self.ecNewEpoch.take().unwrap_or_else(|| EcNewEpoch_::new())
     }
+
+    // .EcNack_ ecNack = 12;
+
+
+    pub fn get_ecNack(&self) -> &EcNack_ {
+        self.ecNack.as_ref().unwrap_or_else(|| EcNack_::default_instance())
+    }
+    pub fn clear_ecNack(&mut self) {
+        self.ecNack.clear();
+    }
+
+    pub fn has_ecNack(&self) -> bool {
+        self.ecNack.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_ecNack(&mut self, v: EcNack_) {
+        self.ecNack = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_ecNack(&mut self) -> &mut EcNack_ {
+        if self.ecNack.is_none() {
+            self.ecNack.set_default();
+        }
+        self.ecNack.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_ecNack(&mut self) -> EcNack_ {
+        self.ecNack.take().unwrap_or_else(|| EcNack_::new())
+    }
 }
 
 impl ::protobuf::Message for Message {
@@ -4310,6 +4344,11 @@ impl ::protobuf::Message for Message {
                 return false;
             }
         };
+        for v in &self.ecNack {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
         true
     }
 
@@ -4349,6 +4388,9 @@ impl ::protobuf::Message for Message {
                 },
                 11 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecNewEpoch)?;
+                },
+                12 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecNack)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -4402,6 +4444,10 @@ impl ::protobuf::Message for Message {
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         if let Some(ref v) = self.ecNewEpoch.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.ecNack.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
@@ -4461,6 +4507,11 @@ impl ::protobuf::Message for Message {
         }
         if let Some(ref v) = self.ecNewEpoch.as_ref() {
             os.write_tag(11, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.ecNack.as_ref() {
+            os.write_tag(12, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
@@ -4558,6 +4609,11 @@ impl ::protobuf::Message for Message {
                     |m: &Message| { &m.ecNewEpoch },
                     |m: &mut Message| { &mut m.ecNewEpoch },
                 ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EcNack_>>(
+                    "ecNack",
+                    |m: &Message| { &m.ecNack },
+                    |m: &mut Message| { &mut m.ecNack },
+                ));
                 ::protobuf::reflect::MessageDescriptor::new::<Message>(
                     "Message",
                     fields,
@@ -4588,6 +4644,7 @@ impl ::protobuf::Clear for Message {
         self.bebBroadcast.clear();
         self.eldHeartbeat.clear();
         self.ecNewEpoch.clear();
+        self.ecNack.clear();
         self.unknown_fields.clear();
     }
 }
@@ -4613,6 +4670,7 @@ pub enum Message_Type {
     ELD_HEARTBEAT = 4,
     BEB_BROADCAST = 5,
     EC_NEW_EPOCH = 6,
+    EC_NACK = 7,
 }
 
 impl ::protobuf::ProtobufEnum for Message_Type {
@@ -4629,6 +4687,7 @@ impl ::protobuf::ProtobufEnum for Message_Type {
             4 => ::std::option::Option::Some(Message_Type::ELD_HEARTBEAT),
             5 => ::std::option::Option::Some(Message_Type::BEB_BROADCAST),
             6 => ::std::option::Option::Some(Message_Type::EC_NEW_EPOCH),
+            7 => ::std::option::Option::Some(Message_Type::EC_NACK),
             _ => ::std::option::Option::None
         }
     }
@@ -4642,6 +4701,7 @@ impl ::protobuf::ProtobufEnum for Message_Type {
             Message_Type::ELD_HEARTBEAT,
             Message_Type::BEB_BROADCAST,
             Message_Type::EC_NEW_EPOCH,
+            Message_Type::EC_NACK,
         ];
         values
     }
@@ -4698,7 +4758,7 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     (\x05R\x05epoch\x12\x1e\n\x04from\x18\x02\x20\x01(\x0b2\n.ProcessIdR\x04\
     from\",\n\x06PlSend\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\x08.Message\
     R\x07message\"/\n\tPlDeliver\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\
-    \x08.MessageR\x07message\"\xe7\x04\n\x07Message\x12!\n\x04type\x18\x01\
+    \x08.MessageR\x07message\"\x96\x05\n\x07Message\x12!\n\x04type\x18\x01\
     \x20\x01(\x0e2\r.Message.TypeR\x04type\x12(\n\tucPropose\x18\x02\x20\x01\
     (\x0b2\n.UcProposeR\tucPropose\x121\n\x0cecStartEpoch\x18\x03\x20\x01(\
     \x0b2\r.EcStartEpochR\x0cecStartEpoch\x12\"\n\x07epAbort\x18\x04\x20\x01\
@@ -4709,10 +4769,11 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x121\n\x0cbebBroadcast\x18\t\x20\x01(\x0b2\r.BebBroadcastR\x0cbebBroadc\
     ast\x122\n\x0celdHeartbeat\x18\n\x20\x01(\x0b2\x0e.EldHeartbeat_R\x0celd\
     Heartbeat\x12,\n\necNewEpoch\x18\x0b\x20\x01(\x0b2\x0c.EcNewEpoch_R\necN\
-    ewEpoch\"\x80\x01\n\x04Type\x12\x0e\n\nUC_PROPOSE\x10\0\x12\x12\n\x0eEC_\
-    START_EPOCH\x10\x01\x12\x0c\n\x08EP_ABORT\x10\x02\x12\x0e\n\nEP_PROPOSE\
-    \x10\x03\x12\x11\n\rELD_HEARTBEAT\x10\x04\x12\x11\n\rBEB_BROADCAST\x10\
-    \x05\x12\x10\n\x0cEC_NEW_EPOCH\x10\x06b\x06proto3\
+    ewEpoch\x12\x20\n\x06ecNack\x18\x0c\x20\x01(\x0b2\x08.EcNack_R\x06ecNack\
+    \"\x8d\x01\n\x04Type\x12\x0e\n\nUC_PROPOSE\x10\0\x12\x12\n\x0eEC_START_E\
+    POCH\x10\x01\x12\x0c\n\x08EP_ABORT\x10\x02\x12\x0e\n\nEP_PROPOSE\x10\x03\
+    \x12\x11\n\rELD_HEARTBEAT\x10\x04\x12\x11\n\rBEB_BROADCAST\x10\x05\x12\
+    \x10\n\x0cEC_NEW_EPOCH\x10\x06\x12\x0b\n\x07EC_NACK\x10\x07b\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy::INIT;

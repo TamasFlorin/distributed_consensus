@@ -20,6 +20,7 @@ pub mod perfect_link;
 use log::{info, warn};
 pub mod beb;
 pub mod ec;
+pub mod storage;
 
 fn read_config<P: AsRef<Path>>(path: &P) -> Result<Vec<Node>, Box<dyn Error>> {
     let mut file = fs::File::open(path.as_ref())?;
@@ -55,6 +56,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let my_id = matches.value_of("id").unwrap().parse::<u16>()?;
     let nodes = read_config(&file_name)?;
     let current_node = nodes.iter().find(|node| node.id == my_id).unwrap().clone();
+
+    // TODO: maybe we don't have to filter this here.
     let nodes = nodes
         .iter()
         .filter(|node| node.id != my_id)
@@ -71,9 +74,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     info!("Listening on Node: {}", node_info.current_node);
+    let node_path = format!("{0}_eld_state.json", node_info.current_node.name);
+    let local_storage = storage::LocalStorage::new(node_path);
     let event_queue = std::sync::Arc::new(std::sync::Mutex::new(EventQueue::default()));
-    let perfect_link = perfect_link::PerfectLink::default();
-    let mut eld = eld::EventualLeaderDetector::new(node_info.clone(), event_queue.clone());
+    let perfect_link = perfect_link::PerfectLink::new(event_queue.clone());
+    let mut eld = eld::EventualLeaderDetector::new(node_info.clone(), event_queue.clone(), local_storage);
     let beb = beb::BestEffortBroadcast::new(node_info.clone(), event_queue.clone());
     let ec = ec::EpochChange::new(node_info.clone(), event_queue.clone());
 

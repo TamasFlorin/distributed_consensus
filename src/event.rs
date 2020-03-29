@@ -13,10 +13,12 @@ pub trait EventHandler {
 #[derive(Debug, Clone)]
 pub enum InternalMessage {
     Timeout(NodeId),
-    Trust(EldTrust),
-    Send(Node, Message),
+    Trust(Node),
+    Send(Node, Node, Message), //(from, to, msg)
+    Sent(Node, Node, Message), // (from, to, msg)
     Broadcast(Message),
-    Deliver(Node, Message),
+    Deliver(Node, Node, Message),
+    Nack(Node, Node), // (from, to)
 }
 
 #[derive(Debug, Clone)]
@@ -48,9 +50,9 @@ impl Default for EventQueue {
 }
 
 impl EventQueue {
-    pub fn push(&self, message: EventData) {
+    pub fn push(&self, event_data: EventData) {
         let mut queue = self.queue.lock().unwrap();
-        queue.push_back(message);
+        queue.push_back(event_data);
         let mut guard = self.element_added.lock().unwrap();
         *guard = true;
         self.cvar.notify_one();

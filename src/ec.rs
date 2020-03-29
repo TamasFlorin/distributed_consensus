@@ -37,7 +37,7 @@ impl EpochChange {
 
     fn beb_deliver(&mut self, node: &Node, new_ts: u32) {
         let trusted = self.trusted.as_ref().unwrap();
-        if node == trusted {
+        if node == trusted && new_ts > self.last_ts {
             self.last_ts = new_ts;
             self.start_epoch(node, new_ts);
         } else {
@@ -79,7 +79,11 @@ impl EpochChange {
     }
 
     fn send_nack(&self, node: &Node) {
-
+        let from = self.node_info.current_node.clone();
+        let nack_msg = InternalMessage::Nack(from, node.clone());
+        let event_data = EventData::Internal(nack_msg);
+        let queue = self.event_queue.lock().unwrap();
+        queue.push(event_data);
     }
 
     fn deliver_nack(&mut self, node: &Node) {
@@ -94,5 +98,20 @@ impl EpochChange {
 impl EventHandler for EpochChange {
     fn handle(&mut self, event_data: &EventData) {
         trace!("Handler summoned with event {:?}", event_data);
+
+        match event_data {
+            EventData::External(external_data) => (),
+            EventData::Internal(internal_data) => {
+                match internal_data {
+                    InternalMessage::Trust(trusted_node) => self.eld_trust(trusted_node),
+                    InternalMessage::Deliver(from, to, message) => {
+                        if from == &self.node_info.current_node {
+                            self.beb_deliver(to, 0);
+                        }
+                    }
+                    _ => (),
+                }
+            },
+        }
     }
 }

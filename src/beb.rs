@@ -1,6 +1,6 @@
 use crate::event::*;
 use crate::node::{Node, NodeInfo};
-use crate::protos::message::Message;
+use crate::protos::message;
 use log::trace;
 use std::sync::{Arc, Mutex};
 
@@ -17,7 +17,7 @@ impl BestEffortBroadcast {
         }
     }
 
-    fn broadcast(&self, message: &Message) {
+    fn broadcast(&self, message: &message::Message) {
         // send the message to all other nodes
         for node in &self.node_info.nodes {
             self.send(node, message);
@@ -27,15 +27,28 @@ impl BestEffortBroadcast {
         self.send(&self.node_info.current_node, message);
     }
 
-    fn send(&self, node: &Node, message: &Message) {
-        let internal_message = InternalMessage::Send(node.clone(), message.clone());
+    fn send(&self, node: &Node, message: &message::Message) {
+        // wrap the received message into a beb wrapper
+        let mut broadcast_message = message::BebBroadcast::new();
+        broadcast_message.set_message(message.clone());
+
+        // compose the actual beb broadcast message
+        let mut message = message::Message::new();
+        message.set_field_type(message::Message_Type::BEB_BROADCAST);
+        message.set_bebBroadcast(broadcast_message);
+
+        let from = self.node_info.current_node.clone();
+        let internal_message = InternalMessage::Send(from, node.clone(), message.clone());
         let event_data = EventData::Internal(internal_message);
         let queue = self.event_queue.lock().unwrap();
         queue.push(event_data);
     }
 
-    fn deliver(&self, node: &Node, message: &Message) {
-        unimplemented!();
+    fn deliver(&self, sender: &Node, receiver: &Node, message: &message::Message) {
+        let message = InternalMessage::Deliver(sender.clone(), receiver.clone(), message.clone());
+        let event_data = EventData::Internal(message);
+        let queue = self.event_queue.lock().unwrap();
+        queue.push(event_data);
     }
 }
 
@@ -46,6 +59,12 @@ impl EventHandler for BestEffortBroadcast {
         match event_data {
             EventData::Internal(data) => match data {
                 InternalMessage::Broadcast(msg) => self.broadcast(msg),
+                InternalMessage::Sent(sender, receiver, message) => {
+                    // we sent a message via the perfect link and now we've received a notification
+                    if sender == &self.node_info.current_node {
+                        self.deliver(sender, receiver, message);
+                    }
+                }
                 _ => (),
             },
             _ => (),
