@@ -23,6 +23,8 @@ pub enum InternalMessage {
     EpPropose(ValueType), //(value)
     EpDecided(ValueType),
     EpDecide(ValueType),
+    EpStateCountReached,
+    EpAcceptedCountReached,
     EpAbort,
     EpAborted(u32, ValueType),
     PlSend(Node, Node, Message), //(from, to, msg)

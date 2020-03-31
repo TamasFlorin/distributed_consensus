@@ -27,14 +27,26 @@ impl EpochConsensusState {
     }
 }
 
+impl PartialOrd<EpochConsensusState> for EpochConsensusState {
+    fn partial_cmp(&self, other: &EpochConsensusState) -> Option<std::cmp::Ordering> {
+        self.value_timestamp.partial_cmp(&other.value_timestamp)
+    }
+    
+}
+
+impl Ord for EpochConsensusState {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering { 
+        self.value_timestamp.cmp(&other.value_timestamp)
+    }
+}
+
 pub struct EpochConsensus {
     node_info: Arc<NodeInfo>,
     event_queue: Arc<EventQueue>,
     temporary_value: ValueType,
-    value_timestamp: u32,
-    value: ValueType,
     states: BTreeMap<NodeId, EpochConsensusState>,
     accepted: u32,
+    state: EpochConsensusState,
 }
 
 impl EpochConsensus {
@@ -42,11 +54,10 @@ impl EpochConsensus {
         EpochConsensus {
             node_info,
             event_queue,
-            value_timestamp: 0,
-            value: ValueType::default(),
             temporary_value: ValueType::default(),
             states: BTreeMap::new(),
             accepted: 0,
+            state: EpochConsensusState::new(0, 0),
         }
     }
 
@@ -67,19 +78,62 @@ impl EpochConsensus {
         let value = msg.get_value();
         let state = EpochConsensusState::new(value_timestamp, value);
         self.states.insert(from.id, state);
+        
+        if self.states.len() > self.node_info.nodes.len() / 2 {
+            let states_message = InternalMessage::EpStateCountReached;
+            let event_data = EventData::Internal(states_message);
+            self.event_queue.push(event_data);
+        }
+    }
+
+    // upon #(states) > N/2 do
+    fn ep_state_count_reached(&mut self) {
+        let highest_timestamp = self.states.iter().max_by(|(_, x), (_, y)| x.cmp(y));
+        match highest_timestamp {
+            Some((_, state)) => self.temporary_value = state.value,
+            None => (),
+        }
+        
+        self.states.clear();
+
+        self.beb_broadcast_write(self.temporary_value);
     }
 
     /// upon event ⟨ beb, Deliver | ℓ, [WRITE, v] ⟩ do
     fn beb_deliver_write(&mut self, from: &Node, msg: &message::EpWrite_) {
         // TODO: what is the value of ets????
         let value_from = msg.get_value() as ValueType;
-        self.value = value_from;
+        self.state.value = value_from;
         self.pl_send_accept(from);
     }
 
     /// upon event ⟨ pl, Deliver | q, [ACCEPT] ⟩ do
     fn pl_deliver_accept(&mut self) {
         self.accepted = self.accepted + 1;
+
+        if self.accepted as usize > self.node_info.nodes.len() {
+            let accepted_message = InternalMessage::EpAcceptedCountReached;
+            let event_data = EventData::Internal(accepted_message);
+            self.event_queue.push(event_data);
+        }
+    }
+
+    /// upon accepted > N/2 do
+    fn ep_accepted_count_reached(&mut self) {
+        self.accepted = 0;
+
+        let current_node = &self.node_info.current_node;
+        
+        let mut decided_message = message::EpDecided_::new();
+        decided_message.set_value(self.temporary_value as i32);
+        
+        let mut msg = message::Message::new();
+        msg.set_epDecided(decided_message);
+        msg.set_sender(current_node.into());
+
+        let broadcast_message = InternalMessage::BebBroadcast(msg);
+        let event_data = EventData::Internal(broadcast_message);
+        self.event_queue.push(event_data);
     }
 
     /// upon event ⟨ beb, Deliver | ℓ, [DECIDED, v] ⟩ do
@@ -92,7 +146,7 @@ impl EpochConsensus {
 
     /// upon event ⟨ ep, Abort ⟩ do
     fn abort(&self) {
-        let internal_message = InternalMessage::EpAborted(self.value_timestamp, self.value);
+        let internal_message = InternalMessage::EpAborted(self.state.value_timestamp, self.state.value);
         let event_data = EventData::Internal(internal_message);
         self.event_queue.push(event_data);
     }
@@ -112,8 +166,8 @@ impl EpochConsensus {
     fn pl_send_state(&self, receiver: &Node) {
         let current_node = &self.node_info.current_node;
         let mut state_message = message::EpState_::new();
-        state_message.set_value(self.value);
-        state_message.set_valueTimestamp(self.value_timestamp as i32);
+        state_message.set_value(self.state.value);
+        state_message.set_valueTimestamp(self.state.value_timestamp as i32);
         let mut message = message::Message::new();
         message.set_epState(state_message);
         message.set_field_type(message::Message_Type::EP_STATE);
@@ -131,6 +185,23 @@ impl EpochConsensus {
         let mut message = message::Message::new();
         message.set_field_type(message::Message_Type::EP_READ);
         message.set_epRead(read_message);
+        message.set_sender(sender);
+
+        let internal_message = InternalMessage::BebBroadcast(message);
+        let event_data = EventData::Internal(internal_message);
+        self.event_queue.push(event_data);
+    }
+
+    fn beb_broadcast_write(&self, value: ValueType) {
+        let current_node = &self.node_info.current_node;
+        let sender: message::ProcessId = current_node.into();
+
+        let mut write_message = message::EpWrite_::new();
+        write_message.set_value(value as i32);
+        
+        let mut message = message::Message::new();
+        message.set_field_type(message::Message_Type::EP_READ);
+        message.set_epWrite(write_message);
         message.set_sender(sender);
 
         let internal_message = InternalMessage::BebBroadcast(message);
@@ -160,6 +231,8 @@ impl EventHandler for EpochConsensus {
                     _ => (),
                 },
                 InternalMessage::EpAbort => self.abort(),
+                InternalMessage::EpStateCountReached => self.ep_state_count_reached(),
+                InternalMessage::EpAcceptedCountReached => self.ep_accepted_count_reached(),
                 _ => (),
             },
             EventData::External(_) => (),
