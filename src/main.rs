@@ -20,6 +20,7 @@ pub mod perfect_link;
 use log::{info, warn};
 pub mod beb;
 pub mod ec;
+pub mod ep;
 pub mod storage;
 
 fn read_config<P: AsRef<Path>>(path: &P) -> Result<Vec<Node>, Box<dyn Error>> {
@@ -56,14 +57,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let my_id = matches.value_of("id").unwrap().parse::<u16>()?;
     let nodes = read_config(&file_name)?;
     let current_node = nodes.iter().find(|node| node.id == my_id).unwrap().clone();
-
-    // TODO: maybe we don't have to filter this here.
-    let nodes = nodes
-        .iter()
-        .filter(|node| node.id != my_id)
-        .map(|node| node.clone())
-        .collect::<Vec<Node>>();
-
     let node_info = std::sync::Arc::new(node::NodeInfo {
         current_node,
         nodes,

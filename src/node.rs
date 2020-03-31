@@ -6,6 +6,7 @@ pub type NodeId = u16;
 
 #[derive(Deserialize, Serialize, Debug, Clone, Eq)]
 pub struct Node {
+    pub owner: String,
     pub name: String,
     pub host: String,
     pub port: u16,
@@ -13,8 +14,9 @@ pub struct Node {
 }
 
 impl Node {
-    pub fn new(name: String, host: String, port: u16, id: u16) -> Self {
+    pub fn new(owner: String, name: String, host: String, port: u16, id: u16) -> Self {
         Node {
+            owner,
             name,
             host,
             port,
@@ -77,6 +79,19 @@ impl From<&Node> for message::EldTrust {
     }
 }
 
+impl From<&message::ProcessId> for Node {
+    fn from(msg: &message::ProcessId) -> Self {
+        let node = Node::new(
+            msg.get_owner().to_owned(),
+            msg.get_owner().to_owned(),
+            msg.get_host().to_owned(),
+            msg.get_port() as u16,
+            msg.get_index() as NodeId,
+        );
+        node
+    }
+}
+
 impl std::fmt::Display for Node {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_fmt(format_args!(
@@ -94,25 +109,13 @@ impl PartialEq<Node> for Node {
 
 impl PartialOrd<Node> for Node {
     fn partial_cmp(&self, other: &Node) -> Option<std::cmp::Ordering> {
-        if self.id == other.id {
-            Some(std::cmp::Ordering::Equal)
-        } else if self.id > other.id {
-            Some(std::cmp::Ordering::Greater)
-        } else {
-            Some(std::cmp::Ordering::Less)
-        }
+        self.id.partial_cmp(&other.id)
     }
 }
 
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        if self.id == other.id {
-            std::cmp::Ordering::Equal
-        } else if self.id > other.id {
-            std::cmp::Ordering::Greater
-        } else {
-            std::cmp::Ordering::Less
-        }
+        self.id.cmp(&other.id)
     }
 }
 

@@ -12,14 +12,14 @@ pub trait EventHandler {
 
 #[derive(Debug, Clone)]
 pub enum InternalMessage {
-    Timeout(NodeId),
+    EldTimeout(NodeId),
     EldTrust(Node),
-    Send(Node, Node, Message),      //(from, to, msg)
-    PlDeliver(Node, Node, Message), // (from, to, msg)
-    Broadcast(Message),
-    BebDeliver(Node, Node, Message),
-    Nack(Node, Node), // (from, to)
-    EcStartEpoch(Node, u32)
+    BebBroadcast(Message),
+    BebDeliver(Node, Message),
+    EcNack(Node, Node), // (from, to)
+    EcStartEpoch(Node, u32),
+    PlSend(Node, Node, Message), //(from, to, msg)
+    PlDeliver(Node, Message), // (from, msg)
 }
 
 #[derive(Debug, Clone)]

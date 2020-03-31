@@ -3893,10 +3893,11 @@ pub struct Message {
     pub epPropose: ::protobuf::SingularPtrField<EpPropose>,
     pub epDecide: ::protobuf::SingularPtrField<EpDecide>,
     pub ucDecide: ::protobuf::SingularPtrField<UcDecide>,
-    pub bebBroadcast: ::protobuf::SingularPtrField<BebBroadcast>,
     pub eldHeartbeat: ::protobuf::SingularPtrField<EldHeartbeat_>,
     pub ecNewEpoch: ::protobuf::SingularPtrField<EcNewEpoch_>,
     pub ecNack: ::protobuf::SingularPtrField<EcNack_>,
+    pub epRead: ::protobuf::SingularPtrField<EpRead_>,
+    pub sender: ::protobuf::SingularPtrField<ProcessId>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -4159,40 +4160,7 @@ impl Message {
         self.ucDecide.take().unwrap_or_else(|| UcDecide::new())
     }
 
-    // .BebBroadcast bebBroadcast = 9;
-
-
-    pub fn get_bebBroadcast(&self) -> &BebBroadcast {
-        self.bebBroadcast.as_ref().unwrap_or_else(|| BebBroadcast::default_instance())
-    }
-    pub fn clear_bebBroadcast(&mut self) {
-        self.bebBroadcast.clear();
-    }
-
-    pub fn has_bebBroadcast(&self) -> bool {
-        self.bebBroadcast.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_bebBroadcast(&mut self, v: BebBroadcast) {
-        self.bebBroadcast = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_bebBroadcast(&mut self) -> &mut BebBroadcast {
-        if self.bebBroadcast.is_none() {
-            self.bebBroadcast.set_default();
-        }
-        self.bebBroadcast.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_bebBroadcast(&mut self) -> BebBroadcast {
-        self.bebBroadcast.take().unwrap_or_else(|| BebBroadcast::new())
-    }
-
-    // .EldHeartbeat_ eldHeartbeat = 10;
+    // .EldHeartbeat_ eldHeartbeat = 9;
 
 
     pub fn get_eldHeartbeat(&self) -> &EldHeartbeat_ {
@@ -4225,7 +4193,7 @@ impl Message {
         self.eldHeartbeat.take().unwrap_or_else(|| EldHeartbeat_::new())
     }
 
-    // .EcNewEpoch_ ecNewEpoch = 11;
+    // .EcNewEpoch_ ecNewEpoch = 10;
 
 
     pub fn get_ecNewEpoch(&self) -> &EcNewEpoch_ {
@@ -4258,7 +4226,7 @@ impl Message {
         self.ecNewEpoch.take().unwrap_or_else(|| EcNewEpoch_::new())
     }
 
-    // .EcNack_ ecNack = 12;
+    // .EcNack_ ecNack = 11;
 
 
     pub fn get_ecNack(&self) -> &EcNack_ {
@@ -4289,6 +4257,72 @@ impl Message {
     // Take field
     pub fn take_ecNack(&mut self) -> EcNack_ {
         self.ecNack.take().unwrap_or_else(|| EcNack_::new())
+    }
+
+    // .EpRead_ epRead = 12;
+
+
+    pub fn get_epRead(&self) -> &EpRead_ {
+        self.epRead.as_ref().unwrap_or_else(|| EpRead_::default_instance())
+    }
+    pub fn clear_epRead(&mut self) {
+        self.epRead.clear();
+    }
+
+    pub fn has_epRead(&self) -> bool {
+        self.epRead.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epRead(&mut self, v: EpRead_) {
+        self.epRead = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epRead(&mut self) -> &mut EpRead_ {
+        if self.epRead.is_none() {
+            self.epRead.set_default();
+        }
+        self.epRead.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epRead(&mut self) -> EpRead_ {
+        self.epRead.take().unwrap_or_else(|| EpRead_::new())
+    }
+
+    // .ProcessId sender = 13;
+
+
+    pub fn get_sender(&self) -> &ProcessId {
+        self.sender.as_ref().unwrap_or_else(|| ProcessId::default_instance())
+    }
+    pub fn clear_sender(&mut self) {
+        self.sender.clear();
+    }
+
+    pub fn has_sender(&self) -> bool {
+        self.sender.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_sender(&mut self, v: ProcessId) {
+        self.sender = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_sender(&mut self) -> &mut ProcessId {
+        if self.sender.is_none() {
+            self.sender.set_default();
+        }
+        self.sender.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_sender(&mut self) -> ProcessId {
+        self.sender.take().unwrap_or_else(|| ProcessId::new())
     }
 }
 
@@ -4329,11 +4363,6 @@ impl ::protobuf::Message for Message {
                 return false;
             }
         };
-        for v in &self.bebBroadcast {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
         for v in &self.eldHeartbeat {
             if !v.is_initialized() {
                 return false;
@@ -4345,6 +4374,16 @@ impl ::protobuf::Message for Message {
             }
         };
         for v in &self.ecNack {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.epRead {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.sender {
             if !v.is_initialized() {
                 return false;
             }
@@ -4381,16 +4420,19 @@ impl ::protobuf::Message for Message {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ucDecide)?;
                 },
                 9 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.bebBroadcast)?;
-                },
-                10 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.eldHeartbeat)?;
                 },
-                11 => {
+                10 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecNewEpoch)?;
                 },
-                12 => {
+                11 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecNack)?;
+                },
+                12 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epRead)?;
+                },
+                13 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.sender)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -4435,10 +4477,6 @@ impl ::protobuf::Message for Message {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
-        if let Some(ref v) = self.bebBroadcast.as_ref() {
-            let len = v.compute_size();
-            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
         if let Some(ref v) = self.eldHeartbeat.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
@@ -4448,6 +4486,14 @@ impl ::protobuf::Message for Message {
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         if let Some(ref v) = self.ecNack.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.epRead.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.sender.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
@@ -4495,23 +4541,28 @@ impl ::protobuf::Message for Message {
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.bebBroadcast.as_ref() {
+        if let Some(ref v) = self.eldHeartbeat.as_ref() {
             os.write_tag(9, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.eldHeartbeat.as_ref() {
+        if let Some(ref v) = self.ecNewEpoch.as_ref() {
             os.write_tag(10, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.ecNewEpoch.as_ref() {
+        if let Some(ref v) = self.ecNack.as_ref() {
             os.write_tag(11, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.ecNack.as_ref() {
+        if let Some(ref v) = self.epRead.as_ref() {
             os.write_tag(12, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.sender.as_ref() {
+            os.write_tag(13, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
@@ -4594,11 +4645,6 @@ impl ::protobuf::Message for Message {
                     |m: &Message| { &m.ucDecide },
                     |m: &mut Message| { &mut m.ucDecide },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<BebBroadcast>>(
-                    "bebBroadcast",
-                    |m: &Message| { &m.bebBroadcast },
-                    |m: &mut Message| { &mut m.bebBroadcast },
-                ));
                 fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EldHeartbeat_>>(
                     "eldHeartbeat",
                     |m: &Message| { &m.eldHeartbeat },
@@ -4613,6 +4659,16 @@ impl ::protobuf::Message for Message {
                     "ecNack",
                     |m: &Message| { &m.ecNack },
                     |m: &mut Message| { &mut m.ecNack },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpRead_>>(
+                    "epRead",
+                    |m: &Message| { &m.epRead },
+                    |m: &mut Message| { &mut m.epRead },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
+                    "sender",
+                    |m: &Message| { &m.sender },
+                    |m: &mut Message| { &mut m.sender },
                 ));
                 ::protobuf::reflect::MessageDescriptor::new::<Message>(
                     "Message",
@@ -4641,10 +4697,11 @@ impl ::protobuf::Clear for Message {
         self.epPropose.clear();
         self.epDecide.clear();
         self.ucDecide.clear();
-        self.bebBroadcast.clear();
         self.eldHeartbeat.clear();
         self.ecNewEpoch.clear();
         self.ecNack.clear();
+        self.epRead.clear();
+        self.sender.clear();
         self.unknown_fields.clear();
     }
 }
@@ -4668,9 +4725,9 @@ pub enum Message_Type {
     EP_ABORT = 2,
     EP_PROPOSE = 3,
     ELD_HEARTBEAT = 4,
-    BEB_BROADCAST = 5,
-    EC_NEW_EPOCH = 6,
-    EC_NACK = 7,
+    EC_NEW_EPOCH = 5,
+    EC_NACK = 6,
+    EP_READ = 7,
 }
 
 impl ::protobuf::ProtobufEnum for Message_Type {
@@ -4685,9 +4742,9 @@ impl ::protobuf::ProtobufEnum for Message_Type {
             2 => ::std::option::Option::Some(Message_Type::EP_ABORT),
             3 => ::std::option::Option::Some(Message_Type::EP_PROPOSE),
             4 => ::std::option::Option::Some(Message_Type::ELD_HEARTBEAT),
-            5 => ::std::option::Option::Some(Message_Type::BEB_BROADCAST),
-            6 => ::std::option::Option::Some(Message_Type::EC_NEW_EPOCH),
-            7 => ::std::option::Option::Some(Message_Type::EC_NACK),
+            5 => ::std::option::Option::Some(Message_Type::EC_NEW_EPOCH),
+            6 => ::std::option::Option::Some(Message_Type::EC_NACK),
+            7 => ::std::option::Option::Some(Message_Type::EP_READ),
             _ => ::std::option::Option::None
         }
     }
@@ -4699,9 +4756,9 @@ impl ::protobuf::ProtobufEnum for Message_Type {
             Message_Type::EP_ABORT,
             Message_Type::EP_PROPOSE,
             Message_Type::ELD_HEARTBEAT,
-            Message_Type::BEB_BROADCAST,
             Message_Type::EC_NEW_EPOCH,
             Message_Type::EC_NACK,
+            Message_Type::EP_READ,
         ];
         values
     }
@@ -4758,7 +4815,7 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     (\x05R\x05epoch\x12\x1e\n\x04from\x18\x02\x20\x01(\x0b2\n.ProcessIdR\x04\
     from\",\n\x06PlSend\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\x08.Message\
     R\x07message\"/\n\tPlDeliver\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\
-    \x08.MessageR\x07message\"\x96\x05\n\x07Message\x12!\n\x04type\x18\x01\
+    \x08.MessageR\x07message\"\xa3\x05\n\x07Message\x12!\n\x04type\x18\x01\
     \x20\x01(\x0e2\r.Message.TypeR\x04type\x12(\n\tucPropose\x18\x02\x20\x01\
     (\x0b2\n.UcProposeR\tucPropose\x121\n\x0cecStartEpoch\x18\x03\x20\x01(\
     \x0b2\r.EcStartEpochR\x0cecStartEpoch\x12\"\n\x07epAbort\x18\x04\x20\x01\
@@ -4766,14 +4823,15 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     .EpAbortedR\tepAborted\x12(\n\tepPropose\x18\x06\x20\x01(\x0b2\n.EpPropo\
     seR\tepPropose\x12%\n\x08epDecide\x18\x07\x20\x01(\x0b2\t.EpDecideR\x08e\
     pDecide\x12%\n\x08ucDecide\x18\x08\x20\x01(\x0b2\t.UcDecideR\x08ucDecide\
-    \x121\n\x0cbebBroadcast\x18\t\x20\x01(\x0b2\r.BebBroadcastR\x0cbebBroadc\
-    ast\x122\n\x0celdHeartbeat\x18\n\x20\x01(\x0b2\x0e.EldHeartbeat_R\x0celd\
-    Heartbeat\x12,\n\necNewEpoch\x18\x0b\x20\x01(\x0b2\x0c.EcNewEpoch_R\necN\
-    ewEpoch\x12\x20\n\x06ecNack\x18\x0c\x20\x01(\x0b2\x08.EcNack_R\x06ecNack\
-    \"\x8d\x01\n\x04Type\x12\x0e\n\nUC_PROPOSE\x10\0\x12\x12\n\x0eEC_START_E\
-    POCH\x10\x01\x12\x0c\n\x08EP_ABORT\x10\x02\x12\x0e\n\nEP_PROPOSE\x10\x03\
-    \x12\x11\n\rELD_HEARTBEAT\x10\x04\x12\x11\n\rBEB_BROADCAST\x10\x05\x12\
-    \x10\n\x0cEC_NEW_EPOCH\x10\x06\x12\x0b\n\x07EC_NACK\x10\x07b\x06proto3\
+    \x122\n\x0celdHeartbeat\x18\t\x20\x01(\x0b2\x0e.EldHeartbeat_R\x0celdHea\
+    rtbeat\x12,\n\necNewEpoch\x18\n\x20\x01(\x0b2\x0c.EcNewEpoch_R\necNewEpo\
+    ch\x12\x20\n\x06ecNack\x18\x0b\x20\x01(\x0b2\x08.EcNack_R\x06ecNack\x12\
+    \x20\n\x06epRead\x18\x0c\x20\x01(\x0b2\x08.EpRead_R\x06epRead\x12\"\n\
+    \x06sender\x18\r\x20\x01(\x0b2\n.ProcessIdR\x06sender\"\x87\x01\n\x04Typ\
+    e\x12\x0e\n\nUC_PROPOSE\x10\0\x12\x12\n\x0eEC_START_EPOCH\x10\x01\x12\
+    \x0c\n\x08EP_ABORT\x10\x02\x12\x0e\n\nEP_PROPOSE\x10\x03\x12\x11\n\rELD_\
+    HEARTBEAT\x10\x04\x12\x10\n\x0cEC_NEW_EPOCH\x10\x05\x12\x0b\n\x07EC_NACK\
+    \x10\x06\x12\x0b\n\x07EP_READ\x10\x07b\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy::INIT;

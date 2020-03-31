@@ -1,7 +1,7 @@
 use crate::event::*;
 use crate::node::{Node, NodeInfo};
-use crate::protos::message::{EcNewEpoch_, Message, Message_Type};
-use log::trace;
+use crate::protos::message::{EcNewEpoch_, Message, Message_Type, ProcessId, EcNack_};
+use log::{info, trace};
 use std::sync::{Arc, Mutex};
 
 const N: u32 = 10;
@@ -50,10 +50,14 @@ impl EpochChange {
         new_epoch_msg.set_timestamp(ts as i32);
 
         let mut message = Message::new();
+        let current_node = &self.node_info.current_node;
+        let sender: ProcessId = current_node.into();
+
+        message.set_sender(sender);
         message.set_ecNewEpoch(new_epoch_msg);
         message.set_field_type(Message_Type::EC_NEW_EPOCH);
 
-        let internal_msg = InternalMessage::Broadcast(message);
+        let internal_msg = InternalMessage::BebBroadcast(message);
         let event_data = EventData::Internal(internal_msg);
 
         let queue = self.event_queue.lock().unwrap();
@@ -68,14 +72,22 @@ impl EpochChange {
     }
 
     fn pl_send_nack(&self, node: &Node) {
-        let from = self.node_info.current_node.clone();
-        let nack_msg = InternalMessage::Nack(from, node.clone());
-        let event_data = EventData::Internal(nack_msg);
+        let current_node = &self.node_info.current_node;
+        let sender: ProcessId = current_node.into();
+
+        let nack = EcNack_::new();
+        let mut msg = Message::new();
+        msg.set_sender(sender);
+        msg.set_ecNack(nack);
+        msg.set_field_type(Message_Type::EC_NACK);
+
+        let internal_message = InternalMessage::PlSend(current_node.clone(), node.clone(), msg);
+        let event_data = EventData::Internal(internal_message);
         let queue = self.event_queue.lock().unwrap();
         queue.push(event_data);
     }
 
-    fn pl_deliver(&mut self, _: &Node) {
+    fn on_nack(&mut self) {
         let trusted = self.trusted.as_ref().unwrap();
         if trusted == &self.node_info.current_node {
             self.ts += N;
@@ -89,37 +101,35 @@ impl EventHandler for EpochChange {
         trace!("Handler summoned with event {:?}", event_data);
 
         match event_data {
-            EventData::External(_) => (),
             EventData::Internal(internal_data) => {
                 match internal_data {
                     InternalMessage::EldTrust(trusted_node) => self.eld_trust(trusted_node),
-                    InternalMessage::BebDeliver(from, to, msg) => {
+                    InternalMessage::BebDeliver(from, msg) => {
                         match msg {
                             // TODO: change proto to use snake case.
                             #![allow(non_snake_case)]
                             Message{field_type: Message_Type::EC_NEW_EPOCH, ecNewEpoch, ..} => {
-                                if from == &self.node_info.current_node {
-                                    let new_ts = ecNewEpoch.as_ref().expect("We should have a valid epoch object.").get_timestamp();
-                                    self.beb_deliver(to, new_ts as u32);
-                                }
+                                info!("EC_NEW_EPOCH");
+                                let new_ts = ecNewEpoch.as_ref().expect("We should have a valid epoch object.").get_timestamp();
+                                self.beb_deliver(from, new_ts as u32);
                             }
                             _ => (),
                         }
-                    }
-                    InternalMessage::PlDeliver(from, to, msg) => match msg {
+                    },
+                    InternalMessage::PlDeliver(_, msg) => match msg {
                         Message {
                             field_type: Message_Type::EC_NACK,
                             ..
                         } => {
-                            if from == &self.node_info.current_node {
-                                self.pl_deliver(to);
-                            }
-                        }
+                            info!("GOT ACK!!");
+                            self.on_nack();
+                        },
                         _ => (),
                     },
                     _ => (),
                 }
-            }
+            },
+            _ => (),
         }
     }
 }

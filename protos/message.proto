@@ -114,9 +114,9 @@ message Message {
         EP_ABORT = 2;
         EP_PROPOSE = 3;
         ELD_HEARTBEAT = 4;
-        BEB_BROADCAST = 5;
-        EC_NEW_EPOCH = 6;
-        EC_NACK = 7;
+        EC_NEW_EPOCH = 5;
+        EC_NACK = 6;
+        EP_READ = 7;
     }
 
     Type type = 1;
@@ -128,10 +128,11 @@ message Message {
     EpPropose epPropose = 6;
     EpDecide epDecide = 7;
     UcDecide ucDecide = 8;
-    BebBroadcast bebBroadcast = 9;
-    EldHeartbeat_ eldHeartbeat = 10;
-    EcNewEpoch_ ecNewEpoch = 11;
-    EcNack_ ecNack = 12;
+    EldHeartbeat_ eldHeartbeat = 9;
+    EcNewEpoch_ ecNewEpoch = 10;
+    EcNack_ ecNack = 11;
+    EpRead_ epRead = 12;
+    ProcessId sender = 13;
 }
 
 // 5

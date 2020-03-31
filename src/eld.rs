@@ -51,6 +51,7 @@ impl EldState {
 
 pub struct EventualLeaderDetector<S: Storage<EldState>> {
     candidates: Arc<RwLock<Vec<Candidate>>>,
+    epoch: u32,
     node_info: Arc<NodeInfo>,
     event_queue: Arc<Mutex<EventQueue>>,
     delay: chrono::Duration,
@@ -64,6 +65,7 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
     pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<Mutex<EventQueue>>, storage: S) -> Self {
         Self {
             candidates: Arc::new(RwLock::new(Vec::new())),
+            epoch: 0,
             node_info,
             event_queue,
             delay: chrono::Duration::milliseconds(DELTA),
@@ -84,43 +86,37 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         self.leader = Some(self.maxrank().clone());
         self.trust(&self.leader.as_ref().unwrap());
 
-        // TODO: store the epoch inside of a local storage.
-        //self.epoch
-        //.store(self.epoch.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
-
-        self.update_epoch();
+        // Update our epoch number (this represents the number of times that we have crashed).
+        // This value will be used when selecting the leader node.
+        self.epoch = self.update_epoch();
 
         // now we need to send a heartbeat to each node from our configuration
-        for node in self.node_info.nodes.iter() {
-            self.send_heartbeat(node);
-        }
+        self.node_info
+            .nodes
+            .iter()
+            .for_each(|node| self.send_heartbeat(node));
 
         self.start_timer();
     }
 
-    fn update_epoch(&self) {
+    fn update_epoch(&self) -> u32 {
         let storage = self.storage.lock().unwrap();
         match storage.read() {
             Ok(state) => {
-                let new_state = EldState::new(state.epoch + 1);
+                let new_epoch = state.epoch + 1;
+                let new_state = EldState::new(new_epoch);
                 storage
                     .write(&new_state)
                     .expect("Epoch should be updated on storage.");
+                new_epoch
             }
             Err(_) => {
-                let state = EldState::new(0);
+                let state = EldState::new(INITIAL_EPOCH);
                 storage
                     .write(&state)
                     .expect("Epoch should be updated on storage.");
+                INITIAL_EPOCH
             }
-        }
-    }
-
-    fn load_epoch(&self) -> u32 {
-        let storage = self.storage.lock().unwrap();
-        match storage.read() {
-            Ok(state) => state.epoch,
-            Err(_) => INITIAL_EPOCH,
         }
     }
 
@@ -131,7 +127,7 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         // TODO: add support for chaning the delay here...
         self.timer_guard = Some(self.timer.schedule_with_delay(self.delay, move || {
             // we just need to send the timeout message to ourselvles.
-            let message = InternalMessage::Timeout(from);
+            let message = InternalMessage::EldTimeout(from);
             let event_data = EventData::Internal(message);
             let queue = queue.lock().unwrap();
             queue.push(event_data);
@@ -140,9 +136,10 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
 
     fn timeout(&mut self) {
         let new_leader = self.select();
-
-        // at this point we should already have a leader
-        let current_leader = self.leader.as_ref().unwrap();
+        let current_leader = self
+            .leader
+            .as_ref()
+            .expect("We should already have a leader.");
         if &new_leader.node != current_leader {
             // Changing the delay guarantees that if leaders keep changing because the timeout delay is too short with
             // respect to communication delays, the delay will continue to increase, until it eventually
@@ -156,9 +153,10 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         }
 
         // now we need to send a heartbeat to each node from our configuration
-        for node in self.node_info.nodes.iter() {
-            self.send_heartbeat(node);
-        }
+        self.node_info
+            .nodes
+            .iter()
+            .for_each(|node| self.send_heartbeat(node));
 
         {
             let mut candidates = self.candidates.write().unwrap();
@@ -172,13 +170,13 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         let current_node = &self.node_info.current_node;
         let process: ProcessId = current_node.into();
         let mut heartbeat = EldHeartbeat_::new();
-        heartbeat.set_epoch(self.load_epoch() as i32);
+        heartbeat.set_epoch(self.epoch as i32);
         heartbeat.set_from(process);
         let mut message = Message::new();
         message.set_eldHeartbeat(heartbeat);
         message.set_field_type(Message_Type::ELD_HEARTBEAT);
         let from = self.node_info.current_node.clone();
-        let internal_msg = InternalMessage::Send(from, node.clone(), message);
+        let internal_msg = InternalMessage::PlSend(from, node.clone(), message);
         let event_data = EventData::Internal(internal_msg);
         let queue = self.event_queue.lock().unwrap();
         queue.push(event_data);
@@ -189,7 +187,7 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         let index = process.get_index() as u16;
         let epoch = heartbeat.get_epoch() as u32;
 
-        // TODO: remove expect from here
+        // TODO: Figure out if we should just ignore the message or panic
         let node = self
             .node_info
             .nodes
@@ -224,35 +222,28 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
     /// stop growing.
     fn select(&self) -> Candidate {
         let candidates = self.candidates.read().unwrap();
-        let min = candidates.iter().min();
-        match min {
-            Some(value) => {
-                let min_by_epoch: Vec<Candidate> = candidates
-                    .iter()
-                    .filter(|c| c.epoch == value.epoch)
-                    .cloned()
-                    .collect();
-                let max_by_rank = min_by_epoch.iter().max().unwrap().clone();
-                max_by_rank
-            }
-            None => Candidate::new(self.node_info.current_node.clone(), self.load_epoch()),
-        }
+        let min = candidates
+            .iter()
+            .min()
+            .expect("We should have at least one candidate.");
+        let min_by_epoch: Vec<Candidate> = candidates
+            .iter()
+            .filter(|c| c.epoch == min.epoch)
+            .cloned()
+            .collect();
+        let max_by_rank = min_by_epoch.iter().max().unwrap().clone();
+        max_by_rank
     }
 
     /// the rank of a process is a unique index
     fn maxrank(&self) -> &Node {
-        let max_rank_node = self.node_info.nodes.iter().max();
-        let current_node = &self.node_info.current_node;
-        match max_rank_node {
-            Some(node) => {
-                if node > current_node {
-                    node
-                } else {
-                    current_node
-                }
-            }
-            None => current_node,
-        }
+        let max_rank_node = self
+            .node_info
+            .nodes
+            .iter()
+            .max()
+            .expect("We should have at least one node.");
+        max_rank_node
     }
 }
 
@@ -262,7 +253,7 @@ impl<S: Storage<EldState>> EventHandler for EventualLeaderDetector<S> {
 
         match event_data {
             EventData::Internal(msg) => match msg {
-                InternalMessage::Timeout(id) => {
+                InternalMessage::EldTimeout(id) => {
                     if id == &self.node_info.current_node.id {
                         self.timeout();
                     }
@@ -270,17 +261,20 @@ impl<S: Storage<EldState>> EventHandler for EventualLeaderDetector<S> {
                 InternalMessage::EldTrust(leader) => {
                     info!("A new leader has been set: {:?}", leader)
                 }
-                _ => (),
-            },
-            EventData::External(msg) => match msg {
-                Message {
-                    field_type: Message_Type::ELD_HEARTBEAT,
-                    ..
-                } => {
-                    self.recv_heartbeat(msg.get_eldHeartbeat());
+                InternalMessage::PlDeliver(_, msg) => {
+                    match msg {
+                        Message {
+                            field_type: Message_Type::ELD_HEARTBEAT,
+                            ..
+                        } => {
+                            self.recv_heartbeat(msg.get_eldHeartbeat());
+                        },
+                        _ => ()
+                    }
                 }
                 _ => (),
             },
+            _ => (),
         }
     }
 }
