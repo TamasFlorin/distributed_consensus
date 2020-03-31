@@ -1,9 +1,9 @@
 use crate::event::*;
-use crate::node::{NodeInfo, Node, NodeId};
+use crate::node::{Node, NodeId, NodeInfo};
 use crate::protos::message;
-use std::sync::Arc;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use std::sync::Arc;
 
 /// Interface the of epoch consensus
 /// Module:
@@ -23,7 +23,10 @@ pub struct EpochConsensusState {
 
 impl EpochConsensusState {
     fn new(value_timestamp: u32, value: ValueType) -> Self {
-        EpochConsensusState{value_timestamp, value}
+        EpochConsensusState {
+            value_timestamp,
+            value,
+        }
     }
 }
 
@@ -31,11 +34,10 @@ impl PartialOrd<EpochConsensusState> for EpochConsensusState {
     fn partial_cmp(&self, other: &EpochConsensusState) -> Option<std::cmp::Ordering> {
         self.value_timestamp.partial_cmp(&other.value_timestamp)
     }
-    
 }
 
 impl Ord for EpochConsensusState {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering { 
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.value_timestamp.cmp(&other.value_timestamp)
     }
 }
@@ -47,6 +49,7 @@ pub struct EpochConsensus {
     states: BTreeMap<NodeId, EpochConsensusState>,
     accepted: u32,
     state: EpochConsensusState,
+    aborted: bool,
 }
 
 impl EpochConsensus {
@@ -57,7 +60,8 @@ impl EpochConsensus {
             temporary_value: ValueType::default(),
             states: BTreeMap::new(),
             accepted: 0,
-            state: EpochConsensusState::new(0, 0),
+            state: EpochConsensusState::new(0, 0), // TODO: this should be impl specific
+            aborted: false,
         }
     }
 
@@ -78,7 +82,7 @@ impl EpochConsensus {
         let value = msg.get_value();
         let state = EpochConsensusState::new(value_timestamp, value);
         self.states.insert(from.id, state);
-        
+
         if self.states.len() > self.node_info.nodes.len() / 2 {
             let states_message = InternalMessage::EpStateCountReached;
             let event_data = EventData::Internal(states_message);
@@ -93,7 +97,7 @@ impl EpochConsensus {
             Some((_, state)) => self.temporary_value = state.value,
             None => (),
         }
-        
+
         self.states.clear();
 
         self.beb_broadcast_write(self.temporary_value);
@@ -123,10 +127,10 @@ impl EpochConsensus {
         self.accepted = 0;
 
         let current_node = &self.node_info.current_node;
-        
+
         let mut decided_message = message::EpDecided_::new();
         decided_message.set_value(self.temporary_value as i32);
-        
+
         let mut msg = message::Message::new();
         msg.set_epDecided(decided_message);
         msg.set_sender(current_node.into());
@@ -145,8 +149,10 @@ impl EpochConsensus {
     }
 
     /// upon event ⟨ ep, Abort ⟩ do
-    fn abort(&self) {
-        let internal_message = InternalMessage::EpAborted(self.state.value_timestamp, self.state.value);
+    fn abort(&mut self) {
+        self.aborted = true;
+        let internal_message =
+            InternalMessage::EpAborted(self.state.value_timestamp, self.state.value);
         let event_data = EventData::Internal(internal_message);
         self.event_queue.push(event_data);
     }
@@ -158,7 +164,8 @@ impl EpochConsensus {
         message.set_epAccept(accept_message);
         message.set_field_type(message::Message_Type::EP_ACCEPT);
         message.set_sender(current_node.into());
-        let internal_message = InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
+        let internal_message =
+            InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
         let event_data = EventData::Internal(internal_message);
         self.event_queue.push(event_data);
     }
@@ -172,7 +179,8 @@ impl EpochConsensus {
         message.set_epState(state_message);
         message.set_field_type(message::Message_Type::EP_STATE);
         message.set_sender(current_node.into());
-        let internal_message = InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
+        let internal_message =
+            InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
         let event_data = EventData::Internal(internal_message);
         self.event_queue.push(event_data);
     }
@@ -198,7 +206,7 @@ impl EpochConsensus {
 
         let mut write_message = message::EpWrite_::new();
         write_message.set_value(value as i32);
-        
+
         let mut message = message::Message::new();
         message.set_field_type(message::Message_Type::EP_READ);
         message.set_epWrite(write_message);
@@ -215,24 +223,67 @@ impl EventHandler for EpochConsensus {
         match message {
             EventData::Internal(internal_msg) => match internal_msg {
                 InternalMessage::EpPropose(value) => self.ep_propose(value.clone()),
-                InternalMessage::BebDeliver(from ,msg) => match msg {
-                    message::Message{field_type: message::Message_Type::EP_READ, ..} => self.beb_deliver_read(from),
-                    message::Message{field_type: message::Message_Type::EP_WRITE, ..} => self.beb_deliver_write(from, msg.get_epWrite()),
-                    message::Message{field_type: message::Message_Type::EP_DECIDED, ..} => self.beb_deliver_decided(msg.get_epDecided()),
-                    _ => (),
-                }
-                InternalMessage::PlDeliver(from, msg) => match msg {
-                    message::Message{field_type: message::Message_Type::EP_STATE, ..} => {
-                        self.pl_deliver_state(from, msg.get_epState());
-                    },
-                    message::Message{field_type: message::Message_Type::EP_ACCEPT, ..} => {
-                        self.pl_deliver_accept();
+                InternalMessage::BebDeliver(from, msg) => match msg {
+                    message::Message {
+                        field_type: message::Message_Type::EP_READ,
+                        ..
+                    } => {
+                        if !self.aborted {
+                            self.beb_deliver_read(from)
+                        }
+                    }
+                    message::Message {
+                        field_type: message::Message_Type::EP_WRITE,
+                        ..
+                    } => {
+                        if !self.aborted {
+                            self.beb_deliver_write(from, msg.get_epWrite())
+                        }
+                    }
+                    message::Message {
+                        field_type: message::Message_Type::EP_DECIDED,
+                        ..
+                    } => {
+                        if !self.aborted {
+                            self.beb_deliver_decided(msg.get_epDecided())
+                        }
                     }
                     _ => (),
                 },
-                InternalMessage::EpAbort => self.abort(),
-                InternalMessage::EpStateCountReached => self.ep_state_count_reached(),
-                InternalMessage::EpAcceptedCountReached => self.ep_accepted_count_reached(),
+                InternalMessage::PlDeliver(from, msg) => match msg {
+                    message::Message {
+                        field_type: message::Message_Type::EP_STATE,
+                        ..
+                    } => {
+                        if !self.aborted {
+                            self.pl_deliver_state(from, msg.get_epState());
+                        }
+                    }
+                    message::Message {
+                        field_type: message::Message_Type::EP_ACCEPT,
+                        ..
+                    } => {
+                        if !self.aborted {
+                            self.pl_deliver_accept()
+                        };
+                    }
+                    _ => (),
+                },
+                InternalMessage::EpAbort => {
+                    if !self.aborted {
+                        self.abort()
+                    }
+                }
+                InternalMessage::EpStateCountReached => {
+                    if !self.aborted {
+                        self.ep_state_count_reached()
+                    }
+                }
+                InternalMessage::EpAcceptedCountReached => {
+                    if !self.aborted {
+                        self.ep_accepted_count_reached()
+                    }
+                }
                 _ => (),
             },
             EventData::External(_) => (),

@@ -1,6 +1,6 @@
 use crate::event::*;
 use crate::node::{Node, NodeInfo};
-use crate::protos::message::{EcNewEpoch_, Message, Message_Type, ProcessId, EcNack_};
+use crate::protos::message::{EcNack_, EcNewEpoch_, Message, Message_Type, ProcessId};
 use log::{info, trace};
 use std::sync::Arc;
 
@@ -17,12 +17,14 @@ pub struct EpochChange {
 impl EpochChange {
     pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<EventQueue>) -> Self {
         let id = node_info.current_node.id as u32;
+        let initial_trusted = node_info.nodes.first().cloned();
+
         EpochChange {
             node_info,
             event_queue,
             last_ts: 0,
             ts: id,
-            trusted: None,
+            trusted: initial_trusted,
         }
     }
 
@@ -111,7 +113,7 @@ impl EventHandler for EpochChange {
                             }
                             _ => (),
                         }
-                    },
+                    }
                     InternalMessage::PlDeliver(_, msg) => match msg {
                         Message {
                             field_type: Message_Type::EC_NACK,
@@ -119,12 +121,12 @@ impl EventHandler for EpochChange {
                         } => {
                             info!("GOT ACK!!");
                             self.on_nack();
-                        },
+                        }
                         _ => (),
                     },
                     _ => (),
                 }
-            },
+            }
             _ => (),
         }
     }

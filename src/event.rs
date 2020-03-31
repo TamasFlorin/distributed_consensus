@@ -1,4 +1,4 @@
-use crate::node::{Node};
+use crate::node::Node;
 use crate::protos::message::Message;
 use std::collections::VecDeque;
 use std::ops::DerefMut;
@@ -20,6 +20,7 @@ pub enum InternalMessage {
     BebDeliver(Node, Message),
     EcNack(Node, Node), // (from, to)
     EcStartEpoch(Node, u32),
+    EcInitialLeader(Node),
     EpPropose(ValueType), //(value)
     EpDecided(ValueType),
     EpDecide(ValueType),
@@ -27,8 +28,10 @@ pub enum InternalMessage {
     EpAcceptedCountReached,
     EpAbort,
     EpAborted(u32, ValueType),
+    EpReset(u32, ValueType),
+    UcPropose(ValueType),
     PlSend(Node, Node, Message), //(from, to, msg)
-    PlDeliver(Node, Message), // (from, msg)
+    PlDeliver(Node, Message),    // (from, msg)
 }
 
 #[derive(Debug, Clone)]

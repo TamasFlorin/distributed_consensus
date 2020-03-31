@@ -255,17 +255,15 @@ impl<S: Storage<EldState>> EventHandler for EventualLeaderDetector<S> {
                 InternalMessage::EldTrust(leader) => {
                     info!("A new leader has been set: {:?}", leader)
                 }
-                InternalMessage::PlDeliver(_, msg) => {
-                    match msg {
-                        Message {
-                            field_type: Message_Type::ELD_HEARTBEAT,
-                            ..
-                        } => {
-                            self.recv_heartbeat(msg.get_eldHeartbeat());
-                        },
-                        _ => ()
+                InternalMessage::PlDeliver(_, msg) => match msg {
+                    Message {
+                        field_type: Message_Type::ELD_HEARTBEAT,
+                        ..
+                    } => {
+                        self.recv_heartbeat(msg.get_eldHeartbeat());
                     }
-                }
+                    _ => (),
+                },
                 _ => (),
             },
             _ => (),

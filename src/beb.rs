@@ -1,7 +1,7 @@
 use crate::event::*;
 use crate::node::*;
 use crate::protos::message;
-use log::{trace};
+use log::trace;
 use std::sync::Arc;
 
 pub struct BestEffortBroadcast {
