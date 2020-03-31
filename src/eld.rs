@@ -122,12 +122,11 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
 
     fn start_timer(&mut self) {
         let queue = Arc::clone(&self.event_queue);
-        let from = self.node_info.current_node.id;
 
         // TODO: add support for chaning the delay here...
         self.timer_guard = Some(self.timer.schedule_with_delay(self.delay, move || {
             // we just need to send the timeout message to ourselvles.
-            let message = InternalMessage::EldTimeout(from);
+            let message = InternalMessage::EldTimeout;
             let event_data = EventData::Internal(message);
             let queue = queue.lock().unwrap();
             queue.push(event_data);
@@ -253,10 +252,8 @@ impl<S: Storage<EldState>> EventHandler for EventualLeaderDetector<S> {
 
         match event_data {
             EventData::Internal(msg) => match msg {
-                InternalMessage::EldTimeout(id) => {
-                    if id == &self.node_info.current_node.id {
-                        self.timeout();
-                    }
+                InternalMessage::EldTimeout => {
+                    self.timeout();
                 }
                 InternalMessage::EldTrust(leader) => {
                     info!("A new leader has been set: {:?}", leader)

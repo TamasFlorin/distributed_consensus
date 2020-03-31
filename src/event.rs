@@ -1,4 +1,4 @@
-use crate::node::{Node, NodeId};
+use crate::node::{Node};
 use crate::protos::message::Message;
 use std::collections::VecDeque;
 use std::ops::DerefMut;
@@ -6,18 +6,25 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex};
 use std::thread;
 
+pub type ValueType = i32;
+
 pub trait EventHandler {
     fn handle(&mut self, message: &EventData);
 }
 
 #[derive(Debug, Clone)]
 pub enum InternalMessage {
-    EldTimeout(NodeId),
+    EldTimeout,
     EldTrust(Node),
     BebBroadcast(Message),
     BebDeliver(Node, Message),
     EcNack(Node, Node), // (from, to)
     EcStartEpoch(Node, u32),
+    EpPropose(ValueType), //(value)
+    EpDecided(ValueType),
+    EpDecide(ValueType),
+    EpAbort,
+    EpAborted(u32, ValueType),
     PlSend(Node, Node, Message), //(from, to, msg)
     PlDeliver(Node, Message), // (from, msg)
 }

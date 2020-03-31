@@ -3897,6 +3897,10 @@ pub struct Message {
     pub ecNewEpoch: ::protobuf::SingularPtrField<EcNewEpoch_>,
     pub ecNack: ::protobuf::SingularPtrField<EcNack_>,
     pub epRead: ::protobuf::SingularPtrField<EpRead_>,
+    pub epState: ::protobuf::SingularPtrField<EpState_>,
+    pub epWrite: ::protobuf::SingularPtrField<EpWrite_>,
+    pub epAccept: ::protobuf::SingularPtrField<EpAccept_>,
+    pub epDecided: ::protobuf::SingularPtrField<EpDecided_>,
     pub sender: ::protobuf::SingularPtrField<ProcessId>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
@@ -4292,7 +4296,139 @@ impl Message {
         self.epRead.take().unwrap_or_else(|| EpRead_::new())
     }
 
-    // .ProcessId sender = 13;
+    // .EpState_ epState = 13;
+
+
+    pub fn get_epState(&self) -> &EpState_ {
+        self.epState.as_ref().unwrap_or_else(|| EpState_::default_instance())
+    }
+    pub fn clear_epState(&mut self) {
+        self.epState.clear();
+    }
+
+    pub fn has_epState(&self) -> bool {
+        self.epState.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epState(&mut self, v: EpState_) {
+        self.epState = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epState(&mut self) -> &mut EpState_ {
+        if self.epState.is_none() {
+            self.epState.set_default();
+        }
+        self.epState.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epState(&mut self) -> EpState_ {
+        self.epState.take().unwrap_or_else(|| EpState_::new())
+    }
+
+    // .EpWrite_ epWrite = 14;
+
+
+    pub fn get_epWrite(&self) -> &EpWrite_ {
+        self.epWrite.as_ref().unwrap_or_else(|| EpWrite_::default_instance())
+    }
+    pub fn clear_epWrite(&mut self) {
+        self.epWrite.clear();
+    }
+
+    pub fn has_epWrite(&self) -> bool {
+        self.epWrite.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epWrite(&mut self, v: EpWrite_) {
+        self.epWrite = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epWrite(&mut self) -> &mut EpWrite_ {
+        if self.epWrite.is_none() {
+            self.epWrite.set_default();
+        }
+        self.epWrite.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epWrite(&mut self) -> EpWrite_ {
+        self.epWrite.take().unwrap_or_else(|| EpWrite_::new())
+    }
+
+    // .EpAccept_ epAccept = 15;
+
+
+    pub fn get_epAccept(&self) -> &EpAccept_ {
+        self.epAccept.as_ref().unwrap_or_else(|| EpAccept_::default_instance())
+    }
+    pub fn clear_epAccept(&mut self) {
+        self.epAccept.clear();
+    }
+
+    pub fn has_epAccept(&self) -> bool {
+        self.epAccept.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epAccept(&mut self, v: EpAccept_) {
+        self.epAccept = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epAccept(&mut self) -> &mut EpAccept_ {
+        if self.epAccept.is_none() {
+            self.epAccept.set_default();
+        }
+        self.epAccept.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epAccept(&mut self) -> EpAccept_ {
+        self.epAccept.take().unwrap_or_else(|| EpAccept_::new())
+    }
+
+    // .EpDecided_ epDecided = 16;
+
+
+    pub fn get_epDecided(&self) -> &EpDecided_ {
+        self.epDecided.as_ref().unwrap_or_else(|| EpDecided_::default_instance())
+    }
+    pub fn clear_epDecided(&mut self) {
+        self.epDecided.clear();
+    }
+
+    pub fn has_epDecided(&self) -> bool {
+        self.epDecided.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epDecided(&mut self, v: EpDecided_) {
+        self.epDecided = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epDecided(&mut self) -> &mut EpDecided_ {
+        if self.epDecided.is_none() {
+            self.epDecided.set_default();
+        }
+        self.epDecided.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epDecided(&mut self) -> EpDecided_ {
+        self.epDecided.take().unwrap_or_else(|| EpDecided_::new())
+    }
+
+    // .ProcessId sender = 17;
 
 
     pub fn get_sender(&self) -> &ProcessId {
@@ -4383,6 +4519,26 @@ impl ::protobuf::Message for Message {
                 return false;
             }
         };
+        for v in &self.epState {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.epWrite {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.epAccept {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.epDecided {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
         for v in &self.sender {
             if !v.is_initialized() {
                 return false;
@@ -4432,6 +4588,18 @@ impl ::protobuf::Message for Message {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epRead)?;
                 },
                 13 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epState)?;
+                },
+                14 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epWrite)?;
+                },
+                15 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epAccept)?;
+                },
+                16 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epDecided)?;
+                },
+                17 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.sender)?;
                 },
                 _ => {
@@ -4493,9 +4661,25 @@ impl ::protobuf::Message for Message {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
-        if let Some(ref v) = self.sender.as_ref() {
+        if let Some(ref v) = self.epState.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.epWrite.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.epAccept.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.epDecided.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.sender.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -4561,8 +4745,28 @@ impl ::protobuf::Message for Message {
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.sender.as_ref() {
+        if let Some(ref v) = self.epState.as_ref() {
             os.write_tag(13, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.epWrite.as_ref() {
+            os.write_tag(14, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.epAccept.as_ref() {
+            os.write_tag(15, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.epDecided.as_ref() {
+            os.write_tag(16, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.sender.as_ref() {
+            os.write_tag(17, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
@@ -4665,6 +4869,26 @@ impl ::protobuf::Message for Message {
                     |m: &Message| { &m.epRead },
                     |m: &mut Message| { &mut m.epRead },
                 ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpState_>>(
+                    "epState",
+                    |m: &Message| { &m.epState },
+                    |m: &mut Message| { &mut m.epState },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpWrite_>>(
+                    "epWrite",
+                    |m: &Message| { &m.epWrite },
+                    |m: &mut Message| { &mut m.epWrite },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpAccept_>>(
+                    "epAccept",
+                    |m: &Message| { &m.epAccept },
+                    |m: &mut Message| { &mut m.epAccept },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpDecided_>>(
+                    "epDecided",
+                    |m: &Message| { &m.epDecided },
+                    |m: &mut Message| { &mut m.epDecided },
+                ));
                 fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
                     "sender",
                     |m: &Message| { &m.sender },
@@ -4701,6 +4925,10 @@ impl ::protobuf::Clear for Message {
         self.ecNewEpoch.clear();
         self.ecNack.clear();
         self.epRead.clear();
+        self.epState.clear();
+        self.epWrite.clear();
+        self.epAccept.clear();
+        self.epDecided.clear();
         self.sender.clear();
         self.unknown_fields.clear();
     }
@@ -4728,6 +4956,10 @@ pub enum Message_Type {
     EC_NEW_EPOCH = 5,
     EC_NACK = 6,
     EP_READ = 7,
+    EP_STATE = 8,
+    EP_WRITE = 9,
+    EP_ACCEPT = 10,
+    EP_DECIDED = 11,
 }
 
 impl ::protobuf::ProtobufEnum for Message_Type {
@@ -4745,6 +4977,10 @@ impl ::protobuf::ProtobufEnum for Message_Type {
             5 => ::std::option::Option::Some(Message_Type::EC_NEW_EPOCH),
             6 => ::std::option::Option::Some(Message_Type::EC_NACK),
             7 => ::std::option::Option::Some(Message_Type::EP_READ),
+            8 => ::std::option::Option::Some(Message_Type::EP_STATE),
+            9 => ::std::option::Option::Some(Message_Type::EP_WRITE),
+            10 => ::std::option::Option::Some(Message_Type::EP_ACCEPT),
+            11 => ::std::option::Option::Some(Message_Type::EP_DECIDED),
             _ => ::std::option::Option::None
         }
     }
@@ -4759,6 +4995,10 @@ impl ::protobuf::ProtobufEnum for Message_Type {
             Message_Type::EC_NEW_EPOCH,
             Message_Type::EC_NACK,
             Message_Type::EP_READ,
+            Message_Type::EP_STATE,
+            Message_Type::EP_WRITE,
+            Message_Type::EP_ACCEPT,
+            Message_Type::EP_DECIDED,
         ];
         values
     }
@@ -4815,7 +5055,7 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     (\x05R\x05epoch\x12\x1e\n\x04from\x18\x02\x20\x01(\x0b2\n.ProcessIdR\x04\
     from\",\n\x06PlSend\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\x08.Message\
     R\x07message\"/\n\tPlDeliver\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\
-    \x08.MessageR\x07message\"\xa3\x05\n\x07Message\x12!\n\x04type\x18\x01\
+    \x08.MessageR\x07message\"\xfb\x06\n\x07Message\x12!\n\x04type\x18\x01\
     \x20\x01(\x0e2\r.Message.TypeR\x04type\x12(\n\tucPropose\x18\x02\x20\x01\
     (\x0b2\n.UcProposeR\tucPropose\x121\n\x0cecStartEpoch\x18\x03\x20\x01(\
     \x0b2\r.EcStartEpochR\x0cecStartEpoch\x12\"\n\x07epAbort\x18\x04\x20\x01\
@@ -4826,12 +5066,17 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x122\n\x0celdHeartbeat\x18\t\x20\x01(\x0b2\x0e.EldHeartbeat_R\x0celdHea\
     rtbeat\x12,\n\necNewEpoch\x18\n\x20\x01(\x0b2\x0c.EcNewEpoch_R\necNewEpo\
     ch\x12\x20\n\x06ecNack\x18\x0b\x20\x01(\x0b2\x08.EcNack_R\x06ecNack\x12\
-    \x20\n\x06epRead\x18\x0c\x20\x01(\x0b2\x08.EpRead_R\x06epRead\x12\"\n\
-    \x06sender\x18\r\x20\x01(\x0b2\n.ProcessIdR\x06sender\"\x87\x01\n\x04Typ\
-    e\x12\x0e\n\nUC_PROPOSE\x10\0\x12\x12\n\x0eEC_START_EPOCH\x10\x01\x12\
-    \x0c\n\x08EP_ABORT\x10\x02\x12\x0e\n\nEP_PROPOSE\x10\x03\x12\x11\n\rELD_\
-    HEARTBEAT\x10\x04\x12\x10\n\x0cEC_NEW_EPOCH\x10\x05\x12\x0b\n\x07EC_NACK\
-    \x10\x06\x12\x0b\n\x07EP_READ\x10\x07b\x06proto3\
+    \x20\n\x06epRead\x18\x0c\x20\x01(\x0b2\x08.EpRead_R\x06epRead\x12#\n\x07\
+    epState\x18\r\x20\x01(\x0b2\t.EpState_R\x07epState\x12#\n\x07epWrite\x18\
+    \x0e\x20\x01(\x0b2\t.EpWrite_R\x07epWrite\x12&\n\x08epAccept\x18\x0f\x20\
+    \x01(\x0b2\n.EpAccept_R\x08epAccept\x12)\n\tepDecided\x18\x10\x20\x01(\
+    \x0b2\x0b.EpDecided_R\tepDecided\x12\"\n\x06sender\x18\x11\x20\x01(\x0b2\
+    \n.ProcessIdR\x06sender\"\xc2\x01\n\x04Type\x12\x0e\n\nUC_PROPOSE\x10\0\
+    \x12\x12\n\x0eEC_START_EPOCH\x10\x01\x12\x0c\n\x08EP_ABORT\x10\x02\x12\
+    \x0e\n\nEP_PROPOSE\x10\x03\x12\x11\n\rELD_HEARTBEAT\x10\x04\x12\x10\n\
+    \x0cEC_NEW_EPOCH\x10\x05\x12\x0b\n\x07EC_NACK\x10\x06\x12\x0b\n\x07EP_RE\
+    AD\x10\x07\x12\x0c\n\x08EP_STATE\x10\x08\x12\x0c\n\x08EP_WRITE\x10\t\x12\
+    \r\n\tEP_ACCEPT\x10\n\x12\x0e\n\nEP_DECIDED\x10\x0bb\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy::INIT;
