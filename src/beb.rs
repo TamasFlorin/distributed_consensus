@@ -2,15 +2,15 @@ use crate::event::*;
 use crate::node::*;
 use crate::protos::message;
 use log::{trace};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 pub struct BestEffortBroadcast {
     node_info: Arc<NodeInfo>,
-    event_queue: Arc<Mutex<EventQueue>>,
+    event_queue: Arc<EventQueue>,
 }
 
 impl BestEffortBroadcast {
-    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<Mutex<EventQueue>>) -> Self {
+    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<EventQueue>) -> Self {
         BestEffortBroadcast {
             node_info,
             event_queue,
@@ -28,15 +28,13 @@ impl BestEffortBroadcast {
         let from = self.node_info.current_node.clone();
         let internal_message = InternalMessage::PlSend(from, node.clone(), message.clone());
         let event_data = EventData::Internal(internal_message);
-        let queue = self.event_queue.lock().unwrap();
-        queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 
     fn deliver(&self, sender: &Node, message: &message::Message) {
         let message = InternalMessage::BebDeliver(sender.clone(), message.clone());
         let event_data = EventData::Internal(message);
-        let queue = self.event_queue.lock().unwrap();
-        queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 }
 

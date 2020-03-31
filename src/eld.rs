@@ -53,7 +53,7 @@ pub struct EventualLeaderDetector<S: Storage<EldState>> {
     candidates: Arc<RwLock<Vec<Candidate>>>,
     epoch: u32,
     node_info: Arc<NodeInfo>,
-    event_queue: Arc<Mutex<EventQueue>>,
+    event_queue: Arc<EventQueue>,
     delay: chrono::Duration,
     timer_guard: Option<Guard>,
     timer: Timer,
@@ -62,7 +62,7 @@ pub struct EventualLeaderDetector<S: Storage<EldState>> {
 }
 
 impl<S: Storage<EldState>> EventualLeaderDetector<S> {
-    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<Mutex<EventQueue>>, storage: S) -> Self {
+    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<EventQueue>, storage: S) -> Self {
         Self {
             candidates: Arc::new(RwLock::new(Vec::new())),
             epoch: 0,
@@ -121,15 +121,14 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
     }
 
     fn start_timer(&mut self) {
-        let queue = Arc::clone(&self.event_queue);
+        let event_queue = Arc::clone(&self.event_queue);
 
         // TODO: add support for chaning the delay here...
         self.timer_guard = Some(self.timer.schedule_with_delay(self.delay, move || {
             // we just need to send the timeout message to ourselvles.
             let message = InternalMessage::EldTimeout;
             let event_data = EventData::Internal(message);
-            let queue = queue.lock().unwrap();
-            queue.push(event_data);
+            event_queue.push(event_data);
         }));
     }
 
@@ -177,8 +176,7 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         let from = self.node_info.current_node.clone();
         let internal_msg = InternalMessage::PlSend(from, node.clone(), message);
         let event_data = EventData::Internal(internal_msg);
-        let queue = self.event_queue.lock().unwrap();
-        queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 
     fn recv_heartbeat(&self, heartbeat: &EldHeartbeat_) {
@@ -208,8 +206,7 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
     fn trust(&self, leader: &Node) {
         // at this point we should already have a leader
         let message = InternalMessage::EldTrust(leader.clone());
-        let event_queue = self.event_queue.lock().unwrap();
-        event_queue.push(EventData::Internal(message));
+        self.event_queue.push(EventData::Internal(message));
     }
 
     /// This method picks one process from candidates according to the following rule:

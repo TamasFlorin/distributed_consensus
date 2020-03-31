@@ -44,20 +44,20 @@ pub struct EventQueue {
     element_added: Arc<Mutex<bool>>,
 }
 
-impl Default for EventQueue {
-    fn default() -> Self {
-        EventQueue {
+impl EventQueue {
+    pub fn create_and_run() -> Self {
+        let mut event_queue = EventQueue {
             handlers: Arc::new(Mutex::new(Vec::new())),
             queue: Arc::new(Mutex::new(VecDeque::new())),
             cvar: Arc::new(Condvar::default()),
             is_running: Arc::new(AtomicBool::new(false)),
             handle: Mutex::new(None),
             element_added: Arc::new(Mutex::new(false)),
-        }
+        };
+        event_queue.run();
+        event_queue
     }
-}
 
-impl EventQueue {
     pub fn push(&self, event_data: EventData) {
         let mut queue = self.queue.lock().unwrap();
         queue.push_back(event_data);
@@ -66,7 +66,7 @@ impl EventQueue {
         self.cvar.notify_one();
     }
 
-    pub fn run(&mut self) {
+    fn run(&mut self) {
         if self.is_running.load(Ordering::SeqCst) {
             panic!("Event queue is already running.");
         }
@@ -128,7 +128,7 @@ impl EventQueue {
         }
     }
 
-    pub fn register_handler(&mut self, event_handler: Box<dyn EventHandler + Send>) {
+    pub fn register_handler(&self, event_handler: Box<dyn EventHandler + Send>) {
         let mut handlers = self.handlers.lock().unwrap();
         handlers.push(event_handler);
     }

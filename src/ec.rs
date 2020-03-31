@@ -2,20 +2,20 @@ use crate::event::*;
 use crate::node::{Node, NodeInfo};
 use crate::protos::message::{EcNewEpoch_, Message, Message_Type, ProcessId, EcNack_};
 use log::{info, trace};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 const N: u32 = 10;
 
 pub struct EpochChange {
     node_info: Arc<NodeInfo>,
-    event_queue: Arc<Mutex<EventQueue>>,
+    event_queue: Arc<EventQueue>,
     last_ts: u32,
     ts: u32,
     trusted: Option<Node>,
 }
 
 impl EpochChange {
-    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<Mutex<EventQueue>>) -> Self {
+    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<EventQueue>) -> Self {
         let id = node_info.current_node.id as u32;
         EpochChange {
             node_info,
@@ -59,16 +59,13 @@ impl EpochChange {
 
         let internal_msg = InternalMessage::BebBroadcast(message);
         let event_data = EventData::Internal(internal_msg);
-
-        let queue = self.event_queue.lock().unwrap();
-        queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 
     fn start_epoch(&mut self, node: &Node, ts: u32) {
         let message = InternalMessage::EcStartEpoch(node.clone(), ts);
         let event_data = EventData::Internal(message);
-        let queue = self.event_queue.lock().unwrap();
-        queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 
     fn pl_send_nack(&self, node: &Node) {
@@ -83,8 +80,7 @@ impl EpochChange {
 
         let internal_message = InternalMessage::PlSend(current_node.clone(), node.clone(), msg);
         let event_data = EventData::Internal(internal_message);
-        let queue = self.event_queue.lock().unwrap();
-        queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 
     fn on_nack(&mut self) {

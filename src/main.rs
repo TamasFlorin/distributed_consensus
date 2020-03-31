@@ -69,7 +69,7 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     info!("Listening on Node: {}", node_info.current_node);
     let node_path = format!("{0}_eld_state.json", node_info.current_node.name);
     let local_storage = storage::LocalStorage::new(node_path);
-    let event_queue = std::sync::Arc::new(std::sync::Mutex::new(EventQueue::default()));
+    let event_queue = std::sync::Arc::new(EventQueue::create_and_run());
     let perfect_link = perfect_link::PerfectLink::new(event_queue.clone());
     let mut eld =
         eld::EventualLeaderDetector::new(node_info.clone(), event_queue.clone(), local_storage);
@@ -77,15 +77,10 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     let ec = ec::EpochChange::new(node_info.clone(), event_queue.clone());
 
     eld.init();
-
-    {
-        let mut queue = event_queue.lock().unwrap();
-        queue.register_handler(Box::new(perfect_link));
-        queue.register_handler(Box::new(eld));
-        queue.register_handler(Box::new(beb));
-        queue.register_handler(Box::new(ec));
-        queue.run();
-    }
+    event_queue.register_handler(Box::new(perfect_link));
+    event_queue.register_handler(Box::new(eld));
+    event_queue.register_handler(Box::new(beb));
+    event_queue.register_handler(Box::new(ec));
 
     let address: SocketAddr = node_info.current_node.clone().into();
     let listener = TcpListener::bind(address)?;
@@ -98,7 +93,7 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
                 match message {
                     Ok(msg) => {
                         let message = EventData::External(msg);
-                        event_queue.lock().unwrap().push(message);
+                        event_queue.push(message);
                     }
                     Err(e) => {
                         warn!("Failed to parse message with error: {}", e);

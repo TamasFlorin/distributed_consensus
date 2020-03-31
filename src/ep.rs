@@ -1,7 +1,7 @@
 use crate::event::*;
 use crate::node::{NodeInfo, Node, NodeId};
 use crate::protos::message;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use serde::{Serialize, Deserialize};
 use std::collections::BTreeMap;
 
@@ -29,7 +29,7 @@ impl EpochConsensusState {
 
 pub struct EpochConsensus {
     node_info: Arc<NodeInfo>,
-    event_queue: Arc<Mutex<EventQueue>>,
+    event_queue: Arc<EventQueue>,
     temporary_value: ValueType,
     value_timestamp: u32,
     value: ValueType,
@@ -38,7 +38,7 @@ pub struct EpochConsensus {
 }
 
 impl EpochConsensus {
-    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<Mutex<EventQueue>>) -> Self {
+    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<EventQueue>) -> Self {
         EpochConsensus {
             node_info,
             event_queue,
@@ -57,7 +57,7 @@ impl EpochConsensus {
     }
 
     /// upon event ⟨ beb, Deliver | ℓ, [READ] ⟩ do
-    fn beb_deliver_read(&self, from: &Node, msg: &message::Message) {
+    fn beb_deliver_read(&self, from: &Node) {
         self.pl_send_state(from);
     }
 
@@ -87,16 +87,14 @@ impl EpochConsensus {
         let value = msg.get_value();
         let internal_message = InternalMessage::EpDecide(value as ValueType);
         let event_data = EventData::Internal(internal_message);
-        let event_queue = self.event_queue.lock().unwrap();
-        event_queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 
     /// upon event ⟨ ep, Abort ⟩ do
     fn abort(&self) {
         let internal_message = InternalMessage::EpAborted(self.value_timestamp, self.value);
         let event_data = EventData::Internal(internal_message);
-        let event_queue = self.event_queue.lock().unwrap();
-        event_queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 
     fn pl_send_accept(&self, receiver: &Node) {
@@ -108,8 +106,7 @@ impl EpochConsensus {
         message.set_sender(current_node.into());
         let internal_message = InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
         let event_data = EventData::Internal(internal_message);
-        let event_queue = self.event_queue.lock().unwrap();
-        event_queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 
     fn pl_send_state(&self, receiver: &Node) {
@@ -123,8 +120,7 @@ impl EpochConsensus {
         message.set_sender(current_node.into());
         let internal_message = InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
         let event_data = EventData::Internal(internal_message);
-        let event_queue = self.event_queue.lock().unwrap();
-        event_queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 
     fn beb_broadcast_read(&self) {
@@ -139,8 +135,7 @@ impl EpochConsensus {
 
         let internal_message = InternalMessage::BebBroadcast(message);
         let event_data = EventData::Internal(internal_message);
-        let queue = self.event_queue.lock().unwrap();
-        queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 }
 
@@ -150,7 +145,7 @@ impl EventHandler for EpochConsensus {
             EventData::Internal(internal_msg) => match internal_msg {
                 InternalMessage::EpPropose(value) => self.ep_propose(value.clone()),
                 InternalMessage::BebDeliver(from ,msg) => match msg {
-                    message::Message{field_type: message::Message_Type::EP_READ, ..} => self.beb_deliver_read(from, msg),
+                    message::Message{field_type: message::Message_Type::EP_READ, ..} => self.beb_deliver_read(from),
                     message::Message{field_type: message::Message_Type::EP_WRITE, ..} => self.beb_deliver_write(from, msg.get_epWrite()),
                     message::Message{field_type: message::Message_Type::EP_DECIDED, ..} => self.beb_deliver_decided(msg.get_epDecided()),
                     _ => (),

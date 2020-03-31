@@ -4,14 +4,14 @@ use crate::protos::message;
 use protobuf::Message;
 use std::error::Error;
 use std::net::{SocketAddr, TcpStream};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 pub struct PerfectLink {
-    event_queue: Arc<Mutex<EventQueue>>,
+    event_queue: Arc<EventQueue>,
 }
 
 impl PerfectLink {
-    pub fn new(event_queue: Arc<Mutex<EventQueue>>) -> Self {
+    pub fn new(event_queue: Arc<EventQueue>) -> Self {
         PerfectLink { event_queue }
     }
 
@@ -31,8 +31,7 @@ impl PerfectLink {
         let from: Node = msg.get_sender().into();
         let internal_message = InternalMessage::PlDeliver(from, msg.clone());
         let event_data = EventData::Internal(internal_message);
-        let event_queue = self.event_queue.lock().unwrap();
-        event_queue.push(event_data);
+        self.event_queue.push(event_data);
     }
 }
 
