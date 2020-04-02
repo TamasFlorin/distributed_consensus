@@ -56,7 +56,7 @@ pub struct EventualLeaderDetector<S: Storage<EldState>> {
     event_queue: Arc<EventQueue>,
     delay: chrono::Duration,
     timer_guard: Option<Guard>,
-    timer: Timer,
+    timer: Mutex<Timer>,
     leader: Option<Node>,
     storage: Mutex<S>,
 }
@@ -70,7 +70,7 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
             event_queue,
             delay: chrono::Duration::milliseconds(DELTA),
             timer_guard: None,
-            timer: Timer::new(),
+            timer: Mutex::new(Timer::new()),
             leader: None,
             storage: Mutex::new(storage),
         }
@@ -124,12 +124,15 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         let event_queue = Arc::clone(&self.event_queue);
 
         // TODO: add support for chaning the delay here...
-        self.timer_guard = Some(self.timer.schedule_with_delay(self.delay, move || {
-            // we just need to send the timeout message to ourselvles.
-            let message = InternalMessage::EldTimeout;
-            let event_data = EventData::Internal(message);
-            event_queue.push(event_data);
-        }));
+        self.timer_guard = Some(self.timer.lock().unwrap().schedule_with_delay(
+            self.delay,
+            move || {
+                // we just need to send the timeout message to ourselvles.
+                let message = InternalMessage::EldTimeout;
+                let event_data = EventData::Internal(message);
+                event_queue.push(event_data);
+            },
+        ));
     }
 
     fn timeout(&mut self) {

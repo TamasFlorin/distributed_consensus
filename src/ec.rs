@@ -11,13 +11,17 @@ pub struct EpochChange {
     event_queue: Arc<EventQueue>,
     last_ts: u32,
     ts: u32,
-    trusted: Option<Node>,
+    pub trusted: Node, // needs to be accessible by UniformConsensus
 }
 
 impl EpochChange {
     pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<EventQueue>) -> Self {
         let id = node_info.current_node.id as u32;
-        let initial_trusted = node_info.nodes.first().cloned();
+        let initial_trusted = node_info
+            .nodes
+            .first()
+            .cloned()
+            .expect("Node information must have at least one node.");
 
         EpochChange {
             node_info,
@@ -29,7 +33,7 @@ impl EpochChange {
     }
 
     fn eld_trust(&mut self, node: &Node) {
-        self.trusted.replace(node.clone());
+        self.trusted = node.clone();
 
         if node == &self.node_info.current_node {
             self.ts += N;
@@ -38,8 +42,7 @@ impl EpochChange {
     }
 
     fn beb_deliver(&mut self, node: &Node, new_ts: u32) {
-        let trusted = self.trusted.as_ref().unwrap();
-        if node == trusted && new_ts > self.last_ts {
+        if node == &self.trusted && new_ts > self.last_ts {
             self.last_ts = new_ts;
             self.start_epoch(node, new_ts);
         } else {
@@ -86,8 +89,7 @@ impl EpochChange {
     }
 
     fn on_nack(&mut self) {
-        let trusted = self.trusted.as_ref().unwrap();
-        if trusted == &self.node_info.current_node {
+        if &self.trusted == &self.node_info.current_node {
             self.ts += N;
             self.new_epoch(self.ts);
         }

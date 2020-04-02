@@ -71,17 +71,28 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     let node_path = format!("{0}_eld_state.json", node_info.current_node.name);
     let local_storage = storage::LocalStorage::new(node_path);
     let event_queue = std::sync::Arc::new(EventQueue::create_and_run());
-    let perfect_link = perfect_link::PerfectLink::new(event_queue.clone());
+    let pl = perfect_link::PerfectLink::new(event_queue.clone());
     let mut eld =
         eld::EventualLeaderDetector::new(node_info.clone(), event_queue.clone(), local_storage);
     let beb = beb::BestEffortBroadcast::new(node_info.clone(), event_queue.clone());
     let ec = ec::EpochChange::new(node_info.clone(), event_queue.clone());
+    let ep = ep::EpochConsensus::new(
+        node_info.clone(),
+        event_queue.clone(),
+        ep::EpochConsensusState::new(0, 0),
+        ec.trusted.clone(),
+    );
 
+    let uc = uc::UniformConsensus::new(event_queue.clone(), node_info.clone(), ec.trusted.clone());
     eld.init();
-    event_queue.register_handler(Box::new(perfect_link));
+    uc.init();
+
+    event_queue.register_handler(Box::new(pl));
     event_queue.register_handler(Box::new(eld));
     event_queue.register_handler(Box::new(beb));
     event_queue.register_handler(Box::new(ec));
+    event_queue.register_handler(Box::new(ep));
+    event_queue.register_handler(Box::new(uc));
 
     let address: SocketAddr = node_info.current_node.clone().into();
     let listener = TcpListener::bind(address)?;

@@ -5,6 +5,7 @@ use protobuf::Message;
 use std::error::Error;
 use std::net::{SocketAddr, TcpStream};
 use std::sync::Arc;
+use log::trace;
 
 pub struct PerfectLink {
     event_queue: Arc<EventQueue>,
@@ -36,8 +37,9 @@ impl PerfectLink {
 }
 
 impl EventHandler for PerfectLink {
-    fn handle(&mut self, message: &EventData) {
-        match message {
+    fn handle(&mut self, event_data: &EventData) {
+        trace!("Handler summoned with event {:?}", event_data);
+        match event_data {
             EventData::External(msg) => {
                 self.deliver(msg);
             }

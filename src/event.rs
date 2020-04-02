@@ -1,7 +1,6 @@
 use crate::node::Node;
 use crate::protos::message::Message;
 use std::collections::VecDeque;
-use std::ops::DerefMut;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex};
 use std::thread;
@@ -18,18 +17,18 @@ pub enum InternalMessage {
     EldTrust(Node),
     BebBroadcast(Message),
     BebDeliver(Node, Message),
-    EcNack(Node, Node), // (from, to)
-    EcStartEpoch(Node, u32),
+    EcNack(Node, Node),      // (from, to)
+    EcStartEpoch(Node, u32), //(leader, epoch_timestamp)
     EcInitialLeader(Node),
-    EpPropose(ValueType), //(value)
+    EpPropose(u32, ValueType), // (timestamp, value)
     EpDecided(ValueType),
-    EpDecide(ValueType),
+    EpDecide(u32, ValueType),
     EpStateCountReached,
     EpAcceptedCountReached,
-    EpAbort,
+    EpAbort(u32), // timestamp
     EpAborted(u32, ValueType),
-    EpReset(u32, ValueType),
     UcPropose(ValueType),
+    UcDecide(ValueType),
     PlSend(Node, Node, Message), //(from, to, msg)
     PlDeliver(Node, Message),    // (from, msg)
 }
@@ -41,7 +40,8 @@ pub enum EventData {
 }
 
 pub struct EventQueue {
-    handlers: Arc<Mutex<Vec<Box<dyn EventHandler + Send>>>>,
+    handlers: Arc<Mutex<Vec<Mutex<Box<dyn EventHandler + Send>>>>>,
+    new_handlers: Arc<Mutex<Vec<Mutex<Box<dyn EventHandler + Send>>>>>,
     queue: Arc<Mutex<VecDeque<EventData>>>,
     cvar: Arc<Condvar>,
     is_running: Arc<AtomicBool>,
@@ -53,6 +53,7 @@ impl EventQueue {
     pub fn create_and_run() -> Self {
         let mut event_queue = EventQueue {
             handlers: Arc::new(Mutex::new(Vec::new())),
+            new_handlers: Arc::new(Mutex::new(Vec::new())),
             queue: Arc::new(Mutex::new(VecDeque::new())),
             cvar: Arc::new(Condvar::default()),
             is_running: Arc::new(AtomicBool::new(false)),
@@ -81,6 +82,7 @@ impl EventQueue {
         let queue = Arc::clone(&self.queue);
         let is_running = Arc::clone(&self.is_running);
         let element_added = Arc::clone(&self.element_added);
+        let new_event_handlers = self.new_handlers.clone();
         self.handle = Mutex::new(Some(thread::spawn(move || {
             is_running.store(true, Ordering::SeqCst);
 
@@ -89,6 +91,16 @@ impl EventQueue {
                 let mut queue_items: VecDeque<EventData> = q.iter().cloned().collect();
                 q.clear();
                 std::mem::drop(q);
+               
+                // handle the case where a certain event handler's 'handle' method was called
+                // and it uses the 'EventQueue' to call 'register_handler'
+                let mut current_handlers = handlers.lock().unwrap();
+                {
+                    let mut event_handlers = new_event_handlers.lock().unwrap();
+                    while let Some(handler) = event_handlers.pop() {
+                        current_handlers.push(handler);
+                    }
+                }
 
                 // We need to parse a copy of the original items since our event handlers
                 // might in turn use the event queue to send other messages.
@@ -98,10 +110,9 @@ impl EventQueue {
 
                     // we are sending the message to everyone for now...
                     // they will need to filter it themselvles.
-                    let mut guard = handlers.lock().unwrap();
-                    let handlers = guard.deref_mut();
-                    for event_handler in handlers.iter_mut() {
-                        event_handler.handle(&first);
+                    for event_handler in current_handlers.iter() {
+                        let mut event_handler_guard = event_handler.lock().unwrap();
+                        event_handler_guard.handle(&first);
                     }
                 }
 
@@ -134,8 +145,8 @@ impl EventQueue {
     }
 
     pub fn register_handler(&self, event_handler: Box<dyn EventHandler + Send>) {
-        let mut handlers = self.handlers.lock().unwrap();
-        handlers.push(event_handler);
+        let mut handlers = self.new_handlers.lock().unwrap();
+        handlers.push(Mutex::new(event_handler));
     }
 }
 
