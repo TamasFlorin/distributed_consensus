@@ -42,15 +42,14 @@ impl EventHandler for BestEffortBroadcast {
     fn handle(&mut self, event_data: &EventData) {
         trace!("Handler summoned with event {:?}", event_data);
 
-        match event_data {
-            EventData::Internal(data) => match data {
+        if let EventData::Internal(data) = event_data {
+            match data {
                 InternalMessage::BebBroadcast(msg) => self.broadcast(msg),
                 InternalMessage::PlDeliver(sender, msg) => {
                     self.deliver(&sender, msg);
                 }
                 _ => (),
-            },
-            _ => (),
-        };
+            }
+        }
     }
 }

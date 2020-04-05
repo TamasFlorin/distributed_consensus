@@ -1,10 +1,10 @@
 use crate::event::*;
 use crate::node::{Node, NodeId, NodeInfo};
 use crate::protos::message;
+use log::trace;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::sync::Arc;
-use log::trace;
 
 /// Interface the of epoch consensus
 /// Module:
@@ -106,13 +106,10 @@ impl EpochConsensus {
     fn ep_state_count_reached(&mut self) {
         if self.node_info.current_node == self.leader {
             let highest_timestamp = self.states.iter().max_by(|(_, x), (_, y)| x.cmp(y));
-            match highest_timestamp {
-                Some((_, state)) => self.temporary_value = state.value,
-                None => (),
+            if let Some((_, state)) = highest_timestamp {
+                self.temporary_value = state.value;
             }
-
             self.states.clear();
-
             self.beb_broadcast_write(self.temporary_value);
         }
     }
@@ -127,7 +124,7 @@ impl EpochConsensus {
     /// upon event ⟨ pl, Deliver | q, [ACCEPT] ⟩ do
     fn pl_deliver_accept(&mut self) {
         if self.node_info.current_node == self.leader {
-            self.accepted = self.accepted + 1;
+            self.accepted += 1;
 
             if self.accepted as usize > self.node_info.nodes.len() {
                 let accepted_message = InternalMessage::EpAcceptedCountReached;

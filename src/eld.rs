@@ -170,12 +170,16 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
     fn send_heartbeat(&self, node: &Node) {
         let current_node = &self.node_info.current_node;
         let process: ProcessId = current_node.into();
+        
         let mut heartbeat = EldHeartbeat_::new();
         heartbeat.set_epoch(self.epoch as i32);
-        heartbeat.set_from(process);
+        heartbeat.set_from(process.clone());
+        
         let mut message = Message::new();
         message.set_eldHeartbeat(heartbeat);
         message.set_field_type(Message_Type::ELD_HEARTBEAT);
+        message.set_sender(process);
+
         let from = self.node_info.current_node.clone();
         let internal_msg = InternalMessage::PlSend(from, node.clone(), message);
         let event_data = EventData::Internal(internal_msg);
@@ -224,52 +228,53 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         let min = candidates
             .iter()
             .min()
-            .expect("We should have at least one candidate.");
+            .expect("There should be at least one candidate.");
+
         let min_by_epoch: Vec<Candidate> = candidates
             .iter()
             .filter(|c| c.epoch == min.epoch)
             .cloned()
             .collect();
-        let max_by_rank = min_by_epoch.iter().max().unwrap().clone();
-        max_by_rank
+
+        let max_by_rank = min_by_epoch
+            .iter()
+            .max()
+            .expect("There should be at least one candidate.");
+        max_by_rank.clone()
     }
 
     /// the rank of a process is a unique index
     fn maxrank(&self) -> &Node {
-        let max_rank_node = self
-            .node_info
+        self.node_info
             .nodes
             .iter()
             .max()
-            .expect("We should have at least one node.");
-        max_rank_node
+            .expect("There should be at least one node.")
     }
 }
 
 impl<S: Storage<EldState>> EventHandler for EventualLeaderDetector<S> {
     fn handle(&mut self, event_data: &EventData) {
         trace!("Handler summoned with event {:?}", event_data);
-
-        match event_data {
-            EventData::Internal(msg) => match msg {
+        if let EventData::Internal(msg) = event_data {
+            match msg {
                 InternalMessage::EldTimeout => {
                     self.timeout();
                 }
                 InternalMessage::EldTrust(leader) => {
                     info!("A new leader has been set: {:?}", leader)
                 }
-                InternalMessage::PlDeliver(_, msg) => match msg {
-                    Message {
+                InternalMessage::PlDeliver(_, msg) => {
+                    if let Message {
                         field_type: Message_Type::ELD_HEARTBEAT,
                         ..
-                    } => {
+                    } = msg
+                    {
                         self.recv_heartbeat(msg.get_eldHeartbeat());
                     }
-                    _ => (),
-                },
+                }
                 _ => (),
-            },
-            _ => (),
+            }
         }
     }
 }

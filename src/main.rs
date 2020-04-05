@@ -17,7 +17,7 @@ use serde_json;
 use std::fs;
 use std::path::Path;
 pub mod perfect_link;
-use log::{info, warn};
+use log::{info, trace, warn};
 pub mod beb;
 pub mod ec;
 pub mod ep;
@@ -71,7 +71,7 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     let node_path = format!("{0}_eld_state.json", node_info.current_node.name);
     let local_storage = storage::LocalStorage::new(node_path);
     let event_queue = std::sync::Arc::new(EventQueue::create_and_run());
-    let pl = perfect_link::PerfectLink::new(event_queue.clone());
+    let pl = perfect_link::PerfectLink::new(event_queue.clone(), node_info.clone());
     let mut eld =
         eld::EventualLeaderDetector::new(node_info.clone(), event_queue.clone(), local_storage);
     let beb = beb::BestEffortBroadcast::new(node_info.clone(), event_queue.clone());
@@ -86,7 +86,6 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     let uc = uc::UniformConsensus::new(event_queue.clone(), node_info.clone(), ec.trusted.clone());
     eld.init();
     uc.init();
-
     event_queue.register_handler(Box::new(pl));
     event_queue.register_handler(Box::new(eld));
     event_queue.register_handler(Box::new(beb));
@@ -94,12 +93,27 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
     event_queue.register_handler(Box::new(ep));
     event_queue.register_handler(Box::new(uc));
 
+    let handle = std::thread::spawn(move || {
+        // TODO: handle result
+        let _ = listen_for_clients(event_queue, node_info);
+    });
+
+    // TODO: Handle result
+    let _join_result = handle.join();
+
+    Ok(())
+}
+
+fn listen_for_clients(
+    event_queue: std::sync::Arc<EventQueue>,
+    node_info: std::sync::Arc<NodeInfo>,
+) -> Result<(), Box<dyn Error>> {
     let address: SocketAddr = node_info.current_node.clone().into();
     let listener = TcpListener::bind(address)?;
     loop {
         match listener.accept() {
             Ok((mut stream, client)) => {
-                info!("Client connected: {}", client);
+                trace!("Client connected: {}", client);
                 let message = parse_from_reader::<Message>(&mut stream);
 
                 match message {

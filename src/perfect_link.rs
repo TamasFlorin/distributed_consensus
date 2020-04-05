@@ -1,19 +1,20 @@
 use crate::event::*;
-use crate::node::Node;
+use crate::node::{Node, NodeInfo, NodeId};
 use crate::protos::message;
+use log::trace;
 use protobuf::Message;
 use std::error::Error;
 use std::net::{SocketAddr, TcpStream};
 use std::sync::Arc;
-use log::trace;
 
 pub struct PerfectLink {
     event_queue: Arc<EventQueue>,
+    node_info: Arc<NodeInfo>
 }
 
 impl PerfectLink {
-    pub fn new(event_queue: Arc<EventQueue>) -> Self {
-        PerfectLink { event_queue }
+    pub fn new(event_queue: Arc<EventQueue>, node_info: Arc<NodeInfo>) -> Self {
+        PerfectLink { event_queue, node_info }
     }
 
     fn send(
@@ -29,8 +30,10 @@ impl PerfectLink {
     }
 
     fn deliver(&self, msg: &message::Message) {
-        let from: Node = msg.get_sender().into();
-        let internal_message = InternalMessage::PlDeliver(from, msg.clone());
+        let sender = msg.sender.as_ref().clone().expect("Sender should be set on a message.");
+        let from = self.node_info.nodes.iter().find(|n| n.id == sender.index as NodeId)
+        .expect("Message should be delivered from a known node.");
+        let internal_message = InternalMessage::PlDeliver(from.clone(), msg.clone());
         let event_data = EventData::Internal(internal_message);
         self.event_queue.push(event_data);
     }
@@ -44,12 +47,9 @@ impl EventHandler for PerfectLink {
                 self.deliver(msg);
             }
             EventData::Internal(msg) => {
-                match msg {
-                    InternalMessage::PlSend(from, dest, data) => {
-                        let _ = self.send(from, dest, data);
-                    }
-                    _ => (),
-                };
+                if let InternalMessage::PlSend(from, dest, data) = msg {
+                    let _ = self.send(from, dest, data);
+                }
             }
         };
     }

@@ -39,9 +39,13 @@ pub enum EventData {
     External(Message),
 }
 
+type EventHandlerType = Box<dyn EventHandler + Send>;
+type EventHandlerCollection = Vec<Mutex<EventHandlerType>>;
+type SafeEventHandlerCollection = Mutex<EventHandlerCollection>;
+
 pub struct EventQueue {
-    handlers: Arc<Mutex<Vec<Mutex<Box<dyn EventHandler + Send>>>>>,
-    new_handlers: Arc<Mutex<Vec<Mutex<Box<dyn EventHandler + Send>>>>>,
+    handlers: Arc<SafeEventHandlerCollection>,
+    new_handlers: Arc<SafeEventHandlerCollection>,
     queue: Arc<Mutex<VecDeque<EventData>>>,
     cvar: Arc<Condvar>,
     is_running: Arc<AtomicBool>,
@@ -51,6 +55,8 @@ pub struct EventQueue {
 
 impl EventQueue {
     pub fn create_and_run() -> Self {
+        // We need the mutex for the condition variable.
+        #[allow(clippy::mutex_atomic)]
         let mut event_queue = EventQueue {
             handlers: Arc::new(Mutex::new(Vec::new())),
             new_handlers: Arc::new(Mutex::new(Vec::new())),
@@ -91,7 +97,7 @@ impl EventQueue {
                 let mut queue_items: VecDeque<EventData> = q.iter().cloned().collect();
                 q.clear();
                 std::mem::drop(q);
-               
+
                 // handle the case where a certain event handler's 'handle' method was called
                 // and it uses the 'EventQueue' to call 'register_handler'
                 let mut current_handlers = handlers.lock().unwrap();

@@ -1,7 +1,7 @@
 use crate::event::*;
 use crate::node::{Node, NodeInfo};
 use crate::protos::message::{EcNack_, EcNewEpoch_, Message, Message_Type, ProcessId};
-use log::{info, trace};
+use log::trace;
 use std::sync::Arc;
 
 const N: u32 = 10;
@@ -89,7 +89,7 @@ impl EpochChange {
     }
 
     fn on_nack(&mut self) {
-        if &self.trusted == &self.node_info.current_node {
+        if self.trusted == self.node_info.current_node {
             self.ts += N;
             self.new_epoch(self.ts);
         }
@@ -100,36 +100,30 @@ impl EventHandler for EpochChange {
     fn handle(&mut self, event_data: &EventData) {
         trace!("Handler summoned with event {:?}", event_data);
 
-        match event_data {
-            EventData::Internal(internal_data) => {
-                match internal_data {
-                    InternalMessage::EldTrust(trusted_node) => self.eld_trust(trusted_node),
-                    InternalMessage::BebDeliver(from, msg) => {
-                        match msg {
-                            // TODO: change proto to use snake case.
-                            #![allow(non_snake_case)]
-                            Message{field_type: Message_Type::EC_NEW_EPOCH, ecNewEpoch, ..} => {
-                                info!("EC_NEW_EPOCH");
-                                let new_ts = ecNewEpoch.as_ref().expect("We should have a valid epoch object.").get_timestamp();
-                                self.beb_deliver(from, new_ts as u32);
-                            }
-                            _ => (),
-                        }
+        if let EventData::Internal(internal_data) = event_data {
+            match internal_data {
+                InternalMessage::EldTrust(trusted_node) => self.eld_trust(trusted_node),
+                InternalMessage::BebDeliver(from, msg) => {
+                    if let Message {
+                        field_type: Message_Type::EC_NEW_EPOCH,
+                        ..
+                    } = msg
+                    {
+                        let new_ts = msg.get_ecNewEpoch().get_timestamp();
+                        self.beb_deliver(from, new_ts as u32);
                     }
-                    InternalMessage::PlDeliver(_, msg) => match msg {
-                        Message {
-                            field_type: Message_Type::EC_NACK,
-                            ..
-                        } => {
-                            info!("GOT ACK!!");
-                            self.on_nack();
-                        }
-                        _ => (),
-                    },
-                    _ => (),
                 }
+                InternalMessage::PlDeliver(_, msg) => {
+                    if let Message {
+                        field_type: Message_Type::EC_NACK,
+                        ..
+                    } = msg
+                    {
+                        self.on_nack();
+                    }
+                }
+                _ => (),
             }
-            _ => (),
-        }
+        };
     }
 }

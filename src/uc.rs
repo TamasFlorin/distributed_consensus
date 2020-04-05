@@ -2,8 +2,8 @@ use crate::ep;
 use crate::ep::EpochConsensusState;
 use crate::event::*;
 use crate::node::{Node, NodeInfo};
-use std::sync::Arc;
 use log::trace;
+use std::sync::Arc;
 
 pub struct UniformConsensusState {
     pub epoch_timestamp: u32,
@@ -80,7 +80,11 @@ impl UniformConsensus {
 
             // Initialize a new instance ep.ets of epoch consensus with timestamp ets, leader l, and state state;
             let state = EpochConsensusState::new(new_ts, new_value);
-            let leader = self.state.leader.clone().expect("We should have a leader at this point.");
+            let leader = self
+                .state
+                .leader
+                .clone()
+                .expect("We should have a leader at this point.");
             let ep = ep::EpochConsensus::new(
                 self.node_info.clone(),
                 self.event_queue.clone(),
@@ -109,7 +113,7 @@ impl UniformConsensus {
 
     /// upon event ⟨ ep.ts, Decide | v ⟩ such that ts = ets do
     fn ep_decide(&mut self, ts: u32, value: ValueType) {
-        if self.decided == false && self.state.epoch_timestamp == ts {
+        if !self.decided && self.state.epoch_timestamp == ts {
             self.decided = true;
             let decide_message = InternalMessage::UcDecide(value);
             let event_data = EventData::Internal(decide_message);
@@ -122,8 +126,8 @@ impl EventHandler for UniformConsensus {
     fn handle(&mut self, event_data: &EventData) {
         trace!("Handler summoned with event {:?}", event_data);
 
-        match event_data {
-            EventData::Internal(msg) => match msg {
+        if let EventData::Internal(msg) = event_data {
+            match msg {
                 InternalMessage::UcPropose(value) => self.uc_propose(value.clone()),
                 InternalMessage::EcStartEpoch(leader, new_timestamp) => {
                     self.ec_start_epoch(leader, *new_timestamp);
@@ -139,8 +143,7 @@ impl EventHandler for UniformConsensus {
                 }
                 InternalMessage::EpDecide(ts, value) => self.ep_decide(*ts, *value),
                 _ => (),
-            },
-            _ => (),
+            }
         }
     }
 }
