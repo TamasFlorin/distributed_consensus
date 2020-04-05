@@ -3,7 +3,7 @@ use crate::node::*;
 use crate::protos::message::*;
 use crate::storage::Storage;
 use chrono;
-use log::{info, trace};
+use log::trace;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -76,11 +76,13 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         }
     }
 
+    /// upon event ⟨ Ω, Init ⟩ do
     pub fn init(&mut self) {
         // recovery procedure completes the initialization
         self.recovery();
     }
 
+    /// upon event ⟨ Ω, Recovery ⟩ do
     pub fn recovery(&mut self) {
         // select the leader based on the maximum rank
         self.leader = Some(self.maxrank().clone());
@@ -99,42 +101,7 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         self.start_timer();
     }
 
-    fn update_epoch(&self) -> u32 {
-        let storage = self.storage.lock().unwrap();
-        match storage.read() {
-            Ok(state) => {
-                let new_epoch = state.epoch + 1;
-                let new_state = EldState::new(new_epoch);
-                storage
-                    .write(&new_state)
-                    .expect("Epoch should be updated on storage.");
-                new_epoch
-            }
-            Err(_) => {
-                let state = EldState::new(INITIAL_EPOCH);
-                storage
-                    .write(&state)
-                    .expect("Epoch should be updated on storage.");
-                INITIAL_EPOCH
-            }
-        }
-    }
-
-    fn start_timer(&mut self) {
-        let event_queue = Arc::clone(&self.event_queue);
-
-        // TODO: add support for chaning the delay here...
-        self.timer_guard = Some(self.timer.lock().unwrap().schedule_with_delay(
-            self.delay,
-            move || {
-                // we just need to send the timeout message to ourselvles.
-                let message = InternalMessage::EldTimeout;
-                let event_data = EventData::Internal(message);
-                event_queue.push(event_data);
-            },
-        ));
-    }
-
+    /// upon event ⟨ Timeout ⟩ do
     fn timeout(&mut self) {
         let new_leader = self.select();
         let current_leader = self
@@ -167,25 +134,28 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         self.start_timer();
     }
 
-    fn send_heartbeat(&self, node: &Node) {
-        let current_node = &self.node_info.current_node;
-        let process: ProcessId = current_node.into();
-        
-        let mut heartbeat = EldHeartbeat_::new();
-        heartbeat.set_epoch(self.epoch as i32);
-        heartbeat.set_from(process.clone());
-        
-        let mut message = Message::new();
-        message.set_eldHeartbeat(heartbeat);
-        message.set_field_type(Message_Type::ELD_HEARTBEAT);
-        message.set_sender(process);
-
-        let from = self.node_info.current_node.clone();
-        let internal_msg = InternalMessage::PlSend(from, node.clone(), message);
-        let event_data = EventData::Internal(internal_msg);
-        self.event_queue.push(event_data);
+    fn update_epoch(&self) -> u32 {
+        let storage = self.storage.lock().unwrap();
+        match storage.read() {
+            Ok(state) => {
+                let new_epoch = state.epoch + 1;
+                let new_state = EldState::new(new_epoch);
+                storage
+                    .write(&new_state)
+                    .expect("Epoch should be updated on storage.");
+                new_epoch
+            }
+            Err(_) => {
+                let state = EldState::new(INITIAL_EPOCH);
+                storage
+                    .write(&state)
+                    .expect("Epoch should be updated on storage.");
+                INITIAL_EPOCH
+            }
+        }
     }
 
+    /// upon event ⟨ fll, Deliver | q, [HEARTBEAT, ep] ⟩ do
     fn recv_heartbeat(&self, heartbeat: &EldHeartbeat_) {
         let process = heartbeat.get_from();
         let index = process.get_index() as u16;
@@ -208,6 +178,39 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
             Some(value) => value.epoch = epoch,
             _ => candidates.push(Candidate::new(node.clone(), epoch)),
         }
+    }
+
+    fn start_timer(&mut self) {
+        let event_queue = Arc::clone(&self.event_queue);
+
+        self.timer_guard = Some(self.timer.lock().unwrap().schedule_with_delay(
+            self.delay,
+            move || {
+                // we just need to send the timeout message to ourselvles.
+                let message = InternalMessage::EldTimeout;
+                let event_data = EventData::Internal(message);
+                event_queue.push(event_data);
+            },
+        ));
+    }
+
+    fn send_heartbeat(&self, node: &Node) {
+        let current_node = &self.node_info.current_node;
+        let process: ProcessId = current_node.into();
+
+        let mut heartbeat = EldHeartbeat_::new();
+        heartbeat.set_epoch(self.epoch as i32);
+        heartbeat.set_from(process.clone());
+
+        let mut message = Message::new();
+        message.set_eldHeartbeat(heartbeat);
+        message.set_field_type(Message_Type::ELD_HEARTBEAT);
+        message.set_sender(process);
+
+        let from = self.node_info.current_node.clone();
+        let internal_msg = InternalMessage::PlSend(from, node.clone(), message);
+        let event_data = EventData::Internal(internal_msg);
+        self.event_queue.push(event_data);
     }
 
     fn trust(&self, leader: &Node) {
@@ -243,7 +246,8 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
         max_by_rank.clone()
     }
 
-    /// the rank of a process is a unique index
+    /// the rank of a process is a unique index that is given to the node
+    /// when it is created.
     fn maxrank(&self) -> &Node {
         self.node_info
             .nodes
@@ -262,7 +266,7 @@ impl<S: Storage<EldState>> EventHandler for EventualLeaderDetector<S> {
                     self.timeout();
                 }
                 InternalMessage::EldTrust(leader) => {
-                    info!("A new leader has been set: {:?}", leader)
+                    trace!("A new leader has been set: {:?}", leader)
                 }
                 InternalMessage::PlDeliver(_, msg) => {
                     if let Message {

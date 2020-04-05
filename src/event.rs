@@ -26,7 +26,7 @@ pub enum InternalMessage {
     EpStateCountReached,
     EpAcceptedCountReached,
     EpAbort(u32), // timestamp
-    EpAborted(u32, ValueType),
+    EpAborted(u32, u32, ValueType), // (epoch_ts, value_ts, value)
     UcPropose(ValueType),
     UcDecide(ValueType),
     PlSend(Node, Node, Message), //(from, to, msg)

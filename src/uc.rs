@@ -69,8 +69,8 @@ impl UniformConsensus {
     }
 
     /// upon event ⟨ ep.ts, Aborted | state ⟩ such that ts = ets do
-    fn ep_aborted(&mut self, new_ts: u32, new_value: ValueType) {
-        if self.state.epoch_timestamp == new_ts {
+    fn ep_aborted(&mut self, epoch_ts: u32, ts: u32, value: ValueType) {
+        if self.state.epoch_timestamp == epoch_ts {
             // (ets, l) := (newts, newl);
             self.state.epoch_timestamp = self.new_state.epoch_timestamp;
             self.state.leader = self.new_state.leader.clone();
@@ -79,17 +79,19 @@ impl UniformConsensus {
             self.proposed = false;
 
             // Initialize a new instance ep.ets of epoch consensus with timestamp ets, leader l, and state state;
-            let state = EpochConsensusState::new(new_ts, new_value);
+            let state = EpochConsensusState::new(ts, value);
             let leader = self
                 .state
                 .leader
                 .clone()
                 .expect("We should have a leader at this point.");
+            
             let ep = ep::EpochConsensus::new(
                 self.node_info.clone(),
                 self.event_queue.clone(),
                 state,
                 leader,
+                self.state.epoch_timestamp,
             );
             self.event_queue.register_handler(Box::new(ep));
         }
@@ -135,8 +137,8 @@ impl EventHandler for UniformConsensus {
                     // we need to call this here since this is the point where the value changes
                     self.change_proposed();
                 }
-                InternalMessage::EpAborted(ts, value) => {
-                    self.ep_aborted(*ts, *value);
+                InternalMessage::EpAborted(e_ts, ts, value) => {
+                    self.ep_aborted(*e_ts, *ts, *value);
 
                     // we need to call this here since this is where the current leader might change.
                     self.change_proposed();

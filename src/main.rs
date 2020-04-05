@@ -81,6 +81,7 @@ fn run(node_info: std::sync::Arc<NodeInfo>) -> Result<(), Box<dyn Error>> {
         event_queue.clone(),
         ep::EpochConsensusState::new(0, 0),
         ec.trusted.clone(),
+        0,
     );
 
     let uc = uc::UniformConsensus::new(event_queue.clone(), node_info.clone(), ec.trusted.clone());

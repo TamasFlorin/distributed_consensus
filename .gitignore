@@ -11,3 +11,6 @@ Cargo.lock
 
 # ignore node configurations
 *.json
+
+# ignore macos specific item
+.DS_Store

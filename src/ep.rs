@@ -52,6 +52,7 @@ pub struct EpochConsensus {
     state: EpochConsensusState,
     aborted: bool,
     leader: Node, // TOOD: use this to check if we have to do anything (probably)
+    epoch_ts: u32,
 }
 
 impl EpochConsensus {
@@ -60,6 +61,7 @@ impl EpochConsensus {
         event_queue: Arc<EventQueue>,
         initial_state: EpochConsensusState,
         leader: Node,
+        epoch_ts: u32,
     ) -> Self {
         EpochConsensus {
             node_info,
@@ -70,23 +72,26 @@ impl EpochConsensus {
             state: initial_state,
             aborted: false,
             leader,
+            epoch_ts,
         }
     }
 
     /// upon event ⟨ ep, Propose | v ⟩ do
+    /// only leader l.
     fn ep_propose(&mut self, time_stamp: u32, value: ValueType) {
-        if self.node_info.current_node == self.leader && self.state.value_timestamp == time_stamp {
+        if self.epoch_ts == time_stamp && self.node_info.current_node == self.leader {
             self.temporary_value = value;
             self.beb_broadcast_read();
         }
     }
 
-    /// upon event ⟨ beb, Deliver | ℓ, [READ] ⟩ do
+    /// upon event ⟨ beb, Deliver | l, [READ] ⟩ do
     fn beb_deliver_read(&self, from: &Node) {
         self.pl_send_state(from);
     }
 
     /// upon event ⟨ pl, Deliver | q, [STATE, ts, v] ⟩ do
+    /// only leader l.
     fn pl_deliver_state(&mut self, from: &Node, msg: &message::EpState_) {
         if self.node_info.current_node == self.leader {
             let value_timestamp = msg.get_valueTimestamp() as u32;
@@ -102,7 +107,8 @@ impl EpochConsensus {
         }
     }
 
-    // upon #(states) > N/2 do
+    /// upon #(states) > N/2 do
+    /// only leader l.
     fn ep_state_count_reached(&mut self) {
         if self.node_info.current_node == self.leader {
             let highest_timestamp = self.states.iter().max_by(|(_, x), (_, y)| x.cmp(y));
@@ -117,6 +123,7 @@ impl EpochConsensus {
     /// upon event ⟨ beb, Deliver | ℓ, [WRITE, v] ⟩ do
     fn beb_deliver_write(&mut self, from: &Node, msg: &message::EpWrite_) {
         let value_from = msg.get_value() as ValueType;
+        self.state.value_timestamp = self.epoch_ts;
         self.state.value = value_from;
         self.pl_send_accept(from);
     }
@@ -136,37 +143,39 @@ impl EpochConsensus {
 
     /// upon accepted > N/2 do
     fn ep_accepted_count_reached(&mut self) {
-        self.accepted = 0;
+        if self.node_info.current_node == self.leader {
+            self.accepted = 0;
 
-        let current_node = &self.node_info.current_node;
+            let current_node = &self.node_info.current_node;
 
-        let mut decided_message = message::EpDecided_::new();
-        decided_message.set_value(self.temporary_value as i32);
+            let mut decided_message = message::EpDecided_::new();
+            decided_message.set_value(self.temporary_value as i32);
 
-        let mut msg = message::Message::new();
-        msg.set_epDecided(decided_message);
-        msg.set_sender(current_node.into());
+            let mut msg = message::Message::new();
+            msg.set_epDecided(decided_message);
+            msg.set_sender(current_node.into());
 
-        let broadcast_message = InternalMessage::BebBroadcast(msg);
-        let event_data = EventData::Internal(broadcast_message);
-        self.event_queue.push(event_data);
+            let broadcast_message = InternalMessage::BebBroadcast(msg);
+            let event_data = EventData::Internal(broadcast_message);
+            self.event_queue.push(event_data);
+        }
     }
 
     /// upon event ⟨ beb, Deliver | ℓ, [DECIDED, v] ⟩ do
     fn beb_deliver_decided(&self, msg: &message::EpDecided_) {
         let value = msg.get_value();
         let internal_message =
-            InternalMessage::EpDecide(self.state.value_timestamp, value as ValueType);
+            InternalMessage::EpDecide(self.epoch_ts, value as ValueType);
         let event_data = EventData::Internal(internal_message);
         self.event_queue.push(event_data);
     }
 
     /// upon event ⟨ ep, Abort ⟩ do
     fn abort(&mut self, ts: u32) {
-        if self.state.value_timestamp == ts {
+        if self.epoch_ts == ts {
             self.aborted = true;
             let internal_message =
-                InternalMessage::EpAborted(self.state.value_timestamp, self.state.value);
+                InternalMessage::EpAborted(self.epoch_ts, self.state.value_timestamp, self.state.value);
             let event_data = EventData::Internal(internal_message);
             self.event_queue.push(event_data);
         }
