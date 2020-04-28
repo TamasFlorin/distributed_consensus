@@ -8,7 +8,7 @@ use std::thread;
 pub type ValueType = i32;
 
 pub trait EventHandler {
-    fn handle(&mut self, message: &EventData);
+    fn handle(&mut self, event_data: &EventData);
 }
 
 #[derive(Debug, Clone)]
@@ -25,7 +25,7 @@ pub enum InternalMessage {
     EpDecide(u32, ValueType),
     EpStateCountReached,
     EpAcceptedCountReached,
-    EpAbort(u32), // timestamp
+    EpAbort(u32),                   // timestamp
     EpAborted(u32, u32, ValueType), // (epoch_ts, value_ts, value)
     UcPropose(ValueType),
     UcDecide(ValueType),

@@ -98,8 +98,7 @@ impl EpochConsensus {
             let value = msg.get_value();
             let state = EpochConsensusState::new(value_timestamp, value);
             self.states.insert(from.id, state);
-
-            if self.states.len() > self.node_info.nodes.len() / 2 {
+            if self.states.len() >= self.node_info.nodes.len() / 2 {
                 let states_message = InternalMessage::EpStateCountReached;
                 let event_data = EventData::Internal(states_message);
                 self.event_queue.push(event_data);
@@ -132,8 +131,7 @@ impl EpochConsensus {
     fn pl_deliver_accept(&mut self) {
         if self.node_info.current_node == self.leader {
             self.accepted += 1;
-
-            if self.accepted as usize > self.node_info.nodes.len() {
+            if self.accepted as usize >= self.node_info.nodes.len() / 2 {
                 let accepted_message = InternalMessage::EpAcceptedCountReached;
                 let event_data = EventData::Internal(accepted_message);
                 self.event_queue.push(event_data);
@@ -145,15 +143,14 @@ impl EpochConsensus {
     fn ep_accepted_count_reached(&mut self) {
         if self.node_info.current_node == self.leader {
             self.accepted = 0;
-
             let current_node = &self.node_info.current_node;
-
             let mut decided_message = message::EpDecided_::new();
             decided_message.set_value(self.temporary_value as i32);
 
             let mut msg = message::Message::new();
             msg.set_epDecided(decided_message);
             msg.set_sender(current_node.into());
+            msg.set_field_type(message::Message_Type::EP_DECIDED);
 
             let broadcast_message = InternalMessage::BebBroadcast(msg);
             let event_data = EventData::Internal(broadcast_message);
@@ -164,8 +161,7 @@ impl EpochConsensus {
     /// upon event ⟨ beb, Deliver | ℓ, [DECIDED, v] ⟩ do
     fn beb_deliver_decided(&self, msg: &message::EpDecided_) {
         let value = msg.get_value();
-        let internal_message =
-            InternalMessage::EpDecide(self.epoch_ts, value as ValueType);
+        let internal_message = InternalMessage::EpDecide(self.epoch_ts, value as ValueType);
         let event_data = EventData::Internal(internal_message);
         self.event_queue.push(event_data);
     }
@@ -174,8 +170,11 @@ impl EpochConsensus {
     fn abort(&mut self, ts: u32) {
         if self.epoch_ts == ts {
             self.aborted = true;
-            let internal_message =
-                InternalMessage::EpAborted(self.epoch_ts, self.state.value_timestamp, self.state.value);
+            let internal_message = InternalMessage::EpAborted(
+                self.epoch_ts,
+                self.state.value_timestamp,
+                self.state.value,
+            );
             let event_data = EventData::Internal(internal_message);
             self.event_queue.push(event_data);
         }
@@ -196,9 +195,11 @@ impl EpochConsensus {
 
     fn pl_send_state(&self, receiver: &Node) {
         let current_node = &self.node_info.current_node;
+        println!("Sending state {:?}", self.state);
         let mut state_message = message::EpState_::new();
         state_message.set_value(self.state.value);
         state_message.set_valueTimestamp(self.state.value_timestamp as i32);
+
         let mut message = message::Message::new();
         message.set_epState(state_message);
         message.set_field_type(message::Message_Type::EP_STATE);
@@ -232,7 +233,7 @@ impl EpochConsensus {
         write_message.set_value(value as i32);
 
         let mut message = message::Message::new();
-        message.set_field_type(message::Message_Type::EP_READ);
+        message.set_field_type(message::Message_Type::EP_WRITE);
         message.set_epWrite(write_message);
         message.set_sender(sender);
 

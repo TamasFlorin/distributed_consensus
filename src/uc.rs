@@ -85,7 +85,7 @@ impl UniformConsensus {
                 .leader
                 .clone()
                 .expect("We should have a leader at this point.");
-            
+
             let ep = ep::EpochConsensus::new(
                 self.node_info.clone(),
                 self.event_queue.clone(),
@@ -130,7 +130,11 @@ impl EventHandler for UniformConsensus {
 
         if let EventData::Internal(msg) = event_data {
             match msg {
-                InternalMessage::UcPropose(value) => self.uc_propose(value.clone()),
+                InternalMessage::UcPropose(value) => {
+                    self.uc_propose(value.clone());
+                    // we need to call this here since this is the point where the value changes
+                    self.change_proposed();
+                }
                 InternalMessage::EcStartEpoch(leader, new_timestamp) => {
                     self.ec_start_epoch(leader, *new_timestamp);
 
