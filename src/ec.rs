@@ -81,8 +81,8 @@ impl EpochChange {
         let sender: ProcessId = current_node.into();
 
         message.set_sender(sender);
-        message.set_ecNewEpoch(new_epoch_msg);
-        message.set_field_type(Message_Type::EC_NEW_EPOCH);
+        message.set_ecNewEpoch_(new_epoch_msg);
+        message.set_field_type(Message_Type::EC_NEW_EPOCH_);
 
         let internal_msg = InternalMessage::BebBroadcast(message);
         let event_data = EventData::Internal(internal_msg);
@@ -102,8 +102,8 @@ impl EpochChange {
         let nack = EcNack_::new();
         let mut msg = Message::new();
         msg.set_sender(sender);
-        msg.set_ecNack(nack);
-        msg.set_field_type(Message_Type::EC_NACK);
+        msg.set_ecNack_(nack);
+        msg.set_field_type(Message_Type::EC_NACK_);
 
         let internal_message = InternalMessage::PlSend(current_node.clone(), node.clone(), msg);
         let event_data = EventData::Internal(internal_message);
@@ -120,17 +120,17 @@ impl EventHandler for EpochChange {
                 InternalMessage::EldTrust(trusted_node) => self.eld_trust(trusted_node),
                 InternalMessage::BebDeliver(from, msg) => {
                     if let Message {
-                        field_type: Message_Type::EC_NEW_EPOCH,
+                        field_type: Message_Type::EC_NEW_EPOCH_,
                         ..
                     } = msg
                     {
-                        let new_ts = msg.get_ecNewEpoch().get_timestamp();
+                        let new_ts = msg.get_ecNewEpoch_().get_timestamp();
                         self.beb_deliver(from, new_ts as u32);
                     }
                 }
                 InternalMessage::PlDeliver(_, msg) => {
                     if let Message {
-                        field_type: Message_Type::EC_NACK,
+                        field_type: Message_Type::EC_NACK_,
                         ..
                     } = msg
                     {

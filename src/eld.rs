@@ -156,9 +156,8 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
     }
 
     /// upon event ⟨ fll, Deliver | q, [HEARTBEAT, ep] ⟩ do
-    fn recv_heartbeat(&self, heartbeat: &EldHeartbeat_) {
-        let process = heartbeat.get_from();
-        let index = process.get_index() as u16;
+    fn recv_heartbeat(&self, heartbeat: &EldHeartbeat_, from: &ProcessId) {
+        let index = from.get_index() as u16;
         let epoch = heartbeat.get_epoch() as u32;
 
         // TODO: Figure out if we should just ignore the message or panic
@@ -200,11 +199,10 @@ impl<S: Storage<EldState>> EventualLeaderDetector<S> {
 
         let mut heartbeat = EldHeartbeat_::new();
         heartbeat.set_epoch(self.epoch as i32);
-        heartbeat.set_from(process.clone());
 
         let mut message = Message::new();
-        message.set_eldHeartbeat(heartbeat);
-        message.set_field_type(Message_Type::ELD_HEARTBEAT);
+        message.set_eldHeartbeat_(heartbeat);
+        message.set_field_type(Message_Type::ELD_HEARTBEAT_);
         message.set_sender(process);
 
         let from = self.node_info.current_node.clone();
@@ -270,11 +268,11 @@ impl<S: Storage<EldState>> EventHandler for EventualLeaderDetector<S> {
                 }
                 InternalMessage::PlDeliver(_, msg) => {
                     if let Message {
-                        field_type: Message_Type::ELD_HEARTBEAT,
+                        field_type: Message_Type::ELD_HEARTBEAT_,
                         ..
                     } = msg
                     {
-                        self.recv_heartbeat(msg.get_eldHeartbeat());
+                        self.recv_heartbeat(msg.get_eldHeartbeat_(), msg.get_sender());
                     }
                 }
                 _ => (),

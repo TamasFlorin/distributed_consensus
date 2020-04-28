@@ -9,141 +9,263 @@ ec   EpochChange             Leader-Based       5.5  219
 beb  BestEffortBroadcast     Basic              3.1  76
 eld  EventualLeaderDetector  Elect Lower Epoch  2.9  58
 pl   PerfectLink (use TCP)
+
+     +---------- app
+     |            |
+     |           uc
+     |         /   \
+     |        ec   ep,ep,ep,ep
+     |      /| \  / \
+     |  eld  | beb  |
+     |   \   \  |  /
+     |   +-- pl -+
+     |       |
+     +------+
+1. The communication is done using the Google Protobuffer 3.x messages defined
+below, over TCP. The exchange will be asynchronous. When sending a
+request/response, open the TCP connection, send the message, then close the
+connection. When listening for requests, get the request, then close the socket.
+
+2. The system consists of several processes and one hub. Your job is to
+implement the processes. The hub will be provided to you by the instructor.
+
+3. The evaluation will be done as follows:
+       - Your laptops will connect to the wireless network on campus
+       - The instructor's laptop will also be connected to the wireless network
+on campus
+       - You will run 3 processes on your laptop, each on a port chosen by you
+       - Your processes will communicate with your colleagues and the
+instructor's processes
+
+4. Process referencing: Upon starting, a process will connect to the hub and
+register. The hub address and port will be configured manually.
+
+5. The hub will play the role of bookkeeper for the active processes, and also
+of evaluator. Every search and replicate request sent by the hub, will contain a
+subnet ID, identifying the nodes involved in the test. A node, will ask the hub
+for the subnet nodes corresponding to the subnet ID and collaborate only with
+those node for responding to the request.
 */
 
+// Data structures
 message ProcessId {
-    string host = 1; // String containing either domain name  or IP (most likely)
-    int32  port = 2;
-    string owner = 3; // Short alias or acronym of the owner of the node
-    int32 index = 4; // Node index within the owner's nodes. Must be 1, 2, or 3
+  string host = 1; // String containing either domain name  or IP (most likely)
+  int32 port = 2;
+  string owner = 3; // Short alias or acronym of the owner of the node
+  int32 index = 4;  // Node index within the owner's nodes. Must be 1, 2, or 3
+  int32 rank = 5;
 }
 
-message UcPropose {
-    int32 value = 1;
-}
+// Messages and events
+message UcPropose { int32 value = 1; }
 
 message EcStartEpoch {
-    int32 newTimestamp = 1;
-    ProcessId newLeader = 2;
+  int32 newTimestamp = 1;
+  ProcessId newLeader = 2;
 }
 
-message EpAbort {
-}
+message EpAbort {}
 
 message EpInit {
-    int32 valueTimestamp = 1;
-    int32 value = 2;
+  int32 valueTimestamp = 1;
+  int32 value = 2;
 }
 
 message EpAborted {
-    int32 valueTimestamp = 1;
-    int32 value = 2;
+  int32 valueTimestamp = 1;
+  int32 value = 2;
 }
 
-message EpPropose {
-    int32 value = 1;
-}
+message EpPropose { int32 value = 1; }
 
-message EpDecide {
-    int32 value = 1;
-}
+message EpDecide { int32 value = 1; }
 
-message UcDecide {
-    int32 value = 1;
-}
+message UcDecide { int32 value = 1; }
 
-message EpRead_ {
-}
+message EpRead_ {}
 
 message EpState_ {
-    int32 valueTimestamp = 1;
-    int32 value = 2;
+  int32 valueTimestamp = 1;
+  int32 value = 2;
 }
 
-message EpWrite_ {
-    int32 value = 1;
-}
+message EpWrite_ { int32 value = 1; }
 
-message EpAccept_ {
-}
+message EpAccept_ {}
 
-message EpDecided_ {
-    int32 value = 1;
-}
+message EpDecided_ { int32 value = 1; }
 
-message EcNewEpoch_ {
-    int32 timestamp = 1;
-}
+message EcNewEpoch_ { int32 timestamp = 1; }
 
-message EcNack_ {
-}
+message EcNack_ {}
 
-message BebBroadcast {
-    Message message = 1;
-}
+message BebBroadcast { Message message = 1; }
 
 message BebDeliver {
-    Message message = 1;
+  Message message = 1;
+  ProcessId sender = 2;
 }
 
-message EldRecovery {
-}
+message EldRecovery {}
 
-message EldTrust {
-    ProcessId processId = 1;
-}
+message EldTimeout {}
 
-message EldHeartbeat_ {
-    int32 epoch = 1;
-    ProcessId from = 2;
-}
+message EldTrust { ProcessId processId = 1; }
 
-message PlSend {
-    Message message = 1;
-}
+message EldHeartbeat_ { int32 epoch = 1; }
+
+message PlSend { Message message = 1; }
 
 message PlDeliver {
-    Message message = 1;
+  Message message = 1;
+  ProcessId sender = 2;
 }
+
+// Application
+message AppRegistration {
+  string owner = 1;
+  int32 index = 2;
+  int32 port = 3;
+}
+
+message AppPropose {
+  int32 value = 1;
+  repeated ProcessId processes = 2;
+}
+
+message AppDecide { int32 value = 1; }
 
 // Wrapper message
 message Message {
-    enum Type {
-        UC_PROPOSE = 0;
-        EC_START_EPOCH = 1;
-        EP_ABORT = 2;
-        EP_PROPOSE = 3;
-        ELD_HEARTBEAT = 4;
-        EC_NEW_EPOCH = 5;
-        EC_NACK = 6;
-        EP_READ = 7;
-        EP_STATE = 8;
-        EP_WRITE = 9;
-        EP_ACCEPT = 10;
-        EP_DECIDED = 11;
-    }
+  enum Type {
+    NONE = 0;
 
-    Type type = 1;
+    APP_REGISTRATION = 5;
+    APP_PROPOSE = 6;
+    APP_DECIDE = 7;
 
-    UcPropose ucPropose = 2;
-    EcStartEpoch ecStartEpoch = 3;
-    EpAbort epAbort = 4;
-    EpAborted epAborted = 5;
-    EpPropose epPropose = 6;
-    EpDecide epDecide = 7;
-    UcDecide ucDecide = 8;
-    EldHeartbeat_ eldHeartbeat = 9;
-    EcNewEpoch_ ecNewEpoch = 10;
-    EcNack_ ecNack = 11;
-    EpRead_ epRead = 12;
-    EpState_ epState = 13;
-    EpWrite_ epWrite = 14;
-    EpAccept_ epAccept = 15;
-    EpDecided_ epDecided = 16;
-    ProcessId sender = 17;
+    BEB_BROADCAST = 10;
+    BEB_DELIVER = 11;
+
+    EC_NACK_ = 12;
+    EC_NEW_EPOCH_ = 13;
+    EC_START_EPOCH = 14;
+
+    ELD_HEARTBEAT_ = 15;
+    ELD_RECOVERY = 16;
+    ELD_TIMEOUT = 17;
+    ELD_TRUST = 18;
+
+    EP_ABORT = 19;
+    EP_ABORTED = 20;
+    EP_ACCEPT_ = 21;
+    EP_DECIDE = 22;
+    EP_DECIDED_ = 23;
+    EP_INIT = 24;
+    EP_PROPOSE = 25;
+    EP_READ_ = 26;
+    EP_STATE_ = 27;
+    EP_WRITE_ = 28;
+
+    PL_DELIVER = 29;
+    PL_SEND = 30;
+
+    UC_DECIDE = 31;
+    UC_PROPOSE = 32;
+  }
+
+  Type type = 1;
+  string messageUuid = 2;
+  string abstractionId = 3;
+  string systemId = 4;
+
+  AppRegistration appRegistration = 5;
+  AppPropose appPropose = 6;
+  AppDecide appDecide = 7;
+
+  BebBroadcast bebBroadcast = 10;
+  BebDeliver bebDeliver = 11;
+
+  EcNack_ ecNack_ = 12;
+  EcNewEpoch_ ecNewEpoch_ = 13;
+  EcStartEpoch ecStartEpoch = 14;
+
+  EldHeartbeat_ eldHeartbeat_ = 15;
+  EldRecovery eldRecovery = 16;
+  EldTimeout eldTimeout = 17;
+  EldTrust eldTrust = 18;
+
+  EpAbort epAbort = 19;
+  EpAborted epAborted = 20;
+  EpAccept_ epAccept_ = 21;
+  EpDecide epDecide = 22;
+  EpDecided_ epDecided_ = 23;
+  EpInit epInit = 24;
+  EpPropose epPropose = 25;
+  EpRead_ epRead_ = 26;
+  EpState_ epState_ = 27;
+  EpWrite_ epWrite_ = 28;
+
+  PlDeliver plDeliver = 29;
+  PlSend plSend = 30;
+
+  UcDecide ucDecide = 31;
+  UcPropose ucPropose = 32;
+
+  // TODO: Should we even have this here?
+  ProcessId sender = 33;
+}
+/*
+MyMessage m = ....;
+byte[] buf = m.toBuffer();
+send(buf)
+....
+buf = recv()
+MyMessage m = MyMessage.fromBuffer(buf);
+
+MyMessage payload = ....
+Message m = new Message();
+m.type = MY_MESSAGE;
+m.myMessage = payload;
+send(m.toBuffer())
+...
+buf = recv();
+Message m = Message.fromBuffer(buf)
+if(m.type == MY_MESSAGE) {
+    doStuffWith(m.myMessage);
 }
 
-// 5
-// Message(5)
-// BebBroadCast(Message(5))
-// Message(BebBroadCast(Message(5)))
+
+5
+Message(5)
+BebBroadCast(Message(5))
+Message(BebBroadCast(Message(5)))
+PlSend(Message(BebBroadCast(Message(5))))
+Message(PlSend(Message(BebBroadCast(Message(5)))))
+
+
+Map<SystemId, System>
+
+System
+- List<ProcessId>
+- List<Algorithm>
+- List<Message>
+- void eventLoop()
+
+Algorithm
+- STATE
+- boolean handle(Message)
+- private handler methods
+
+while(1) {
+    for each system
+        call system.eventLoop
+}
+
+eventLoop()
+    for each message
+        for each algorithm
+            b ||= alg.handle(msg)
+            if(b)
+                remove msg from list
+*/

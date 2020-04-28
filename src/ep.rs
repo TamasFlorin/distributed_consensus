@@ -148,9 +148,9 @@ impl EpochConsensus {
             decided_message.set_value(self.temporary_value as i32);
 
             let mut msg = message::Message::new();
-            msg.set_epDecided(decided_message);
+            msg.set_epDecided_(decided_message);
             msg.set_sender(current_node.into());
-            msg.set_field_type(message::Message_Type::EP_DECIDED);
+            msg.set_field_type(message::Message_Type::EP_DECIDED_);
 
             let broadcast_message = InternalMessage::BebBroadcast(msg);
             let event_data = EventData::Internal(broadcast_message);
@@ -184,8 +184,8 @@ impl EpochConsensus {
         let current_node = &self.node_info.current_node;
         let accept_message = message::EpAccept_::new();
         let mut message = message::Message::new();
-        message.set_epAccept(accept_message);
-        message.set_field_type(message::Message_Type::EP_ACCEPT);
+        message.set_epAccept_(accept_message);
+        message.set_field_type(message::Message_Type::EP_ACCEPT_);
         message.set_sender(current_node.into());
         let internal_message =
             InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
@@ -201,8 +201,8 @@ impl EpochConsensus {
         state_message.set_valueTimestamp(self.state.value_timestamp as i32);
 
         let mut message = message::Message::new();
-        message.set_epState(state_message);
-        message.set_field_type(message::Message_Type::EP_STATE);
+        message.set_epState_(state_message);
+        message.set_field_type(message::Message_Type::EP_STATE_);
         message.set_sender(current_node.into());
         let internal_message =
             InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
@@ -216,8 +216,8 @@ impl EpochConsensus {
 
         let read_message = message::EpRead_::new();
         let mut message = message::Message::new();
-        message.set_field_type(message::Message_Type::EP_READ);
-        message.set_epRead(read_message);
+        message.set_field_type(message::Message_Type::EP_READ_);
+        message.set_epRead_(read_message);
         message.set_sender(sender);
 
         let internal_message = InternalMessage::BebBroadcast(message);
@@ -233,8 +233,8 @@ impl EpochConsensus {
         write_message.set_value(value as i32);
 
         let mut message = message::Message::new();
-        message.set_field_type(message::Message_Type::EP_WRITE);
-        message.set_epWrite(write_message);
+        message.set_field_type(message::Message_Type::EP_WRITE_);
+        message.set_epWrite_(write_message);
         message.set_sender(sender);
 
         let internal_message = InternalMessage::BebBroadcast(message);
@@ -251,7 +251,7 @@ impl EventHandler for EpochConsensus {
                 InternalMessage::EpPropose(ts, value) => self.ep_propose(*ts, *value),
                 InternalMessage::BebDeliver(from, msg) => match msg {
                     message::Message {
-                        field_type: message::Message_Type::EP_READ,
+                        field_type: message::Message_Type::EP_READ_,
                         ..
                     } => {
                         if !self.aborted {
@@ -259,34 +259,34 @@ impl EventHandler for EpochConsensus {
                         }
                     }
                     message::Message {
-                        field_type: message::Message_Type::EP_WRITE,
+                        field_type: message::Message_Type::EP_WRITE_,
                         ..
                     } => {
                         if !self.aborted {
-                            self.beb_deliver_write(from, msg.get_epWrite())
+                            self.beb_deliver_write(from, msg.get_epWrite_())
                         }
                     }
                     message::Message {
-                        field_type: message::Message_Type::EP_DECIDED,
+                        field_type: message::Message_Type::EP_DECIDED_,
                         ..
                     } => {
                         if !self.aborted {
-                            self.beb_deliver_decided(msg.get_epDecided())
+                            self.beb_deliver_decided(msg.get_epDecided_())
                         }
                     }
                     _ => (),
                 },
                 InternalMessage::PlDeliver(from, msg) => match msg {
                     message::Message {
-                        field_type: message::Message_Type::EP_STATE,
+                        field_type: message::Message_Type::EP_STATE_,
                         ..
                     } => {
                         if !self.aborted {
-                            self.pl_deliver_state(from, msg.get_epState());
+                            self.pl_deliver_state(from, msg.get_epState_());
                         }
                     }
                     message::Message {
-                        field_type: message::Message_Type::EP_ACCEPT,
+                        field_type: message::Message_Type::EP_ACCEPT_,
                         ..
                     } => {
                         if !self.aborted {
