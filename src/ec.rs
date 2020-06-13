@@ -1,10 +1,12 @@
 use crate::event::*;
 use crate::node::{Node, NodeInfo};
-use crate::protos::message::{EcNack_, EcNewEpoch_, Message, Message_Type, ProcessId};
+use crate::protos::message::{EcNack_, EcNewEpoch_, Message, Message_Type};
 use log::trace;
 use std::sync::Arc;
+use uuid::Uuid;
 
 const N: u32 = 10;
+const ABSTRACTION_ID: &str = "ec";
 
 /// The epoch-change algorithmis quite simple. Every process p maintains two timestamps:
 /// a timestamp lastts of the last epoch that it started (i.e., for which it triggered
@@ -24,10 +26,11 @@ pub struct EpochChange {
     last_ts: u32,
     ts: u32,
     pub trusted: Node, // needs to be accessible by UniformConsensus
+    system_id: String,
 }
 
 impl EpochChange {
-    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<EventQueue>) -> Self {
+    pub fn new(node_info: Arc<NodeInfo>, event_queue: Arc<EventQueue>, system_id: String) -> Self {
         let id = node_info.current_node.id as u32;
         let initial_trusted = node_info
             .nodes
@@ -41,6 +44,7 @@ impl EpochChange {
             last_ts: 0,
             ts: id,
             trusted: initial_trusted,
+            system_id,
         }
     }
 
@@ -76,46 +80,56 @@ impl EpochChange {
         let mut new_epoch_msg = EcNewEpoch_::new();
         new_epoch_msg.set_timestamp(ts as i32);
 
+        let uuid = Uuid::new_v4();
         let mut message = Message::new();
-        let current_node = &self.node_info.current_node;
-        let sender: ProcessId = current_node.into();
-
-        message.set_sender(sender);
+        message.set_messageUuid(uuid.to_string());
         message.set_ecNewEpoch_(new_epoch_msg);
         message.set_field_type(Message_Type::EC_NEW_EPOCH_);
+        message.set_abstractionId(ABSTRACTION_ID.to_owned());
+        message.set_systemId(self.system_id.clone());
 
         let internal_msg = InternalMessage::BebBroadcast(message);
-        let event_data = EventData::Internal(internal_msg);
+        let event_data = EventData::Internal(self.system_id.clone(), internal_msg);
         self.event_queue.push(event_data);
     }
 
     fn start_epoch(&mut self, node: &Node, ts: u32) {
         let message = InternalMessage::EcStartEpoch(node.clone(), ts);
-        let event_data = EventData::Internal(message);
+        let event_data = EventData::Internal(self.system_id.clone(), message);
         self.event_queue.push(event_data);
     }
 
     fn pl_send_nack(&self, node: &Node) {
         let current_node = &self.node_info.current_node;
-        let sender: ProcessId = current_node.into();
-
         let nack = EcNack_::new();
+        
+        let uuid = Uuid::new_v4();
         let mut msg = Message::new();
-        msg.set_sender(sender);
+        msg.set_messageUuid(uuid.to_string());
         msg.set_ecNack_(nack);
         msg.set_field_type(Message_Type::EC_NACK_);
+        msg.set_abstractionId(ABSTRACTION_ID.to_owned());
+        msg.set_systemId(self.system_id.clone());
 
         let internal_message = InternalMessage::PlSend(current_node.clone(), node.clone(), msg);
-        let event_data = EventData::Internal(internal_message);
+        let event_data = EventData::Internal(self.system_id.clone(), internal_message);
         self.event_queue.push(event_data);
     }
 }
 
 impl EventHandler for EpochChange {
+    fn should_handle_event(&self, event_data: &EventData) -> bool {
+        if let EventData::Internal(system_id, _) = event_data {
+            system_id == &self.system_id   
+        } else {
+            false
+        }
+    }
+    
     fn handle(&mut self, event_data: &EventData) {
         trace!("Handler summoned with event {:?}", event_data);
 
-        if let EventData::Internal(internal_data) = event_data {
+        if let EventData::Internal(_, internal_data) = event_data {
             match internal_data {
                 InternalMessage::EldTrust(trusted_node) => self.eld_trust(trusted_node),
                 InternalMessage::BebDeliver(from, msg) => {

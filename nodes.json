@@ -1,16 +1,26 @@
 [
-    {
-        "owner": "dev",
-        "name": "node1",
-        "host": "127.0.0.1",
-        "port": 1330,
-        "id": 0
-    },
-    {
-        "owner": "dev",
-        "name": "node2",
-        "host": "127.0.0.1",
-        "port": 1331,
-        "id": 1
-    }
+  {
+    "owner": "dev",
+    "name": "1",
+    "host": "127.0.0.1",
+    "port": 1330,
+    "id": 1,
+    "rank": 0
+  },
+  {
+    "owner": "dev",
+    "name": "2",
+    "host": "127.0.0.1",
+    "port": 1331,
+    "id": 2,
+    "rank": 0
+  },
+  {
+    "owner": "dev",
+    "name": "3",
+    "host": "127.0.0.1",
+    "port": 1332,
+    "id": 3,
+    "rank": 0
+  }
 ]

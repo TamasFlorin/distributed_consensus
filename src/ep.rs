@@ -5,6 +5,9 @@ use log::trace;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::sync::Arc;
+use uuid::Uuid;
+
+const ABSTRACTION_ID: &str = "ep";
 
 /// Interface the of epoch consensus
 /// Module:
@@ -53,6 +56,8 @@ pub struct EpochConsensus {
     aborted: bool,
     leader: Node, // TOOD: use this to check if we have to do anything (probably)
     epoch_ts: u32,
+    system_id: String,
+    index: usize,
 }
 
 impl EpochConsensus {
@@ -62,6 +67,8 @@ impl EpochConsensus {
         initial_state: EpochConsensusState,
         leader: Node,
         epoch_ts: u32,
+        system_id: String,
+        index: usize,
     ) -> Self {
         EpochConsensus {
             node_info,
@@ -73,6 +80,8 @@ impl EpochConsensus {
             aborted: false,
             leader,
             epoch_ts,
+            system_id,
+            index
         }
     }
 
@@ -96,12 +105,14 @@ impl EpochConsensus {
         if self.node_info.current_node == self.leader {
             let value_timestamp = msg.get_valueTimestamp() as u32;
             let value = msg.get_value();
-            let state = EpochConsensusState::new(value_timestamp, value);
-            self.states.insert(from.id, state);
-            if self.states.len() >= self.node_info.nodes.len() / 2 {
-                let states_message = InternalMessage::EpStateCountReached;
-                let event_data = EventData::Internal(states_message);
-                self.event_queue.push(event_data);
+            if value.get_defined() {
+                let state = EpochConsensusState::new(value_timestamp, value.get_v());
+                self.states.insert(from.id, state);
+                if self.states.len() >= self.node_info.nodes.len() / 2 {
+                    let states_message = InternalMessage::EpStateCountReached;
+                    let event_data = EventData::Internal(self.system_id.clone(), states_message);
+                    self.event_queue.push(event_data);
+                }
             }
         }
     }
@@ -121,10 +132,12 @@ impl EpochConsensus {
 
     /// upon event ⟨ beb, Deliver | ℓ, [WRITE, v] ⟩ do
     fn beb_deliver_write(&mut self, from: &Node, msg: &message::EpWrite_) {
-        let value_from = msg.get_value() as ValueType;
-        self.state.value_timestamp = self.epoch_ts;
-        self.state.value = value_from;
-        self.pl_send_accept(from);
+        let value_from = msg.get_value();
+        if value_from.get_defined() {
+            self.state.value_timestamp = self.epoch_ts;
+            self.state.value = value_from.get_v() as ValueType;
+            self.pl_send_accept(from);
+        }
     }
 
     /// upon event ⟨ pl, Deliver | q, [ACCEPT] ⟩ do
@@ -133,7 +146,7 @@ impl EpochConsensus {
             self.accepted += 1;
             if self.accepted as usize >= self.node_info.nodes.len() / 2 {
                 let accepted_message = InternalMessage::EpAcceptedCountReached;
-                let event_data = EventData::Internal(accepted_message);
+                let event_data = EventData::Internal(self.system_id.clone(), accepted_message);
                 self.event_queue.push(event_data);
             }
         }
@@ -143,17 +156,22 @@ impl EpochConsensus {
     fn ep_accepted_count_reached(&mut self) {
         if self.node_info.current_node == self.leader {
             self.accepted = 0;
-            let current_node = &self.node_info.current_node;
             let mut decided_message = message::EpDecided_::new();
-            decided_message.set_value(self.temporary_value as i32);
+            let mut msg_value = message::Value::new();
+            msg_value.set_defined(true);
+            msg_value.set_v(self.temporary_value as i32);
+            decided_message.set_value(msg_value);
 
+            let uuid = Uuid::new_v4();
             let mut msg = message::Message::new();
+            msg.set_messageUuid(uuid.to_string());
             msg.set_epDecided_(decided_message);
-            msg.set_sender(current_node.into());
             msg.set_field_type(message::Message_Type::EP_DECIDED_);
+            msg.set_systemId(self.system_id.clone());
+            msg.set_abstractionId(format!("{}{}", ABSTRACTION_ID.to_owned(), self.index));
 
             let broadcast_message = InternalMessage::BebBroadcast(msg);
-            let event_data = EventData::Internal(broadcast_message);
+            let event_data = EventData::Internal(self.system_id.clone(), broadcast_message);
             self.event_queue.push(event_data);
         }
     }
@@ -161,9 +179,12 @@ impl EpochConsensus {
     /// upon event ⟨ beb, Deliver | ℓ, [DECIDED, v] ⟩ do
     fn beb_deliver_decided(&self, msg: &message::EpDecided_) {
         let value = msg.get_value();
-        let internal_message = InternalMessage::EpDecide(self.epoch_ts, value as ValueType);
-        let event_data = EventData::Internal(internal_message);
-        self.event_queue.push(event_data);
+        if value.get_defined() {
+            let internal_message =
+                InternalMessage::EpDecide(self.epoch_ts, value.get_v() as ValueType);
+            let event_data = EventData::Internal(self.system_id.clone(), internal_message);
+            self.event_queue.push(event_data);
+        }
     }
 
     /// upon event ⟨ ep, Abort ⟩ do
@@ -175,7 +196,7 @@ impl EpochConsensus {
                 self.state.value_timestamp,
                 self.state.value,
             );
-            let event_data = EventData::Internal(internal_message);
+            let event_data = EventData::Internal(self.system_id.clone(), internal_message);
             self.event_queue.push(event_data);
         }
     }
@@ -183,13 +204,18 @@ impl EpochConsensus {
     fn pl_send_accept(&self, receiver: &Node) {
         let current_node = &self.node_info.current_node;
         let accept_message = message::EpAccept_::new();
+
+        let uuid = Uuid::new_v4();
         let mut message = message::Message::new();
+        message.set_messageUuid(uuid.to_string());
         message.set_epAccept_(accept_message);
         message.set_field_type(message::Message_Type::EP_ACCEPT_);
-        message.set_sender(current_node.into());
+        message.set_systemId(self.system_id.clone());
+        message.set_abstractionId(format!("{}{}", ABSTRACTION_ID.to_owned(), self.index));
+
         let internal_message =
             InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
-        let event_data = EventData::Internal(internal_message);
+        let event_data = EventData::Internal(self.system_id.clone(), internal_message);
         self.event_queue.push(event_data);
     }
 
@@ -197,57 +223,76 @@ impl EpochConsensus {
         let current_node = &self.node_info.current_node;
         println!("Sending state {:?}", self.state);
         let mut state_message = message::EpState_::new();
-        state_message.set_value(self.state.value);
+        let mut msg_value = message::Value::new();
+        msg_value.set_defined(true);
+        msg_value.set_v(self.state.value);
+        state_message.set_value(msg_value);
         state_message.set_valueTimestamp(self.state.value_timestamp as i32);
 
+        let uuid = Uuid::new_v4();
         let mut message = message::Message::new();
+        message.set_messageUuid(uuid.to_string());
         message.set_epState_(state_message);
         message.set_field_type(message::Message_Type::EP_STATE_);
-        message.set_sender(current_node.into());
+        message.set_systemId(self.system_id.clone());
+        message.set_abstractionId(format!("{}{}", ABSTRACTION_ID.to_owned(), self.index));
+
         let internal_message =
             InternalMessage::PlSend(current_node.clone(), receiver.clone(), message);
-        let event_data = EventData::Internal(internal_message);
+        let event_data = EventData::Internal(self.system_id.clone(), internal_message);
         self.event_queue.push(event_data);
     }
 
     fn beb_broadcast_read(&self) {
-        let current_node = &self.node_info.current_node;
-        let sender: message::ProcessId = current_node.into();
-
         let read_message = message::EpRead_::new();
+
+        let uuid = Uuid::new_v4();
         let mut message = message::Message::new();
+        message.set_messageUuid(uuid.to_string());
         message.set_field_type(message::Message_Type::EP_READ_);
         message.set_epRead_(read_message);
-        message.set_sender(sender);
+        message.set_systemId(self.system_id.clone());
+        message.set_abstractionId(format!("{}{}", ABSTRACTION_ID.to_owned(), self.index));
 
         let internal_message = InternalMessage::BebBroadcast(message);
-        let event_data = EventData::Internal(internal_message);
+        let event_data = EventData::Internal(self.system_id.clone(), internal_message);
         self.event_queue.push(event_data);
     }
 
     fn beb_broadcast_write(&self, value: ValueType) {
-        let current_node = &self.node_info.current_node;
-        let sender: message::ProcessId = current_node.into();
-
         let mut write_message = message::EpWrite_::new();
-        write_message.set_value(value as i32);
+        let mut msg_value = message::Value::new();
+        msg_value.set_defined(true);
+        msg_value.set_v(value);
+        write_message.set_value(msg_value);
 
+        let uuid = Uuid::new_v4();
         let mut message = message::Message::new();
+        message.set_messageUuid(uuid.to_string());
         message.set_field_type(message::Message_Type::EP_WRITE_);
         message.set_epWrite_(write_message);
-        message.set_sender(sender);
+        message.set_systemId(self.system_id.clone());
+        message.set_abstractionId(format!("{}{}", ABSTRACTION_ID.to_owned(), self.index));
 
         let internal_message = InternalMessage::BebBroadcast(message);
-        let event_data = EventData::Internal(internal_message);
+        let event_data = EventData::Internal(self.system_id.clone(), internal_message);
         self.event_queue.push(event_data);
     }
 }
 
 impl EventHandler for EpochConsensus {
+    fn should_handle_event(&self, event_data: &EventData) -> bool {
+        if let EventData::Internal(system_id, _) = event_data {
+            system_id == &self.system_id   
+        } else {
+            false
+        }
+    }
+
     fn handle(&mut self, event_data: &EventData) {
         trace!("Handler summoned with event {:?}", event_data);
         match event_data {
-            EventData::Internal(internal_msg) => match internal_msg {
+            EventData::Internal(_, internal_msg) => match internal_msg {
                 InternalMessage::EpPropose(ts, value) => self.ep_propose(*ts, *value),
                 InternalMessage::BebDeliver(from, msg) => match msg {
                     message::Message {
@@ -312,7 +357,7 @@ impl EventHandler for EpochConsensus {
                 }
                 _ => (),
             },
-            EventData::External(_) => (),
+            EventData::External(_, _) => (),
         }
     }
 }

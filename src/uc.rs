@@ -2,7 +2,7 @@ use crate::ep;
 use crate::ep::EpochConsensusState;
 use crate::event::*;
 use crate::node::{Node, NodeInfo};
-use log::trace;
+use log::{trace};
 use std::sync::Arc;
 
 pub struct UniformConsensusState {
@@ -27,6 +27,8 @@ pub struct UniformConsensus {
     decided: bool,
     state: UniformConsensusState,
     new_state: UniformConsensusState,
+    system_id: String,
+    ep_index: usize,
 }
 
 impl UniformConsensus {
@@ -34,6 +36,7 @@ impl UniformConsensus {
         event_queue: Arc<EventQueue>,
         node_info: Arc<NodeInfo>,
         initial_leader: Node,
+        system_id: String,
     ) -> Self {
         UniformConsensus {
             event_queue,
@@ -43,6 +46,8 @@ impl UniformConsensus {
             decided: false,
             state: UniformConsensusState::new(0, Some(initial_leader)),
             new_state: UniformConsensusState::new(0, None),
+            system_id,
+            ep_index: 0,
         }
     }
 
@@ -64,7 +69,7 @@ impl UniformConsensus {
         // trigger ⟨ ep.ets, Abort ⟩;
         let ets = self.state.epoch_timestamp;
         let abort_mesasge = InternalMessage::EpAbort(ets);
-        let event_data = EventData::Internal(abort_mesasge);
+        let event_data = EventData::Internal(self.system_id.clone(), abort_mesasge);
         self.event_queue.push(event_data);
     }
 
@@ -85,15 +90,19 @@ impl UniformConsensus {
                 .leader
                 .clone()
                 .expect("We should have a leader at this point.");
-
+            
+            self.ep_index += 1;
             let ep = ep::EpochConsensus::new(
                 self.node_info.clone(),
                 self.event_queue.clone(),
                 state,
                 leader,
                 self.state.epoch_timestamp,
+                self.system_id.clone(),
+                self.ep_index,
             );
-            self.event_queue.register_handler(Box::new(ep));
+            self.event_queue
+                .register_handler( Box::new(ep));
         }
     }
 
@@ -108,7 +117,7 @@ impl UniformConsensus {
             self.proposed = true;
             let propose_message =
                 InternalMessage::EpPropose(self.state.epoch_timestamp, self.value.unwrap());
-            let event_data = EventData::Internal(propose_message);
+            let event_data = EventData::Internal(self.system_id.clone(), propose_message);
             self.event_queue.push(event_data);
         }
     }
@@ -118,17 +127,25 @@ impl UniformConsensus {
         if !self.decided && self.state.epoch_timestamp == ts {
             self.decided = true;
             let decide_message = InternalMessage::UcDecide(value);
-            let event_data = EventData::Internal(decide_message);
+            let event_data = EventData::Internal(self.system_id.clone(), decide_message);
             self.event_queue.push(event_data);
         }
     }
 }
 
 impl EventHandler for UniformConsensus {
+    fn should_handle_event(&self, event_data: &EventData) -> bool {
+        if let EventData::Internal(system_id, _) = event_data {
+            system_id == &self.system_id   
+        } else {
+            false
+        }
+    }
+
     fn handle(&mut self, event_data: &EventData) {
         trace!("Handler summoned with event {:?}", event_data);
 
-        if let EventData::Internal(msg) = event_data {
+        if let EventData::Internal(_, msg) = event_data {
             match msg {
                 InternalMessage::UcPropose(value) => {
                     self.uc_propose(value.clone());

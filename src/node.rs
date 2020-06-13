@@ -1,4 +1,5 @@
 use crate::protos::message;
+use message::ProcessId;
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 
@@ -11,16 +12,18 @@ pub struct Node {
     pub host: String,
     pub port: u16,
     pub id: NodeId,
+    pub rank: u16,
 }
 
 impl Node {
-    pub fn new(owner: String, name: String, host: String, port: u16, id: u16) -> Self {
+    pub fn new(owner: String, name: String, host: String, port: u16, id: u16, rank: u16) -> Self {
         Node {
             owner,
             name,
             host,
             port,
             id,
+            rank,
         }
     }
 }
@@ -66,8 +69,21 @@ impl From<&Node> for message::EldTrust {
     fn from(node: &Node) -> Self {
         let proc_id = message::ProcessId::from(node);
         let mut eld_trust = message::EldTrust::new();
-        eld_trust.set_processId(proc_id);
+        eld_trust.set_process(proc_id);
         eld_trust
+    }
+}
+
+impl From<&ProcessId> for Node {
+    fn from(process_id: &ProcessId) -> Self {
+        Node::new(
+            process_id.get_owner().to_owned(),
+            format!("{}-{}", process_id.get_owner(), process_id.get_index()),
+            process_id.get_host().to_owned(),
+            process_id.get_port() as u16,
+            process_id.get_index() as u16,
+            process_id.get_rank() as u16,
+        )
     }
 }
 
@@ -101,5 +117,6 @@ impl Ord for Node {
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NodeInfo {
     pub current_node: Node,
+    pub hub: Node,
     pub nodes: Vec<Node>,
 }

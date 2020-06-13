@@ -1,5 +1,5 @@
 use crate::node::Node;
-use crate::protos::message::Message;
+use crate::protos::message::*;
 use std::collections::VecDeque;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex};
@@ -8,20 +8,22 @@ use std::thread;
 pub type ValueType = i32;
 
 pub trait EventHandler {
+    fn should_handle_event(&self, event_data: &EventData) -> bool;
     fn handle(&mut self, event_data: &EventData);
 }
 
 #[derive(Debug, Clone)]
 pub enum InternalMessage {
-    EldTimeout,
+    AppPropose(Node, Message),
+    AppInit,
+    EpfdTimeout,
+    EpfdSuspect(Node),
+    EpfdRestore(Node),
     EldTrust(Node),
     BebBroadcast(Message),
     BebDeliver(Node, Message),
-    EcNack(Node, Node),      // (from, to)
     EcStartEpoch(Node, u32), //(leader, epoch_timestamp)
-    EcInitialLeader(Node),
     EpPropose(u32, ValueType), // (timestamp, value)
-    EpDecided(ValueType),
     EpDecide(u32, ValueType),
     EpStateCountReached,
     EpAcceptedCountReached,
@@ -35,8 +37,8 @@ pub enum InternalMessage {
 
 #[derive(Debug, Clone)]
 pub enum EventData {
-    Internal(InternalMessage),
-    External(Message),
+    Internal(String, InternalMessage), // system id
+    External(String, Message),         // system id
 }
 
 type EventHandlerType = Box<dyn EventHandler + Send>;
@@ -118,7 +120,9 @@ impl EventQueue {
                     // they will need to filter it themselvles.
                     for event_handler in current_handlers.iter() {
                         let mut event_handler_guard = event_handler.lock().unwrap();
-                        event_handler_guard.handle(&first);
+                        if event_handler_guard.should_handle_event(&first) {
+                            event_handler_guard.handle(&first);
+                        }
                     }
                 }
 
@@ -142,7 +146,7 @@ impl EventQueue {
         let mut handle = self.handle.lock().unwrap();
         if handle.is_some() {
             self.is_running.store(false, Ordering::SeqCst);
-            let _ = self.element_added.lock().unwrap();
+            let _lock = self.element_added.lock().unwrap();
             self.cvar.notify_one();
             let _ = handle.take().unwrap().join();
         } else {

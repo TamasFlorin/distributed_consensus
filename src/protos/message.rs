@@ -337,9 +337,803 @@ impl ::protobuf::reflect::ProtobufValue for ProcessId {
 }
 
 #[derive(PartialEq,Clone,Default)]
+pub struct Value {
+    // message fields
+    pub defined: bool,
+    pub v: i32,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Value {
+    fn default() -> &'a Value {
+        <Value as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl Value {
+    pub fn new() -> Value {
+        ::std::default::Default::default()
+    }
+
+    // bool defined = 1;
+
+
+    pub fn get_defined(&self) -> bool {
+        self.defined
+    }
+    pub fn clear_defined(&mut self) {
+        self.defined = false;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_defined(&mut self, v: bool) {
+        self.defined = v;
+    }
+
+    // int32 v = 2;
+
+
+    pub fn get_v(&self) -> i32 {
+        self.v
+    }
+    pub fn clear_v(&mut self) {
+        self.v = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_v(&mut self, v: i32) {
+        self.v = v;
+    }
+}
+
+impl ::protobuf::Message for Value {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_bool()?;
+                    self.defined = tmp;
+                },
+                2 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_int32()?;
+                    self.v = tmp;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.defined != false {
+            my_size += 2;
+        }
+        if self.v != 0 {
+            my_size += ::protobuf::rt::value_size(2, self.v, ::protobuf::wire_format::WireTypeVarint);
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.defined != false {
+            os.write_bool(1, self.defined)?;
+        }
+        if self.v != 0 {
+            os.write_int32(2, self.v)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Value {
+        Value::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeBool>(
+                    "defined",
+                    |m: &Value| { &m.defined },
+                    |m: &mut Value| { &mut m.defined },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
+                    "v",
+                    |m: &Value| { &m.v },
+                    |m: &mut Value| { &mut m.v },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<Value>(
+                    "Value",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static Value {
+        static mut instance: ::protobuf::lazy::Lazy<Value> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(Value::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for Value {
+    fn clear(&mut self) {
+        self.defined = false;
+        self.v = 0;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Value {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Value {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct AppRegistration {
+    // message fields
+    pub owner: ::std::string::String,
+    pub index: i32,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a AppRegistration {
+    fn default() -> &'a AppRegistration {
+        <AppRegistration as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl AppRegistration {
+    pub fn new() -> AppRegistration {
+        ::std::default::Default::default()
+    }
+
+    // string owner = 1;
+
+
+    pub fn get_owner(&self) -> &str {
+        &self.owner
+    }
+    pub fn clear_owner(&mut self) {
+        self.owner.clear();
+    }
+
+    // Param is passed by value, moved
+    pub fn set_owner(&mut self, v: ::std::string::String) {
+        self.owner = v;
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_owner(&mut self) -> &mut ::std::string::String {
+        &mut self.owner
+    }
+
+    // Take field
+    pub fn take_owner(&mut self) -> ::std::string::String {
+        ::std::mem::replace(&mut self.owner, ::std::string::String::new())
+    }
+
+    // int32 index = 2;
+
+
+    pub fn get_index(&self) -> i32 {
+        self.index
+    }
+    pub fn clear_index(&mut self) {
+        self.index = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_index(&mut self, v: i32) {
+        self.index = v;
+    }
+}
+
+impl ::protobuf::Message for AppRegistration {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_proto3_string_into(wire_type, is, &mut self.owner)?;
+                },
+                2 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_int32()?;
+                    self.index = tmp;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if !self.owner.is_empty() {
+            my_size += ::protobuf::rt::string_size(1, &self.owner);
+        }
+        if self.index != 0 {
+            my_size += ::protobuf::rt::value_size(2, self.index, ::protobuf::wire_format::WireTypeVarint);
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if !self.owner.is_empty() {
+            os.write_string(1, &self.owner)?;
+        }
+        if self.index != 0 {
+            os.write_int32(2, self.index)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> AppRegistration {
+        AppRegistration::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "owner",
+                    |m: &AppRegistration| { &m.owner },
+                    |m: &mut AppRegistration| { &mut m.owner },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
+                    "index",
+                    |m: &AppRegistration| { &m.index },
+                    |m: &mut AppRegistration| { &mut m.index },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<AppRegistration>(
+                    "AppRegistration",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static AppRegistration {
+        static mut instance: ::protobuf::lazy::Lazy<AppRegistration> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(AppRegistration::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for AppRegistration {
+    fn clear(&mut self) {
+        self.owner.clear();
+        self.index = 0;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for AppRegistration {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for AppRegistration {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct AppPropose {
+    // message fields
+    pub value: ::protobuf::SingularPtrField<Value>,
+    pub processes: ::protobuf::RepeatedField<ProcessId>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a AppPropose {
+    fn default() -> &'a AppPropose {
+        <AppPropose as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl AppPropose {
+    pub fn new() -> AppPropose {
+        ::std::default::Default::default()
+    }
+
+    // .main.Value value = 1;
+
+
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
+    }
+    pub fn clear_value(&mut self) {
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
+    }
+
+    // repeated .main.ProcessId processes = 2;
+
+
+    pub fn get_processes(&self) -> &[ProcessId] {
+        &self.processes
+    }
+    pub fn clear_processes(&mut self) {
+        self.processes.clear();
+    }
+
+    // Param is passed by value, moved
+    pub fn set_processes(&mut self, v: ::protobuf::RepeatedField<ProcessId>) {
+        self.processes = v;
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_processes(&mut self) -> &mut ::protobuf::RepeatedField<ProcessId> {
+        &mut self.processes
+    }
+
+    // Take field
+    pub fn take_processes(&mut self) -> ::protobuf::RepeatedField<ProcessId> {
+        ::std::mem::replace(&mut self.processes, ::protobuf::RepeatedField::new())
+    }
+}
+
+impl ::protobuf::Message for AppPropose {
+    fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.processes {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
+                },
+                2 => {
+                    ::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.processes)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        for value in &self.processes {
+            let len = value.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        };
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        for v in &self.processes {
+            os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        };
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> AppPropose {
+        AppPropose::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
+                    "value",
+                    |m: &AppPropose| { &m.value },
+                    |m: &mut AppPropose| { &mut m.value },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_repeated_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
+                    "processes",
+                    |m: &AppPropose| { &m.processes },
+                    |m: &mut AppPropose| { &mut m.processes },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<AppPropose>(
+                    "AppPropose",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static AppPropose {
+        static mut instance: ::protobuf::lazy::Lazy<AppPropose> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(AppPropose::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for AppPropose {
+    fn clear(&mut self) {
+        self.value.clear();
+        self.processes.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for AppPropose {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for AppPropose {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct AppDecide {
+    // message fields
+    pub value: ::protobuf::SingularPtrField<Value>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a AppDecide {
+    fn default() -> &'a AppDecide {
+        <AppDecide as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl AppDecide {
+    pub fn new() -> AppDecide {
+        ::std::default::Default::default()
+    }
+
+    // .main.Value value = 1;
+
+
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
+    }
+    pub fn clear_value(&mut self) {
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
+    }
+}
+
+impl ::protobuf::Message for AppDecide {
+    fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> AppDecide {
+        AppDecide::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
+                    "value",
+                    |m: &AppDecide| { &m.value },
+                    |m: &mut AppDecide| { &mut m.value },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<AppDecide>(
+                    "AppDecide",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static AppDecide {
+        static mut instance: ::protobuf::lazy::Lazy<AppDecide> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(AppDecide::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for AppDecide {
+    fn clear(&mut self) {
+        self.value.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for AppDecide {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for AppDecide {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
 pub struct UcPropose {
     // message fields
-    pub value: i32,
+    pub value: ::protobuf::SingularPtrField<Value>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -356,24 +1150,47 @@ impl UcPropose {
         ::std::default::Default::default()
     }
 
-    // int32 value = 1;
+    // .main.Value value = 1;
 
 
-    pub fn get_value(&self) -> i32 {
-        self.value
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
     }
     pub fn clear_value(&mut self) {
-        self.value = 0;
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
     }
 
     // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
     }
 }
 
 impl ::protobuf::Message for UcPropose {
     fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
         true
     }
 
@@ -382,11 +1199,7 @@ impl ::protobuf::Message for UcPropose {
             let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
                 1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -400,8 +1213,9 @@ impl ::protobuf::Message for UcPropose {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.value, ::protobuf::wire_format::WireTypeVarint);
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -409,8 +1223,10 @@ impl ::protobuf::Message for UcPropose {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.value != 0 {
-            os.write_int32(1, self.value)?;
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
         }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -451,7 +1267,7 @@ impl ::protobuf::Message for UcPropose {
         unsafe {
             descriptor.get(|| {
                 let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
                     "value",
                     |m: &UcPropose| { &m.value },
                     |m: &mut UcPropose| { &mut m.value },
@@ -475,7 +1291,7 @@ impl ::protobuf::Message for UcPropose {
 
 impl ::protobuf::Clear for UcPropose {
     fn clear(&mut self) {
-        self.value = 0;
+        self.value.clear();
         self.unknown_fields.clear();
     }
 }
@@ -487,6 +1303,1872 @@ impl ::std::fmt::Debug for UcPropose {
 }
 
 impl ::protobuf::reflect::ProtobufValue for UcPropose {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct UcDecide {
+    // message fields
+    pub value: ::protobuf::SingularPtrField<Value>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a UcDecide {
+    fn default() -> &'a UcDecide {
+        <UcDecide as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl UcDecide {
+    pub fn new() -> UcDecide {
+        ::std::default::Default::default()
+    }
+
+    // .main.Value value = 1;
+
+
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
+    }
+    pub fn clear_value(&mut self) {
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
+    }
+}
+
+impl ::protobuf::Message for UcDecide {
+    fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> UcDecide {
+        UcDecide::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
+                    "value",
+                    |m: &UcDecide| { &m.value },
+                    |m: &mut UcDecide| { &mut m.value },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<UcDecide>(
+                    "UcDecide",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static UcDecide {
+        static mut instance: ::protobuf::lazy::Lazy<UcDecide> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(UcDecide::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for UcDecide {
+    fn clear(&mut self) {
+        self.value.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for UcDecide {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for UcDecide {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpAbort {
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpAbort {
+    fn default() -> &'a EpAbort {
+        <EpAbort as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpAbort {
+    pub fn new() -> EpAbort {
+        ::std::default::Default::default()
+    }
+}
+
+impl ::protobuf::Message for EpAbort {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpAbort {
+        EpAbort::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<EpAbort>(
+                    "EpAbort",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpAbort {
+        static mut instance: ::protobuf::lazy::Lazy<EpAbort> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpAbort::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpAbort {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpAbort {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpAbort {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpAborted {
+    // message fields
+    pub ets: i32,
+    pub valueTimestamp: i32,
+    pub value: ::protobuf::SingularPtrField<Value>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpAborted {
+    fn default() -> &'a EpAborted {
+        <EpAborted as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpAborted {
+    pub fn new() -> EpAborted {
+        ::std::default::Default::default()
+    }
+
+    // int32 ets = 1;
+
+
+    pub fn get_ets(&self) -> i32 {
+        self.ets
+    }
+    pub fn clear_ets(&mut self) {
+        self.ets = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_ets(&mut self, v: i32) {
+        self.ets = v;
+    }
+
+    // int32 valueTimestamp = 2;
+
+
+    pub fn get_valueTimestamp(&self) -> i32 {
+        self.valueTimestamp
+    }
+    pub fn clear_valueTimestamp(&mut self) {
+        self.valueTimestamp = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_valueTimestamp(&mut self, v: i32) {
+        self.valueTimestamp = v;
+    }
+
+    // .main.Value value = 3;
+
+
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
+    }
+    pub fn clear_value(&mut self) {
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
+    }
+}
+
+impl ::protobuf::Message for EpAborted {
+    fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_int32()?;
+                    self.ets = tmp;
+                },
+                2 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_int32()?;
+                    self.valueTimestamp = tmp;
+                },
+                3 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.ets != 0 {
+            my_size += ::protobuf::rt::value_size(1, self.ets, ::protobuf::wire_format::WireTypeVarint);
+        }
+        if self.valueTimestamp != 0 {
+            my_size += ::protobuf::rt::value_size(2, self.valueTimestamp, ::protobuf::wire_format::WireTypeVarint);
+        }
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.ets != 0 {
+            os.write_int32(1, self.ets)?;
+        }
+        if self.valueTimestamp != 0 {
+            os.write_int32(2, self.valueTimestamp)?;
+        }
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpAborted {
+        EpAborted::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
+                    "ets",
+                    |m: &EpAborted| { &m.ets },
+                    |m: &mut EpAborted| { &mut m.ets },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
+                    "valueTimestamp",
+                    |m: &EpAborted| { &m.valueTimestamp },
+                    |m: &mut EpAborted| { &mut m.valueTimestamp },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
+                    "value",
+                    |m: &EpAborted| { &m.value },
+                    |m: &mut EpAborted| { &mut m.value },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<EpAborted>(
+                    "EpAborted",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpAborted {
+        static mut instance: ::protobuf::lazy::Lazy<EpAborted> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpAborted::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpAborted {
+    fn clear(&mut self) {
+        self.ets = 0;
+        self.valueTimestamp = 0;
+        self.value.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpAborted {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpAborted {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpPropose {
+    // message fields
+    pub value: ::protobuf::SingularPtrField<Value>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpPropose {
+    fn default() -> &'a EpPropose {
+        <EpPropose as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpPropose {
+    pub fn new() -> EpPropose {
+        ::std::default::Default::default()
+    }
+
+    // .main.Value value = 1;
+
+
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
+    }
+    pub fn clear_value(&mut self) {
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
+    }
+}
+
+impl ::protobuf::Message for EpPropose {
+    fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpPropose {
+        EpPropose::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
+                    "value",
+                    |m: &EpPropose| { &m.value },
+                    |m: &mut EpPropose| { &mut m.value },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<EpPropose>(
+                    "EpPropose",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpPropose {
+        static mut instance: ::protobuf::lazy::Lazy<EpPropose> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpPropose::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpPropose {
+    fn clear(&mut self) {
+        self.value.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpPropose {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpPropose {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpDecide {
+    // message fields
+    pub ets: i32,
+    pub value: ::protobuf::SingularPtrField<Value>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpDecide {
+    fn default() -> &'a EpDecide {
+        <EpDecide as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpDecide {
+    pub fn new() -> EpDecide {
+        ::std::default::Default::default()
+    }
+
+    // int32 ets = 1;
+
+
+    pub fn get_ets(&self) -> i32 {
+        self.ets
+    }
+    pub fn clear_ets(&mut self) {
+        self.ets = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_ets(&mut self, v: i32) {
+        self.ets = v;
+    }
+
+    // .main.Value value = 2;
+
+
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
+    }
+    pub fn clear_value(&mut self) {
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
+    }
+}
+
+impl ::protobuf::Message for EpDecide {
+    fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_int32()?;
+                    self.ets = tmp;
+                },
+                2 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.ets != 0 {
+            my_size += ::protobuf::rt::value_size(1, self.ets, ::protobuf::wire_format::WireTypeVarint);
+        }
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.ets != 0 {
+            os.write_int32(1, self.ets)?;
+        }
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpDecide {
+        EpDecide::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
+                    "ets",
+                    |m: &EpDecide| { &m.ets },
+                    |m: &mut EpDecide| { &mut m.ets },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
+                    "value",
+                    |m: &EpDecide| { &m.value },
+                    |m: &mut EpDecide| { &mut m.value },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<EpDecide>(
+                    "EpDecide",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpDecide {
+        static mut instance: ::protobuf::lazy::Lazy<EpDecide> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpDecide::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpDecide {
+    fn clear(&mut self) {
+        self.ets = 0;
+        self.value.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpDecide {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpDecide {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpRead_ {
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpRead_ {
+    fn default() -> &'a EpRead_ {
+        <EpRead_ as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpRead_ {
+    pub fn new() -> EpRead_ {
+        ::std::default::Default::default()
+    }
+}
+
+impl ::protobuf::Message for EpRead_ {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpRead_ {
+        EpRead_::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<EpRead_>(
+                    "EpRead_",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpRead_ {
+        static mut instance: ::protobuf::lazy::Lazy<EpRead_> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpRead_::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpRead_ {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpRead_ {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpRead_ {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpState_ {
+    // message fields
+    pub valueTimestamp: i32,
+    pub value: ::protobuf::SingularPtrField<Value>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpState_ {
+    fn default() -> &'a EpState_ {
+        <EpState_ as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpState_ {
+    pub fn new() -> EpState_ {
+        ::std::default::Default::default()
+    }
+
+    // int32 valueTimestamp = 1;
+
+
+    pub fn get_valueTimestamp(&self) -> i32 {
+        self.valueTimestamp
+    }
+    pub fn clear_valueTimestamp(&mut self) {
+        self.valueTimestamp = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_valueTimestamp(&mut self, v: i32) {
+        self.valueTimestamp = v;
+    }
+
+    // .main.Value value = 2;
+
+
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
+    }
+    pub fn clear_value(&mut self) {
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
+    }
+}
+
+impl ::protobuf::Message for EpState_ {
+    fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_int32()?;
+                    self.valueTimestamp = tmp;
+                },
+                2 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.valueTimestamp != 0 {
+            my_size += ::protobuf::rt::value_size(1, self.valueTimestamp, ::protobuf::wire_format::WireTypeVarint);
+        }
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.valueTimestamp != 0 {
+            os.write_int32(1, self.valueTimestamp)?;
+        }
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpState_ {
+        EpState_::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
+                    "valueTimestamp",
+                    |m: &EpState_| { &m.valueTimestamp },
+                    |m: &mut EpState_| { &mut m.valueTimestamp },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
+                    "value",
+                    |m: &EpState_| { &m.value },
+                    |m: &mut EpState_| { &mut m.value },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<EpState_>(
+                    "EpState_",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpState_ {
+        static mut instance: ::protobuf::lazy::Lazy<EpState_> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpState_::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpState_ {
+    fn clear(&mut self) {
+        self.valueTimestamp = 0;
+        self.value.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpState_ {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpState_ {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpWrite_ {
+    // message fields
+    pub value: ::protobuf::SingularPtrField<Value>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpWrite_ {
+    fn default() -> &'a EpWrite_ {
+        <EpWrite_ as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpWrite_ {
+    pub fn new() -> EpWrite_ {
+        ::std::default::Default::default()
+    }
+
+    // .main.Value value = 1;
+
+
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
+    }
+    pub fn clear_value(&mut self) {
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
+    }
+}
+
+impl ::protobuf::Message for EpWrite_ {
+    fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpWrite_ {
+        EpWrite_::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
+                    "value",
+                    |m: &EpWrite_| { &m.value },
+                    |m: &mut EpWrite_| { &mut m.value },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<EpWrite_>(
+                    "EpWrite_",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpWrite_ {
+        static mut instance: ::protobuf::lazy::Lazy<EpWrite_> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpWrite_::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpWrite_ {
+    fn clear(&mut self) {
+        self.value.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpWrite_ {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpWrite_ {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpAccept_ {
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpAccept_ {
+    fn default() -> &'a EpAccept_ {
+        <EpAccept_ as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpAccept_ {
+    pub fn new() -> EpAccept_ {
+        ::std::default::Default::default()
+    }
+}
+
+impl ::protobuf::Message for EpAccept_ {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpAccept_ {
+        EpAccept_::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<EpAccept_>(
+                    "EpAccept_",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpAccept_ {
+        static mut instance: ::protobuf::lazy::Lazy<EpAccept_> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpAccept_::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpAccept_ {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpAccept_ {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpAccept_ {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpDecided_ {
+    // message fields
+    pub value: ::protobuf::SingularPtrField<Value>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpDecided_ {
+    fn default() -> &'a EpDecided_ {
+        <EpDecided_ as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpDecided_ {
+    pub fn new() -> EpDecided_ {
+        ::std::default::Default::default()
+    }
+
+    // .main.Value value = 1;
+
+
+    pub fn get_value(&self) -> &Value {
+        self.value.as_ref().unwrap_or_else(|| Value::default_instance())
+    }
+    pub fn clear_value(&mut self) {
+        self.value.clear();
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.value.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_value(&mut self, v: Value) {
+        self.value = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_value(&mut self) -> &mut Value {
+        if self.value.is_none() {
+            self.value.set_default();
+        }
+        self.value.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_value(&mut self) -> Value {
+        self.value.take().unwrap_or_else(|| Value::new())
+    }
+}
+
+impl ::protobuf::Message for EpDecided_ {
+    fn is_initialized(&self) -> bool {
+        for v in &self.value {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.value)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let Some(ref v) = self.value.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let Some(ref v) = self.value.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpDecided_ {
+        EpDecided_::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Value>>(
+                    "value",
+                    |m: &EpDecided_| { &m.value },
+                    |m: &mut EpDecided_| { &mut m.value },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<EpDecided_>(
+                    "EpDecided_",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpDecided_ {
+        static mut instance: ::protobuf::lazy::Lazy<EpDecided_> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpDecided_::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpDecided_ {
+    fn clear(&mut self) {
+        self.value.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpDecided_ {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpDecided_ {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EcNack_ {
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EcNack_ {
+    fn default() -> &'a EcNack_ {
+        <EcNack_ as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EcNack_ {
+    pub fn new() -> EcNack_ {
+        ::std::default::Default::default()
+    }
+}
+
+impl ::protobuf::Message for EcNack_ {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EcNack_ {
+        EcNack_::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<EcNack_>(
+                    "EcNack_",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EcNack_ {
+        static mut instance: ::protobuf::lazy::Lazy<EcNack_> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EcNack_::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EcNack_ {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EcNack_ {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EcNack_ {
     fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
         ::protobuf::reflect::ReflectValueRef::Message(self)
     }
@@ -528,7 +3210,7 @@ impl EcStartEpoch {
         self.newTimestamp = v;
     }
 
-    // .ProcessId newLeader = 2;
+    // .main.ProcessId newLeader = 2;
 
 
     pub fn get_newLeader(&self) -> &ProcessId {
@@ -706,1719 +3388,6 @@ impl ::protobuf::reflect::ProtobufValue for EcStartEpoch {
 }
 
 #[derive(PartialEq,Clone,Default)]
-pub struct EpAbort {
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpAbort {
-    fn default() -> &'a EpAbort {
-        <EpAbort as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpAbort {
-    pub fn new() -> EpAbort {
-        ::std::default::Default::default()
-    }
-}
-
-impl ::protobuf::Message for EpAbort {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpAbort {
-        EpAbort::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let fields = ::std::vec::Vec::new();
-                ::protobuf::reflect::MessageDescriptor::new::<EpAbort>(
-                    "EpAbort",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpAbort {
-        static mut instance: ::protobuf::lazy::Lazy<EpAbort> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpAbort::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpAbort {
-    fn clear(&mut self) {
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpAbort {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpAbort {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct EpInit {
-    // message fields
-    pub valueTimestamp: i32,
-    pub value: i32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpInit {
-    fn default() -> &'a EpInit {
-        <EpInit as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpInit {
-    pub fn new() -> EpInit {
-        ::std::default::Default::default()
-    }
-
-    // int32 valueTimestamp = 1;
-
-
-    pub fn get_valueTimestamp(&self) -> i32 {
-        self.valueTimestamp
-    }
-    pub fn clear_valueTimestamp(&mut self) {
-        self.valueTimestamp = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_valueTimestamp(&mut self, v: i32) {
-        self.valueTimestamp = v;
-    }
-
-    // int32 value = 2;
-
-
-    pub fn get_value(&self) -> i32 {
-        self.value
-    }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-}
-
-impl ::protobuf::Message for EpInit {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.valueTimestamp = tmp;
-                },
-                2 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.valueTimestamp != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.valueTimestamp, ::protobuf::wire_format::WireTypeVarint);
-        }
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(2, self.value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.valueTimestamp != 0 {
-            os.write_int32(1, self.valueTimestamp)?;
-        }
-        if self.value != 0 {
-            os.write_int32(2, self.value)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpInit {
-        EpInit::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "valueTimestamp",
-                    |m: &EpInit| { &m.valueTimestamp },
-                    |m: &mut EpInit| { &mut m.valueTimestamp },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &EpInit| { &m.value },
-                    |m: &mut EpInit| { &mut m.value },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<EpInit>(
-                    "EpInit",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpInit {
-        static mut instance: ::protobuf::lazy::Lazy<EpInit> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpInit::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpInit {
-    fn clear(&mut self) {
-        self.valueTimestamp = 0;
-        self.value = 0;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpInit {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpInit {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct EpAborted {
-    // message fields
-    pub valueTimestamp: i32,
-    pub value: i32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpAborted {
-    fn default() -> &'a EpAborted {
-        <EpAborted as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpAborted {
-    pub fn new() -> EpAborted {
-        ::std::default::Default::default()
-    }
-
-    // int32 valueTimestamp = 1;
-
-
-    pub fn get_valueTimestamp(&self) -> i32 {
-        self.valueTimestamp
-    }
-    pub fn clear_valueTimestamp(&mut self) {
-        self.valueTimestamp = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_valueTimestamp(&mut self, v: i32) {
-        self.valueTimestamp = v;
-    }
-
-    // int32 value = 2;
-
-
-    pub fn get_value(&self) -> i32 {
-        self.value
-    }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-}
-
-impl ::protobuf::Message for EpAborted {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.valueTimestamp = tmp;
-                },
-                2 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.valueTimestamp != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.valueTimestamp, ::protobuf::wire_format::WireTypeVarint);
-        }
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(2, self.value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.valueTimestamp != 0 {
-            os.write_int32(1, self.valueTimestamp)?;
-        }
-        if self.value != 0 {
-            os.write_int32(2, self.value)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpAborted {
-        EpAborted::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "valueTimestamp",
-                    |m: &EpAborted| { &m.valueTimestamp },
-                    |m: &mut EpAborted| { &mut m.valueTimestamp },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &EpAborted| { &m.value },
-                    |m: &mut EpAborted| { &mut m.value },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<EpAborted>(
-                    "EpAborted",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpAborted {
-        static mut instance: ::protobuf::lazy::Lazy<EpAborted> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpAborted::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpAborted {
-    fn clear(&mut self) {
-        self.valueTimestamp = 0;
-        self.value = 0;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpAborted {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpAborted {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct EpPropose {
-    // message fields
-    pub value: i32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpPropose {
-    fn default() -> &'a EpPropose {
-        <EpPropose as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpPropose {
-    pub fn new() -> EpPropose {
-        ::std::default::Default::default()
-    }
-
-    // int32 value = 1;
-
-
-    pub fn get_value(&self) -> i32 {
-        self.value
-    }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-}
-
-impl ::protobuf::Message for EpPropose {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.value != 0 {
-            os.write_int32(1, self.value)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpPropose {
-        EpPropose::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &EpPropose| { &m.value },
-                    |m: &mut EpPropose| { &mut m.value },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<EpPropose>(
-                    "EpPropose",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpPropose {
-        static mut instance: ::protobuf::lazy::Lazy<EpPropose> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpPropose::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpPropose {
-    fn clear(&mut self) {
-        self.value = 0;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpPropose {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpPropose {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct EpDecide {
-    // message fields
-    pub value: i32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpDecide {
-    fn default() -> &'a EpDecide {
-        <EpDecide as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpDecide {
-    pub fn new() -> EpDecide {
-        ::std::default::Default::default()
-    }
-
-    // int32 value = 1;
-
-
-    pub fn get_value(&self) -> i32 {
-        self.value
-    }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-}
-
-impl ::protobuf::Message for EpDecide {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.value != 0 {
-            os.write_int32(1, self.value)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpDecide {
-        EpDecide::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &EpDecide| { &m.value },
-                    |m: &mut EpDecide| { &mut m.value },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<EpDecide>(
-                    "EpDecide",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpDecide {
-        static mut instance: ::protobuf::lazy::Lazy<EpDecide> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpDecide::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpDecide {
-    fn clear(&mut self) {
-        self.value = 0;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpDecide {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpDecide {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct UcDecide {
-    // message fields
-    pub value: i32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a UcDecide {
-    fn default() -> &'a UcDecide {
-        <UcDecide as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl UcDecide {
-    pub fn new() -> UcDecide {
-        ::std::default::Default::default()
-    }
-
-    // int32 value = 1;
-
-
-    pub fn get_value(&self) -> i32 {
-        self.value
-    }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-}
-
-impl ::protobuf::Message for UcDecide {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.value != 0 {
-            os.write_int32(1, self.value)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> UcDecide {
-        UcDecide::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &UcDecide| { &m.value },
-                    |m: &mut UcDecide| { &mut m.value },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<UcDecide>(
-                    "UcDecide",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static UcDecide {
-        static mut instance: ::protobuf::lazy::Lazy<UcDecide> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(UcDecide::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for UcDecide {
-    fn clear(&mut self) {
-        self.value = 0;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for UcDecide {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for UcDecide {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct EpRead_ {
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpRead_ {
-    fn default() -> &'a EpRead_ {
-        <EpRead_ as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpRead_ {
-    pub fn new() -> EpRead_ {
-        ::std::default::Default::default()
-    }
-}
-
-impl ::protobuf::Message for EpRead_ {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpRead_ {
-        EpRead_::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let fields = ::std::vec::Vec::new();
-                ::protobuf::reflect::MessageDescriptor::new::<EpRead_>(
-                    "EpRead_",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpRead_ {
-        static mut instance: ::protobuf::lazy::Lazy<EpRead_> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpRead_::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpRead_ {
-    fn clear(&mut self) {
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpRead_ {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpRead_ {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct EpState_ {
-    // message fields
-    pub valueTimestamp: i32,
-    pub value: i32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpState_ {
-    fn default() -> &'a EpState_ {
-        <EpState_ as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpState_ {
-    pub fn new() -> EpState_ {
-        ::std::default::Default::default()
-    }
-
-    // int32 valueTimestamp = 1;
-
-
-    pub fn get_valueTimestamp(&self) -> i32 {
-        self.valueTimestamp
-    }
-    pub fn clear_valueTimestamp(&mut self) {
-        self.valueTimestamp = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_valueTimestamp(&mut self, v: i32) {
-        self.valueTimestamp = v;
-    }
-
-    // int32 value = 2;
-
-
-    pub fn get_value(&self) -> i32 {
-        self.value
-    }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-}
-
-impl ::protobuf::Message for EpState_ {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.valueTimestamp = tmp;
-                },
-                2 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.valueTimestamp != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.valueTimestamp, ::protobuf::wire_format::WireTypeVarint);
-        }
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(2, self.value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.valueTimestamp != 0 {
-            os.write_int32(1, self.valueTimestamp)?;
-        }
-        if self.value != 0 {
-            os.write_int32(2, self.value)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpState_ {
-        EpState_::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "valueTimestamp",
-                    |m: &EpState_| { &m.valueTimestamp },
-                    |m: &mut EpState_| { &mut m.valueTimestamp },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &EpState_| { &m.value },
-                    |m: &mut EpState_| { &mut m.value },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<EpState_>(
-                    "EpState_",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpState_ {
-        static mut instance: ::protobuf::lazy::Lazy<EpState_> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpState_::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpState_ {
-    fn clear(&mut self) {
-        self.valueTimestamp = 0;
-        self.value = 0;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpState_ {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpState_ {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct EpWrite_ {
-    // message fields
-    pub value: i32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpWrite_ {
-    fn default() -> &'a EpWrite_ {
-        <EpWrite_ as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpWrite_ {
-    pub fn new() -> EpWrite_ {
-        ::std::default::Default::default()
-    }
-
-    // int32 value = 1;
-
-
-    pub fn get_value(&self) -> i32 {
-        self.value
-    }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-}
-
-impl ::protobuf::Message for EpWrite_ {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.value != 0 {
-            os.write_int32(1, self.value)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpWrite_ {
-        EpWrite_::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &EpWrite_| { &m.value },
-                    |m: &mut EpWrite_| { &mut m.value },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<EpWrite_>(
-                    "EpWrite_",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpWrite_ {
-        static mut instance: ::protobuf::lazy::Lazy<EpWrite_> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpWrite_::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpWrite_ {
-    fn clear(&mut self) {
-        self.value = 0;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpWrite_ {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpWrite_ {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct EpAccept_ {
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpAccept_ {
-    fn default() -> &'a EpAccept_ {
-        <EpAccept_ as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpAccept_ {
-    pub fn new() -> EpAccept_ {
-        ::std::default::Default::default()
-    }
-}
-
-impl ::protobuf::Message for EpAccept_ {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpAccept_ {
-        EpAccept_::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let fields = ::std::vec::Vec::new();
-                ::protobuf::reflect::MessageDescriptor::new::<EpAccept_>(
-                    "EpAccept_",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpAccept_ {
-        static mut instance: ::protobuf::lazy::Lazy<EpAccept_> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpAccept_::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpAccept_ {
-    fn clear(&mut self) {
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpAccept_ {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpAccept_ {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct EpDecided_ {
-    // message fields
-    pub value: i32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EpDecided_ {
-    fn default() -> &'a EpDecided_ {
-        <EpDecided_ as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EpDecided_ {
-    pub fn new() -> EpDecided_ {
-        ::std::default::Default::default()
-    }
-
-    // int32 value = 1;
-
-
-    pub fn get_value(&self) -> i32 {
-        self.value
-    }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-}
-
-impl ::protobuf::Message for EpDecided_ {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.value != 0 {
-            os.write_int32(1, self.value)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EpDecided_ {
-        EpDecided_::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &EpDecided_| { &m.value },
-                    |m: &mut EpDecided_| { &mut m.value },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<EpDecided_>(
-                    "EpDecided_",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EpDecided_ {
-        static mut instance: ::protobuf::lazy::Lazy<EpDecided_> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EpDecided_::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EpDecided_ {
-    fn clear(&mut self) {
-        self.value = 0;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EpDecided_ {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EpDecided_ {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
 pub struct EcNewEpoch_ {
     // message fields
     pub timestamp: i32,
@@ -2575,126 +3544,6 @@ impl ::protobuf::reflect::ProtobufValue for EcNewEpoch_ {
 }
 
 #[derive(PartialEq,Clone,Default)]
-pub struct EcNack_ {
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EcNack_ {
-    fn default() -> &'a EcNack_ {
-        <EcNack_ as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EcNack_ {
-    pub fn new() -> EcNack_ {
-        ::std::default::Default::default()
-    }
-}
-
-impl ::protobuf::Message for EcNack_ {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EcNack_ {
-        EcNack_::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let fields = ::std::vec::Vec::new();
-                ::protobuf::reflect::MessageDescriptor::new::<EcNack_>(
-                    "EcNack_",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EcNack_ {
-        static mut instance: ::protobuf::lazy::Lazy<EcNack_> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EcNack_::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EcNack_ {
-    fn clear(&mut self) {
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EcNack_ {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EcNack_ {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
 pub struct BebBroadcast {
     // message fields
     pub message: ::protobuf::SingularPtrField<Message>,
@@ -2714,7 +3563,7 @@ impl BebBroadcast {
         ::std::default::Default::default()
     }
 
-    // .Message message = 1;
+    // .main.Message message = 1;
 
 
     pub fn get_message(&self) -> &Message {
@@ -2893,7 +3742,7 @@ impl BebDeliver {
         ::std::default::Default::default()
     }
 
-    // .Message message = 1;
+    // .main.Message message = 1;
 
 
     pub fn get_message(&self) -> &Message {
@@ -2926,7 +3775,7 @@ impl BebDeliver {
         self.message.take().unwrap_or_else(|| Message::new())
     }
 
-    // .ProcessId sender = 2;
+    // .main.ProcessId sender = 2;
 
 
     pub fn get_sender(&self) -> &ProcessId {
@@ -3108,126 +3957,6 @@ impl ::protobuf::reflect::ProtobufValue for BebDeliver {
 }
 
 #[derive(PartialEq,Clone,Default)]
-pub struct EldRecovery {
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a EldRecovery {
-    fn default() -> &'a EldRecovery {
-        <EldRecovery as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl EldRecovery {
-    pub fn new() -> EldRecovery {
-        ::std::default::Default::default()
-    }
-}
-
-impl ::protobuf::Message for EldRecovery {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> EldRecovery {
-        EldRecovery::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let fields = ::std::vec::Vec::new();
-                ::protobuf::reflect::MessageDescriptor::new::<EldRecovery>(
-                    "EldRecovery",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static EldRecovery {
-        static mut instance: ::protobuf::lazy::Lazy<EldRecovery> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(EldRecovery::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for EldRecovery {
-    fn clear(&mut self) {
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for EldRecovery {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for EldRecovery {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
 pub struct EldTimeout {
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
@@ -3350,7 +4079,7 @@ impl ::protobuf::reflect::ProtobufValue for EldTimeout {
 #[derive(PartialEq,Clone,Default)]
 pub struct EldTrust {
     // message fields
-    pub processId: ::protobuf::SingularPtrField<ProcessId>,
+    pub process: ::protobuf::SingularPtrField<ProcessId>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -3367,43 +4096,43 @@ impl EldTrust {
         ::std::default::Default::default()
     }
 
-    // .ProcessId processId = 1;
+    // .main.ProcessId process = 1;
 
 
-    pub fn get_processId(&self) -> &ProcessId {
-        self.processId.as_ref().unwrap_or_else(|| ProcessId::default_instance())
+    pub fn get_process(&self) -> &ProcessId {
+        self.process.as_ref().unwrap_or_else(|| ProcessId::default_instance())
     }
-    pub fn clear_processId(&mut self) {
-        self.processId.clear();
+    pub fn clear_process(&mut self) {
+        self.process.clear();
     }
 
-    pub fn has_processId(&self) -> bool {
-        self.processId.is_some()
+    pub fn has_process(&self) -> bool {
+        self.process.is_some()
     }
 
     // Param is passed by value, moved
-    pub fn set_processId(&mut self, v: ProcessId) {
-        self.processId = ::protobuf::SingularPtrField::some(v);
+    pub fn set_process(&mut self, v: ProcessId) {
+        self.process = ::protobuf::SingularPtrField::some(v);
     }
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_processId(&mut self) -> &mut ProcessId {
-        if self.processId.is_none() {
-            self.processId.set_default();
+    pub fn mut_process(&mut self) -> &mut ProcessId {
+        if self.process.is_none() {
+            self.process.set_default();
         }
-        self.processId.as_mut().unwrap()
+        self.process.as_mut().unwrap()
     }
 
     // Take field
-    pub fn take_processId(&mut self) -> ProcessId {
-        self.processId.take().unwrap_or_else(|| ProcessId::new())
+    pub fn take_process(&mut self) -> ProcessId {
+        self.process.take().unwrap_or_else(|| ProcessId::new())
     }
 }
 
 impl ::protobuf::Message for EldTrust {
     fn is_initialized(&self) -> bool {
-        for v in &self.processId {
+        for v in &self.process {
             if !v.is_initialized() {
                 return false;
             }
@@ -3416,7 +4145,7 @@ impl ::protobuf::Message for EldTrust {
             let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
                 1 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.processId)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.process)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -3430,7 +4159,7 @@ impl ::protobuf::Message for EldTrust {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        if let Some(ref v) = self.processId.as_ref() {
+        if let Some(ref v) = self.process.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
@@ -3440,7 +4169,7 @@ impl ::protobuf::Message for EldTrust {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if let Some(ref v) = self.processId.as_ref() {
+        if let Some(ref v) = self.process.as_ref() {
             os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
@@ -3485,9 +4214,9 @@ impl ::protobuf::Message for EldTrust {
             descriptor.get(|| {
                 let mut fields = ::std::vec::Vec::new();
                 fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
-                    "processId",
-                    |m: &EldTrust| { &m.processId },
-                    |m: &mut EldTrust| { &mut m.processId },
+                    "process",
+                    |m: &EldTrust| { &m.process },
+                    |m: &mut EldTrust| { &mut m.process },
                 ));
                 ::protobuf::reflect::MessageDescriptor::new::<EldTrust>(
                     "EldTrust",
@@ -3508,7 +4237,7 @@ impl ::protobuf::Message for EldTrust {
 
 impl ::protobuf::Clear for EldTrust {
     fn clear(&mut self) {
-        self.processId.clear();
+        self.process.clear();
         self.unknown_fields.clear();
     }
 }
@@ -3526,42 +4255,25 @@ impl ::protobuf::reflect::ProtobufValue for EldTrust {
 }
 
 #[derive(PartialEq,Clone,Default)]
-pub struct EldHeartbeat_ {
-    // message fields
-    pub epoch: i32,
+pub struct EpfdTimeout {
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
 }
 
-impl<'a> ::std::default::Default for &'a EldHeartbeat_ {
-    fn default() -> &'a EldHeartbeat_ {
-        <EldHeartbeat_ as ::protobuf::Message>::default_instance()
+impl<'a> ::std::default::Default for &'a EpfdTimeout {
+    fn default() -> &'a EpfdTimeout {
+        <EpfdTimeout as ::protobuf::Message>::default_instance()
     }
 }
 
-impl EldHeartbeat_ {
-    pub fn new() -> EldHeartbeat_ {
+impl EpfdTimeout {
+    pub fn new() -> EpfdTimeout {
         ::std::default::Default::default()
     }
-
-    // int32 epoch = 1;
-
-
-    pub fn get_epoch(&self) -> i32 {
-        self.epoch
-    }
-    pub fn clear_epoch(&mut self) {
-        self.epoch = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epoch(&mut self, v: i32) {
-        self.epoch = v;
-    }
 }
 
-impl ::protobuf::Message for EldHeartbeat_ {
+impl ::protobuf::Message for EpfdTimeout {
     fn is_initialized(&self) -> bool {
         true
     }
@@ -3570,12 +4282,408 @@ impl ::protobuf::Message for EldHeartbeat_ {
         while !is.eof()? {
             let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpfdTimeout {
+        EpfdTimeout::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<EpfdTimeout>(
+                    "EpfdTimeout",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpfdTimeout {
+        static mut instance: ::protobuf::lazy::Lazy<EpfdTimeout> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpfdTimeout::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpfdTimeout {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpfdTimeout {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpfdTimeout {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpfdHeartbeatRequest_ {
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpfdHeartbeatRequest_ {
+    fn default() -> &'a EpfdHeartbeatRequest_ {
+        <EpfdHeartbeatRequest_ as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpfdHeartbeatRequest_ {
+    pub fn new() -> EpfdHeartbeatRequest_ {
+        ::std::default::Default::default()
+    }
+}
+
+impl ::protobuf::Message for EpfdHeartbeatRequest_ {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpfdHeartbeatRequest_ {
+        EpfdHeartbeatRequest_::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<EpfdHeartbeatRequest_>(
+                    "EpfdHeartbeatRequest_",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpfdHeartbeatRequest_ {
+        static mut instance: ::protobuf::lazy::Lazy<EpfdHeartbeatRequest_> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpfdHeartbeatRequest_::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpfdHeartbeatRequest_ {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpfdHeartbeatRequest_ {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpfdHeartbeatRequest_ {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpfdHeartbeatReply_ {
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpfdHeartbeatReply_ {
+    fn default() -> &'a EpfdHeartbeatReply_ {
+        <EpfdHeartbeatReply_ as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpfdHeartbeatReply_ {
+    pub fn new() -> EpfdHeartbeatReply_ {
+        ::std::default::Default::default()
+    }
+}
+
+impl ::protobuf::Message for EpfdHeartbeatReply_ {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpfdHeartbeatReply_ {
+        EpfdHeartbeatReply_::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<EpfdHeartbeatReply_>(
+                    "EpfdHeartbeatReply_",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpfdHeartbeatReply_ {
+        static mut instance: ::protobuf::lazy::Lazy<EpfdHeartbeatReply_> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpfdHeartbeatReply_::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpfdHeartbeatReply_ {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpfdHeartbeatReply_ {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpfdHeartbeatReply_ {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpfdSuspect {
+    // message fields
+    pub process: ::protobuf::SingularPtrField<ProcessId>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpfdSuspect {
+    fn default() -> &'a EpfdSuspect {
+        <EpfdSuspect as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpfdSuspect {
+    pub fn new() -> EpfdSuspect {
+        ::std::default::Default::default()
+    }
+
+    // .main.ProcessId process = 1;
+
+
+    pub fn get_process(&self) -> &ProcessId {
+        self.process.as_ref().unwrap_or_else(|| ProcessId::default_instance())
+    }
+    pub fn clear_process(&mut self) {
+        self.process.clear();
+    }
+
+    pub fn has_process(&self) -> bool {
+        self.process.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_process(&mut self, v: ProcessId) {
+        self.process = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_process(&mut self) -> &mut ProcessId {
+        if self.process.is_none() {
+            self.process.set_default();
+        }
+        self.process.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_process(&mut self) -> ProcessId {
+        self.process.take().unwrap_or_else(|| ProcessId::new())
+    }
+}
+
+impl ::protobuf::Message for EpfdSuspect {
+    fn is_initialized(&self) -> bool {
+        for v in &self.process {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
                 1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.epoch = tmp;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.process)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -3589,8 +4697,9 @@ impl ::protobuf::Message for EldHeartbeat_ {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        if self.epoch != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.epoch, ::protobuf::wire_format::WireTypeVarint);
+        if let Some(ref v) = self.process.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -3598,8 +4707,10 @@ impl ::protobuf::Message for EldHeartbeat_ {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.epoch != 0 {
-            os.write_int32(1, self.epoch)?;
+        if let Some(ref v) = self.process.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
         }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -3631,8 +4742,8 @@ impl ::protobuf::Message for EldHeartbeat_ {
         Self::descriptor_static()
     }
 
-    fn new() -> EldHeartbeat_ {
-        EldHeartbeat_::new()
+    fn new() -> EpfdSuspect {
+        EpfdSuspect::new()
     }
 
     fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -3640,13 +4751,13 @@ impl ::protobuf::Message for EldHeartbeat_ {
         unsafe {
             descriptor.get(|| {
                 let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "epoch",
-                    |m: &EldHeartbeat_| { &m.epoch },
-                    |m: &mut EldHeartbeat_| { &mut m.epoch },
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
+                    "process",
+                    |m: &EpfdSuspect| { &m.process },
+                    |m: &mut EpfdSuspect| { &mut m.process },
                 ));
-                ::protobuf::reflect::MessageDescriptor::new::<EldHeartbeat_>(
-                    "EldHeartbeat_",
+                ::protobuf::reflect::MessageDescriptor::new::<EpfdSuspect>(
+                    "EpfdSuspect",
                     fields,
                     file_descriptor_proto()
                 )
@@ -3654,28 +4765,206 @@ impl ::protobuf::Message for EldHeartbeat_ {
         }
     }
 
-    fn default_instance() -> &'static EldHeartbeat_ {
-        static mut instance: ::protobuf::lazy::Lazy<EldHeartbeat_> = ::protobuf::lazy::Lazy::INIT;
+    fn default_instance() -> &'static EpfdSuspect {
+        static mut instance: ::protobuf::lazy::Lazy<EpfdSuspect> = ::protobuf::lazy::Lazy::INIT;
         unsafe {
-            instance.get(EldHeartbeat_::new)
+            instance.get(EpfdSuspect::new)
         }
     }
 }
 
-impl ::protobuf::Clear for EldHeartbeat_ {
+impl ::protobuf::Clear for EpfdSuspect {
     fn clear(&mut self) {
-        self.epoch = 0;
+        self.process.clear();
         self.unknown_fields.clear();
     }
 }
 
-impl ::std::fmt::Debug for EldHeartbeat_ {
+impl ::std::fmt::Debug for EpfdSuspect {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         ::protobuf::text_format::fmt(self, f)
     }
 }
 
-impl ::protobuf::reflect::ProtobufValue for EldHeartbeat_ {
+impl ::protobuf::reflect::ProtobufValue for EpfdSuspect {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct EpfdRestore {
+    // message fields
+    pub process: ::protobuf::SingularPtrField<ProcessId>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a EpfdRestore {
+    fn default() -> &'a EpfdRestore {
+        <EpfdRestore as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl EpfdRestore {
+    pub fn new() -> EpfdRestore {
+        ::std::default::Default::default()
+    }
+
+    // .main.ProcessId process = 1;
+
+
+    pub fn get_process(&self) -> &ProcessId {
+        self.process.as_ref().unwrap_or_else(|| ProcessId::default_instance())
+    }
+    pub fn clear_process(&mut self) {
+        self.process.clear();
+    }
+
+    pub fn has_process(&self) -> bool {
+        self.process.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_process(&mut self, v: ProcessId) {
+        self.process = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_process(&mut self) -> &mut ProcessId {
+        if self.process.is_none() {
+            self.process.set_default();
+        }
+        self.process.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_process(&mut self) -> ProcessId {
+        self.process.take().unwrap_or_else(|| ProcessId::new())
+    }
+}
+
+impl ::protobuf::Message for EpfdRestore {
+    fn is_initialized(&self) -> bool {
+        for v in &self.process {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.process)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let Some(ref v) = self.process.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let Some(ref v) = self.process.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> EpfdRestore {
+        EpfdRestore::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
+                    "process",
+                    |m: &EpfdRestore| { &m.process },
+                    |m: &mut EpfdRestore| { &mut m.process },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<EpfdRestore>(
+                    "EpfdRestore",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static EpfdRestore {
+        static mut instance: ::protobuf::lazy::Lazy<EpfdRestore> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(EpfdRestore::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for EpfdRestore {
+    fn clear(&mut self) {
+        self.process.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for EpfdRestore {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for EpfdRestore {
     fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
         ::protobuf::reflect::ReflectValueRef::Message(self)
     }
@@ -3684,6 +4973,7 @@ impl ::protobuf::reflect::ProtobufValue for EldHeartbeat_ {
 #[derive(PartialEq,Clone,Default)]
 pub struct PlSend {
     // message fields
+    pub destination: ::protobuf::SingularPtrField<ProcessId>,
     pub message: ::protobuf::SingularPtrField<Message>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
@@ -3701,7 +4991,40 @@ impl PlSend {
         ::std::default::Default::default()
     }
 
-    // .Message message = 1;
+    // .main.ProcessId destination = 1;
+
+
+    pub fn get_destination(&self) -> &ProcessId {
+        self.destination.as_ref().unwrap_or_else(|| ProcessId::default_instance())
+    }
+    pub fn clear_destination(&mut self) {
+        self.destination.clear();
+    }
+
+    pub fn has_destination(&self) -> bool {
+        self.destination.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_destination(&mut self, v: ProcessId) {
+        self.destination = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_destination(&mut self) -> &mut ProcessId {
+        if self.destination.is_none() {
+            self.destination.set_default();
+        }
+        self.destination.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_destination(&mut self) -> ProcessId {
+        self.destination.take().unwrap_or_else(|| ProcessId::new())
+    }
+
+    // .main.Message message = 2;
 
 
     pub fn get_message(&self) -> &Message {
@@ -3737,6 +5060,11 @@ impl PlSend {
 
 impl ::protobuf::Message for PlSend {
     fn is_initialized(&self) -> bool {
+        for v in &self.destination {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
         for v in &self.message {
             if !v.is_initialized() {
                 return false;
@@ -3750,6 +5078,9 @@ impl ::protobuf::Message for PlSend {
             let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
                 1 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.destination)?;
+                },
+                2 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.message)?;
                 },
                 _ => {
@@ -3764,6 +5095,10 @@ impl ::protobuf::Message for PlSend {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
+        if let Some(ref v) = self.destination.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
         if let Some(ref v) = self.message.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
@@ -3774,8 +5109,13 @@ impl ::protobuf::Message for PlSend {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if let Some(ref v) = self.message.as_ref() {
+        if let Some(ref v) = self.destination.as_ref() {
             os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.message.as_ref() {
+            os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
@@ -3818,6 +5158,11 @@ impl ::protobuf::Message for PlSend {
         unsafe {
             descriptor.get(|| {
                 let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
+                    "destination",
+                    |m: &PlSend| { &m.destination },
+                    |m: &mut PlSend| { &mut m.destination },
+                ));
                 fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Message>>(
                     "message",
                     |m: &PlSend| { &m.message },
@@ -3842,6 +5187,7 @@ impl ::protobuf::Message for PlSend {
 
 impl ::protobuf::Clear for PlSend {
     fn clear(&mut self) {
+        self.destination.clear();
         self.message.clear();
         self.unknown_fields.clear();
     }
@@ -3862,8 +5208,8 @@ impl ::protobuf::reflect::ProtobufValue for PlSend {
 #[derive(PartialEq,Clone,Default)]
 pub struct PlDeliver {
     // message fields
-    pub message: ::protobuf::SingularPtrField<Message>,
     pub sender: ::protobuf::SingularPtrField<ProcessId>,
+    pub message: ::protobuf::SingularPtrField<Message>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -3880,40 +5226,7 @@ impl PlDeliver {
         ::std::default::Default::default()
     }
 
-    // .Message message = 1;
-
-
-    pub fn get_message(&self) -> &Message {
-        self.message.as_ref().unwrap_or_else(|| Message::default_instance())
-    }
-    pub fn clear_message(&mut self) {
-        self.message.clear();
-    }
-
-    pub fn has_message(&self) -> bool {
-        self.message.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_message(&mut self, v: Message) {
-        self.message = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_message(&mut self) -> &mut Message {
-        if self.message.is_none() {
-            self.message.set_default();
-        }
-        self.message.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_message(&mut self) -> Message {
-        self.message.take().unwrap_or_else(|| Message::new())
-    }
-
-    // .ProcessId sender = 2;
+    // .main.ProcessId sender = 1;
 
 
     pub fn get_sender(&self) -> &ProcessId {
@@ -3945,16 +5258,49 @@ impl PlDeliver {
     pub fn take_sender(&mut self) -> ProcessId {
         self.sender.take().unwrap_or_else(|| ProcessId::new())
     }
+
+    // .main.Message message = 2;
+
+
+    pub fn get_message(&self) -> &Message {
+        self.message.as_ref().unwrap_or_else(|| Message::default_instance())
+    }
+    pub fn clear_message(&mut self) {
+        self.message.clear();
+    }
+
+    pub fn has_message(&self) -> bool {
+        self.message.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_message(&mut self, v: Message) {
+        self.message = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_message(&mut self) -> &mut Message {
+        if self.message.is_none() {
+            self.message.set_default();
+        }
+        self.message.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_message(&mut self) -> Message {
+        self.message.take().unwrap_or_else(|| Message::new())
+    }
 }
 
 impl ::protobuf::Message for PlDeliver {
     fn is_initialized(&self) -> bool {
-        for v in &self.message {
+        for v in &self.sender {
             if !v.is_initialized() {
                 return false;
             }
         };
-        for v in &self.sender {
+        for v in &self.message {
             if !v.is_initialized() {
                 return false;
             }
@@ -3967,10 +5313,10 @@ impl ::protobuf::Message for PlDeliver {
             let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
                 1 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.message)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.sender)?;
                 },
                 2 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.sender)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.message)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -3984,11 +5330,11 @@ impl ::protobuf::Message for PlDeliver {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        if let Some(ref v) = self.message.as_ref() {
+        if let Some(ref v) = self.sender.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
-        if let Some(ref v) = self.sender.as_ref() {
+        if let Some(ref v) = self.message.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
@@ -3998,12 +5344,12 @@ impl ::protobuf::Message for PlDeliver {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if let Some(ref v) = self.message.as_ref() {
+        if let Some(ref v) = self.sender.as_ref() {
             os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.sender.as_ref() {
+        if let Some(ref v) = self.message.as_ref() {
             os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
@@ -4047,15 +5393,15 @@ impl ::protobuf::Message for PlDeliver {
         unsafe {
             descriptor.get(|| {
                 let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Message>>(
-                    "message",
-                    |m: &PlDeliver| { &m.message },
-                    |m: &mut PlDeliver| { &mut m.message },
-                ));
                 fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
                     "sender",
                     |m: &PlDeliver| { &m.sender },
                     |m: &mut PlDeliver| { &mut m.sender },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Message>>(
+                    "message",
+                    |m: &PlDeliver| { &m.message },
+                    |m: &mut PlDeliver| { &mut m.message },
                 ));
                 ::protobuf::reflect::MessageDescriptor::new::<PlDeliver>(
                     "PlDeliver",
@@ -4076,8 +5422,8 @@ impl ::protobuf::Message for PlDeliver {
 
 impl ::protobuf::Clear for PlDeliver {
     fn clear(&mut self) {
-        self.message.clear();
         self.sender.clear();
+        self.message.clear();
         self.unknown_fields.clear();
     }
 }
@@ -4095,303 +5441,105 @@ impl ::protobuf::reflect::ProtobufValue for PlDeliver {
 }
 
 #[derive(PartialEq,Clone,Default)]
-pub struct AppRegistration {
+pub struct NetworkMessage {
     // message fields
-    pub owner: ::std::string::String,
-    pub index: i32,
-    pub port: i32,
+    pub senderHost: ::std::string::String,
+    pub senderListeningPort: i32,
+    pub message: ::protobuf::SingularPtrField<Message>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
 }
 
-impl<'a> ::std::default::Default for &'a AppRegistration {
-    fn default() -> &'a AppRegistration {
-        <AppRegistration as ::protobuf::Message>::default_instance()
+impl<'a> ::std::default::Default for &'a NetworkMessage {
+    fn default() -> &'a NetworkMessage {
+        <NetworkMessage as ::protobuf::Message>::default_instance()
     }
 }
 
-impl AppRegistration {
-    pub fn new() -> AppRegistration {
+impl NetworkMessage {
+    pub fn new() -> NetworkMessage {
         ::std::default::Default::default()
     }
 
-    // string owner = 1;
+    // string senderHost = 1;
 
 
-    pub fn get_owner(&self) -> &str {
-        &self.owner
+    pub fn get_senderHost(&self) -> &str {
+        &self.senderHost
     }
-    pub fn clear_owner(&mut self) {
-        self.owner.clear();
+    pub fn clear_senderHost(&mut self) {
+        self.senderHost.clear();
     }
 
     // Param is passed by value, moved
-    pub fn set_owner(&mut self, v: ::std::string::String) {
-        self.owner = v;
+    pub fn set_senderHost(&mut self, v: ::std::string::String) {
+        self.senderHost = v;
     }
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_owner(&mut self) -> &mut ::std::string::String {
-        &mut self.owner
+    pub fn mut_senderHost(&mut self) -> &mut ::std::string::String {
+        &mut self.senderHost
     }
 
     // Take field
-    pub fn take_owner(&mut self) -> ::std::string::String {
-        ::std::mem::replace(&mut self.owner, ::std::string::String::new())
+    pub fn take_senderHost(&mut self) -> ::std::string::String {
+        ::std::mem::replace(&mut self.senderHost, ::std::string::String::new())
     }
 
-    // int32 index = 2;
+    // int32 senderListeningPort = 2;
 
 
-    pub fn get_index(&self) -> i32 {
-        self.index
+    pub fn get_senderListeningPort(&self) -> i32 {
+        self.senderListeningPort
     }
-    pub fn clear_index(&mut self) {
-        self.index = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_index(&mut self, v: i32) {
-        self.index = v;
-    }
-
-    // int32 port = 3;
-
-
-    pub fn get_port(&self) -> i32 {
-        self.port
-    }
-    pub fn clear_port(&mut self) {
-        self.port = 0;
+    pub fn clear_senderListeningPort(&mut self) {
+        self.senderListeningPort = 0;
     }
 
     // Param is passed by value, moved
-    pub fn set_port(&mut self, v: i32) {
-        self.port = v;
-    }
-}
-
-impl ::protobuf::Message for AppRegistration {
-    fn is_initialized(&self) -> bool {
-        true
+    pub fn set_senderListeningPort(&mut self, v: i32) {
+        self.senderListeningPort = v;
     }
 
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    ::protobuf::rt::read_singular_proto3_string_into(wire_type, is, &mut self.owner)?;
-                },
-                2 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.index = tmp;
-                },
-                3 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.port = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if !self.owner.is_empty() {
-            my_size += ::protobuf::rt::string_size(1, &self.owner);
-        }
-        if self.index != 0 {
-            my_size += ::protobuf::rt::value_size(2, self.index, ::protobuf::wire_format::WireTypeVarint);
-        }
-        if self.port != 0 {
-            my_size += ::protobuf::rt::value_size(3, self.port, ::protobuf::wire_format::WireTypeVarint);
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if !self.owner.is_empty() {
-            os.write_string(1, &self.owner)?;
-        }
-        if self.index != 0 {
-            os.write_int32(2, self.index)?;
-        }
-        if self.port != 0 {
-            os.write_int32(3, self.port)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> AppRegistration {
-        AppRegistration::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
-                    "owner",
-                    |m: &AppRegistration| { &m.owner },
-                    |m: &mut AppRegistration| { &mut m.owner },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "index",
-                    |m: &AppRegistration| { &m.index },
-                    |m: &mut AppRegistration| { &mut m.index },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "port",
-                    |m: &AppRegistration| { &m.port },
-                    |m: &mut AppRegistration| { &mut m.port },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<AppRegistration>(
-                    "AppRegistration",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static AppRegistration {
-        static mut instance: ::protobuf::lazy::Lazy<AppRegistration> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(AppRegistration::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for AppRegistration {
-    fn clear(&mut self) {
-        self.owner.clear();
-        self.index = 0;
-        self.port = 0;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for AppRegistration {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for AppRegistration {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct AppPropose {
-    // message fields
-    pub value: i32,
-    pub processes: ::protobuf::RepeatedField<ProcessId>,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a AppPropose {
-    fn default() -> &'a AppPropose {
-        <AppPropose as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl AppPropose {
-    pub fn new() -> AppPropose {
-        ::std::default::Default::default()
-    }
-
-    // int32 value = 1;
+    // .main.Message message = 3;
 
 
-    pub fn get_value(&self) -> i32 {
-        self.value
+    pub fn get_message(&self) -> &Message {
+        self.message.as_ref().unwrap_or_else(|| Message::default_instance())
     }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
+    pub fn clear_message(&mut self) {
+        self.message.clear();
+    }
+
+    pub fn has_message(&self) -> bool {
+        self.message.is_some()
     }
 
     // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-
-    // repeated .ProcessId processes = 2;
-
-
-    pub fn get_processes(&self) -> &[ProcessId] {
-        &self.processes
-    }
-    pub fn clear_processes(&mut self) {
-        self.processes.clear();
-    }
-
-    // Param is passed by value, moved
-    pub fn set_processes(&mut self, v: ::protobuf::RepeatedField<ProcessId>) {
-        self.processes = v;
+    pub fn set_message(&mut self, v: Message) {
+        self.message = ::protobuf::SingularPtrField::some(v);
     }
 
     // Mutable pointer to the field.
-    pub fn mut_processes(&mut self) -> &mut ::protobuf::RepeatedField<ProcessId> {
-        &mut self.processes
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_message(&mut self) -> &mut Message {
+        if self.message.is_none() {
+            self.message.set_default();
+        }
+        self.message.as_mut().unwrap()
     }
 
     // Take field
-    pub fn take_processes(&mut self) -> ::protobuf::RepeatedField<ProcessId> {
-        ::std::mem::replace(&mut self.processes, ::protobuf::RepeatedField::new())
+    pub fn take_message(&mut self) -> Message {
+        self.message.take().unwrap_or_else(|| Message::new())
     }
 }
 
-impl ::protobuf::Message for AppPropose {
+impl ::protobuf::Message for NetworkMessage {
     fn is_initialized(&self) -> bool {
-        for v in &self.processes {
+        for v in &self.message {
             if !v.is_initialized() {
                 return false;
             }
@@ -4404,185 +5552,17 @@ impl ::protobuf::Message for AppPropose {
             let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
                 1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_int32()?;
-                    self.value = tmp;
+                    ::protobuf::rt::read_singular_proto3_string_into(wire_type, is, &mut self.senderHost)?;
                 },
                 2 => {
-                    ::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.processes)?;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        for value in &self.processes {
-            let len = value.compute_size();
-            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        };
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.value != 0 {
-            os.write_int32(1, self.value)?;
-        }
-        for v in &self.processes {
-            os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        };
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> AppPropose {
-        AppPropose::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &AppPropose| { &m.value },
-                    |m: &mut AppPropose| { &mut m.value },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_repeated_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
-                    "processes",
-                    |m: &AppPropose| { &m.processes },
-                    |m: &mut AppPropose| { &mut m.processes },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<AppPropose>(
-                    "AppPropose",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static AppPropose {
-        static mut instance: ::protobuf::lazy::Lazy<AppPropose> = ::protobuf::lazy::Lazy::INIT;
-        unsafe {
-            instance.get(AppPropose::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for AppPropose {
-    fn clear(&mut self) {
-        self.value = 0;
-        self.processes.clear();
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for AppPropose {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for AppPropose {
-    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
-        ::protobuf::reflect::ReflectValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct AppDecide {
-    // message fields
-    pub value: i32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a AppDecide {
-    fn default() -> &'a AppDecide {
-        <AppDecide as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl AppDecide {
-    pub fn new() -> AppDecide {
-        ::std::default::Default::default()
-    }
-
-    // int32 value = 1;
-
-
-    pub fn get_value(&self) -> i32 {
-        self.value
-    }
-    pub fn clear_value(&mut self) {
-        self.value = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_value(&mut self, v: i32) {
-        self.value = v;
-    }
-}
-
-impl ::protobuf::Message for AppDecide {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
                     let tmp = is.read_int32()?;
-                    self.value = tmp;
+                    self.senderListeningPort = tmp;
+                },
+                3 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.message)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -4596,8 +5576,15 @@ impl ::protobuf::Message for AppDecide {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        if self.value != 0 {
-            my_size += ::protobuf::rt::value_size(1, self.value, ::protobuf::wire_format::WireTypeVarint);
+        if !self.senderHost.is_empty() {
+            my_size += ::protobuf::rt::string_size(1, &self.senderHost);
+        }
+        if self.senderListeningPort != 0 {
+            my_size += ::protobuf::rt::value_size(2, self.senderListeningPort, ::protobuf::wire_format::WireTypeVarint);
+        }
+        if let Some(ref v) = self.message.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -4605,8 +5592,16 @@ impl ::protobuf::Message for AppDecide {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.value != 0 {
-            os.write_int32(1, self.value)?;
+        if !self.senderHost.is_empty() {
+            os.write_string(1, &self.senderHost)?;
+        }
+        if self.senderListeningPort != 0 {
+            os.write_int32(2, self.senderListeningPort)?;
+        }
+        if let Some(ref v) = self.message.as_ref() {
+            os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
         }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -4638,8 +5633,8 @@ impl ::protobuf::Message for AppDecide {
         Self::descriptor_static()
     }
 
-    fn new() -> AppDecide {
-        AppDecide::new()
+    fn new() -> NetworkMessage {
+        NetworkMessage::new()
     }
 
     fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -4647,13 +5642,23 @@ impl ::protobuf::Message for AppDecide {
         unsafe {
             descriptor.get(|| {
                 let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
-                    "value",
-                    |m: &AppDecide| { &m.value },
-                    |m: &mut AppDecide| { &mut m.value },
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "senderHost",
+                    |m: &NetworkMessage| { &m.senderHost },
+                    |m: &mut NetworkMessage| { &mut m.senderHost },
                 ));
-                ::protobuf::reflect::MessageDescriptor::new::<AppDecide>(
-                    "AppDecide",
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
+                    "senderListeningPort",
+                    |m: &NetworkMessage| { &m.senderListeningPort },
+                    |m: &mut NetworkMessage| { &mut m.senderListeningPort },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Message>>(
+                    "message",
+                    |m: &NetworkMessage| { &m.message },
+                    |m: &mut NetworkMessage| { &mut m.message },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<NetworkMessage>(
+                    "NetworkMessage",
                     fields,
                     file_descriptor_proto()
                 )
@@ -4661,28 +5666,30 @@ impl ::protobuf::Message for AppDecide {
         }
     }
 
-    fn default_instance() -> &'static AppDecide {
-        static mut instance: ::protobuf::lazy::Lazy<AppDecide> = ::protobuf::lazy::Lazy::INIT;
+    fn default_instance() -> &'static NetworkMessage {
+        static mut instance: ::protobuf::lazy::Lazy<NetworkMessage> = ::protobuf::lazy::Lazy::INIT;
         unsafe {
-            instance.get(AppDecide::new)
+            instance.get(NetworkMessage::new)
         }
     }
 }
 
-impl ::protobuf::Clear for AppDecide {
+impl ::protobuf::Clear for NetworkMessage {
     fn clear(&mut self) {
-        self.value = 0;
+        self.senderHost.clear();
+        self.senderListeningPort = 0;
+        self.message.clear();
         self.unknown_fields.clear();
     }
 }
 
-impl ::std::fmt::Debug for AppDecide {
+impl ::std::fmt::Debug for NetworkMessage {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         ::protobuf::text_format::fmt(self, f)
     }
 }
 
-impl ::protobuf::reflect::ProtobufValue for AppDecide {
+impl ::protobuf::reflect::ProtobufValue for NetworkMessage {
     fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
         ::protobuf::reflect::ReflectValueRef::Message(self)
     }
@@ -4695,33 +5702,35 @@ pub struct Message {
     pub messageUuid: ::std::string::String,
     pub abstractionId: ::std::string::String,
     pub systemId: ::std::string::String,
+    pub networkMessage: ::protobuf::SingularPtrField<NetworkMessage>,
     pub appRegistration: ::protobuf::SingularPtrField<AppRegistration>,
     pub appPropose: ::protobuf::SingularPtrField<AppPropose>,
     pub appDecide: ::protobuf::SingularPtrField<AppDecide>,
-    pub bebBroadcast: ::protobuf::SingularPtrField<BebBroadcast>,
-    pub bebDeliver: ::protobuf::SingularPtrField<BebDeliver>,
-    pub ecNack_: ::protobuf::SingularPtrField<EcNack_>,
-    pub ecNewEpoch_: ::protobuf::SingularPtrField<EcNewEpoch_>,
-    pub ecStartEpoch: ::protobuf::SingularPtrField<EcStartEpoch>,
-    pub eldHeartbeat_: ::protobuf::SingularPtrField<EldHeartbeat_>,
-    pub eldRecovery: ::protobuf::SingularPtrField<EldRecovery>,
-    pub eldTimeout: ::protobuf::SingularPtrField<EldTimeout>,
-    pub eldTrust: ::protobuf::SingularPtrField<EldTrust>,
+    pub ucDecide: ::protobuf::SingularPtrField<UcDecide>,
+    pub ucPropose: ::protobuf::SingularPtrField<UcPropose>,
     pub epAbort: ::protobuf::SingularPtrField<EpAbort>,
     pub epAborted: ::protobuf::SingularPtrField<EpAborted>,
     pub epAccept_: ::protobuf::SingularPtrField<EpAccept_>,
     pub epDecide: ::protobuf::SingularPtrField<EpDecide>,
     pub epDecided_: ::protobuf::SingularPtrField<EpDecided_>,
-    pub epInit: ::protobuf::SingularPtrField<EpInit>,
     pub epPropose: ::protobuf::SingularPtrField<EpPropose>,
     pub epRead_: ::protobuf::SingularPtrField<EpRead_>,
     pub epState_: ::protobuf::SingularPtrField<EpState_>,
     pub epWrite_: ::protobuf::SingularPtrField<EpWrite_>,
+    pub ecNack_: ::protobuf::SingularPtrField<EcNack_>,
+    pub ecNewEpoch_: ::protobuf::SingularPtrField<EcNewEpoch_>,
+    pub ecStartEpoch: ::protobuf::SingularPtrField<EcStartEpoch>,
+    pub bebBroadcast: ::protobuf::SingularPtrField<BebBroadcast>,
+    pub bebDeliver: ::protobuf::SingularPtrField<BebDeliver>,
+    pub eldTimeout: ::protobuf::SingularPtrField<EldTimeout>,
+    pub eldTrust: ::protobuf::SingularPtrField<EldTrust>,
+    pub epfdTimeout: ::protobuf::SingularPtrField<EpfdTimeout>,
+    pub epfdHeartbeatRequest_: ::protobuf::SingularPtrField<EpfdHeartbeatRequest_>,
+    pub epfdHeartbeatReply_: ::protobuf::SingularPtrField<EpfdHeartbeatReply_>,
+    pub epfdSuspect: ::protobuf::SingularPtrField<EpfdSuspect>,
+    pub epfdRestore: ::protobuf::SingularPtrField<EpfdRestore>,
     pub plDeliver: ::protobuf::SingularPtrField<PlDeliver>,
     pub plSend: ::protobuf::SingularPtrField<PlSend>,
-    pub ucDecide: ::protobuf::SingularPtrField<UcDecide>,
-    pub ucPropose: ::protobuf::SingularPtrField<UcPropose>,
-    pub sender: ::protobuf::SingularPtrField<ProcessId>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -4738,14 +5747,14 @@ impl Message {
         ::std::default::Default::default()
     }
 
-    // .Message.Type type = 1;
+    // .main.Message.Type type = 1;
 
 
     pub fn get_field_type(&self) -> Message_Type {
         self.field_type
     }
     pub fn clear_field_type(&mut self) {
-        self.field_type = Message_Type::NONE;
+        self.field_type = Message_Type::NETWORK_MESSAGE;
     }
 
     // Param is passed by value, moved
@@ -4831,7 +5840,40 @@ impl Message {
         ::std::mem::replace(&mut self.systemId, ::std::string::String::new())
     }
 
-    // .AppRegistration appRegistration = 5;
+    // .main.NetworkMessage networkMessage = 5;
+
+
+    pub fn get_networkMessage(&self) -> &NetworkMessage {
+        self.networkMessage.as_ref().unwrap_or_else(|| NetworkMessage::default_instance())
+    }
+    pub fn clear_networkMessage(&mut self) {
+        self.networkMessage.clear();
+    }
+
+    pub fn has_networkMessage(&self) -> bool {
+        self.networkMessage.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_networkMessage(&mut self, v: NetworkMessage) {
+        self.networkMessage = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_networkMessage(&mut self) -> &mut NetworkMessage {
+        if self.networkMessage.is_none() {
+            self.networkMessage.set_default();
+        }
+        self.networkMessage.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_networkMessage(&mut self) -> NetworkMessage {
+        self.networkMessage.take().unwrap_or_else(|| NetworkMessage::new())
+    }
+
+    // .main.AppRegistration appRegistration = 6;
 
 
     pub fn get_appRegistration(&self) -> &AppRegistration {
@@ -4864,7 +5906,7 @@ impl Message {
         self.appRegistration.take().unwrap_or_else(|| AppRegistration::new())
     }
 
-    // .AppPropose appPropose = 6;
+    // .main.AppPropose appPropose = 7;
 
 
     pub fn get_appPropose(&self) -> &AppPropose {
@@ -4897,7 +5939,7 @@ impl Message {
         self.appPropose.take().unwrap_or_else(|| AppPropose::new())
     }
 
-    // .AppDecide appDecide = 7;
+    // .main.AppDecide appDecide = 8;
 
 
     pub fn get_appDecide(&self) -> &AppDecide {
@@ -4930,700 +5972,7 @@ impl Message {
         self.appDecide.take().unwrap_or_else(|| AppDecide::new())
     }
 
-    // .BebBroadcast bebBroadcast = 10;
-
-
-    pub fn get_bebBroadcast(&self) -> &BebBroadcast {
-        self.bebBroadcast.as_ref().unwrap_or_else(|| BebBroadcast::default_instance())
-    }
-    pub fn clear_bebBroadcast(&mut self) {
-        self.bebBroadcast.clear();
-    }
-
-    pub fn has_bebBroadcast(&self) -> bool {
-        self.bebBroadcast.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_bebBroadcast(&mut self, v: BebBroadcast) {
-        self.bebBroadcast = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_bebBroadcast(&mut self) -> &mut BebBroadcast {
-        if self.bebBroadcast.is_none() {
-            self.bebBroadcast.set_default();
-        }
-        self.bebBroadcast.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_bebBroadcast(&mut self) -> BebBroadcast {
-        self.bebBroadcast.take().unwrap_or_else(|| BebBroadcast::new())
-    }
-
-    // .BebDeliver bebDeliver = 11;
-
-
-    pub fn get_bebDeliver(&self) -> &BebDeliver {
-        self.bebDeliver.as_ref().unwrap_or_else(|| BebDeliver::default_instance())
-    }
-    pub fn clear_bebDeliver(&mut self) {
-        self.bebDeliver.clear();
-    }
-
-    pub fn has_bebDeliver(&self) -> bool {
-        self.bebDeliver.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_bebDeliver(&mut self, v: BebDeliver) {
-        self.bebDeliver = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_bebDeliver(&mut self) -> &mut BebDeliver {
-        if self.bebDeliver.is_none() {
-            self.bebDeliver.set_default();
-        }
-        self.bebDeliver.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_bebDeliver(&mut self) -> BebDeliver {
-        self.bebDeliver.take().unwrap_or_else(|| BebDeliver::new())
-    }
-
-    // .EcNack_ ecNack_ = 12;
-
-
-    pub fn get_ecNack_(&self) -> &EcNack_ {
-        self.ecNack_.as_ref().unwrap_or_else(|| EcNack_::default_instance())
-    }
-    pub fn clear_ecNack_(&mut self) {
-        self.ecNack_.clear();
-    }
-
-    pub fn has_ecNack_(&self) -> bool {
-        self.ecNack_.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_ecNack_(&mut self, v: EcNack_) {
-        self.ecNack_ = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_ecNack_(&mut self) -> &mut EcNack_ {
-        if self.ecNack_.is_none() {
-            self.ecNack_.set_default();
-        }
-        self.ecNack_.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_ecNack_(&mut self) -> EcNack_ {
-        self.ecNack_.take().unwrap_or_else(|| EcNack_::new())
-    }
-
-    // .EcNewEpoch_ ecNewEpoch_ = 13;
-
-
-    pub fn get_ecNewEpoch_(&self) -> &EcNewEpoch_ {
-        self.ecNewEpoch_.as_ref().unwrap_or_else(|| EcNewEpoch_::default_instance())
-    }
-    pub fn clear_ecNewEpoch_(&mut self) {
-        self.ecNewEpoch_.clear();
-    }
-
-    pub fn has_ecNewEpoch_(&self) -> bool {
-        self.ecNewEpoch_.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_ecNewEpoch_(&mut self, v: EcNewEpoch_) {
-        self.ecNewEpoch_ = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_ecNewEpoch_(&mut self) -> &mut EcNewEpoch_ {
-        if self.ecNewEpoch_.is_none() {
-            self.ecNewEpoch_.set_default();
-        }
-        self.ecNewEpoch_.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_ecNewEpoch_(&mut self) -> EcNewEpoch_ {
-        self.ecNewEpoch_.take().unwrap_or_else(|| EcNewEpoch_::new())
-    }
-
-    // .EcStartEpoch ecStartEpoch = 14;
-
-
-    pub fn get_ecStartEpoch(&self) -> &EcStartEpoch {
-        self.ecStartEpoch.as_ref().unwrap_or_else(|| EcStartEpoch::default_instance())
-    }
-    pub fn clear_ecStartEpoch(&mut self) {
-        self.ecStartEpoch.clear();
-    }
-
-    pub fn has_ecStartEpoch(&self) -> bool {
-        self.ecStartEpoch.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_ecStartEpoch(&mut self, v: EcStartEpoch) {
-        self.ecStartEpoch = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_ecStartEpoch(&mut self) -> &mut EcStartEpoch {
-        if self.ecStartEpoch.is_none() {
-            self.ecStartEpoch.set_default();
-        }
-        self.ecStartEpoch.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_ecStartEpoch(&mut self) -> EcStartEpoch {
-        self.ecStartEpoch.take().unwrap_or_else(|| EcStartEpoch::new())
-    }
-
-    // .EldHeartbeat_ eldHeartbeat_ = 15;
-
-
-    pub fn get_eldHeartbeat_(&self) -> &EldHeartbeat_ {
-        self.eldHeartbeat_.as_ref().unwrap_or_else(|| EldHeartbeat_::default_instance())
-    }
-    pub fn clear_eldHeartbeat_(&mut self) {
-        self.eldHeartbeat_.clear();
-    }
-
-    pub fn has_eldHeartbeat_(&self) -> bool {
-        self.eldHeartbeat_.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_eldHeartbeat_(&mut self, v: EldHeartbeat_) {
-        self.eldHeartbeat_ = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_eldHeartbeat_(&mut self) -> &mut EldHeartbeat_ {
-        if self.eldHeartbeat_.is_none() {
-            self.eldHeartbeat_.set_default();
-        }
-        self.eldHeartbeat_.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_eldHeartbeat_(&mut self) -> EldHeartbeat_ {
-        self.eldHeartbeat_.take().unwrap_or_else(|| EldHeartbeat_::new())
-    }
-
-    // .EldRecovery eldRecovery = 16;
-
-
-    pub fn get_eldRecovery(&self) -> &EldRecovery {
-        self.eldRecovery.as_ref().unwrap_or_else(|| EldRecovery::default_instance())
-    }
-    pub fn clear_eldRecovery(&mut self) {
-        self.eldRecovery.clear();
-    }
-
-    pub fn has_eldRecovery(&self) -> bool {
-        self.eldRecovery.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_eldRecovery(&mut self, v: EldRecovery) {
-        self.eldRecovery = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_eldRecovery(&mut self) -> &mut EldRecovery {
-        if self.eldRecovery.is_none() {
-            self.eldRecovery.set_default();
-        }
-        self.eldRecovery.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_eldRecovery(&mut self) -> EldRecovery {
-        self.eldRecovery.take().unwrap_or_else(|| EldRecovery::new())
-    }
-
-    // .EldTimeout eldTimeout = 17;
-
-
-    pub fn get_eldTimeout(&self) -> &EldTimeout {
-        self.eldTimeout.as_ref().unwrap_or_else(|| EldTimeout::default_instance())
-    }
-    pub fn clear_eldTimeout(&mut self) {
-        self.eldTimeout.clear();
-    }
-
-    pub fn has_eldTimeout(&self) -> bool {
-        self.eldTimeout.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_eldTimeout(&mut self, v: EldTimeout) {
-        self.eldTimeout = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_eldTimeout(&mut self) -> &mut EldTimeout {
-        if self.eldTimeout.is_none() {
-            self.eldTimeout.set_default();
-        }
-        self.eldTimeout.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_eldTimeout(&mut self) -> EldTimeout {
-        self.eldTimeout.take().unwrap_or_else(|| EldTimeout::new())
-    }
-
-    // .EldTrust eldTrust = 18;
-
-
-    pub fn get_eldTrust(&self) -> &EldTrust {
-        self.eldTrust.as_ref().unwrap_or_else(|| EldTrust::default_instance())
-    }
-    pub fn clear_eldTrust(&mut self) {
-        self.eldTrust.clear();
-    }
-
-    pub fn has_eldTrust(&self) -> bool {
-        self.eldTrust.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_eldTrust(&mut self, v: EldTrust) {
-        self.eldTrust = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_eldTrust(&mut self) -> &mut EldTrust {
-        if self.eldTrust.is_none() {
-            self.eldTrust.set_default();
-        }
-        self.eldTrust.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_eldTrust(&mut self) -> EldTrust {
-        self.eldTrust.take().unwrap_or_else(|| EldTrust::new())
-    }
-
-    // .EpAbort epAbort = 19;
-
-
-    pub fn get_epAbort(&self) -> &EpAbort {
-        self.epAbort.as_ref().unwrap_or_else(|| EpAbort::default_instance())
-    }
-    pub fn clear_epAbort(&mut self) {
-        self.epAbort.clear();
-    }
-
-    pub fn has_epAbort(&self) -> bool {
-        self.epAbort.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epAbort(&mut self, v: EpAbort) {
-        self.epAbort = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epAbort(&mut self) -> &mut EpAbort {
-        if self.epAbort.is_none() {
-            self.epAbort.set_default();
-        }
-        self.epAbort.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epAbort(&mut self) -> EpAbort {
-        self.epAbort.take().unwrap_or_else(|| EpAbort::new())
-    }
-
-    // .EpAborted epAborted = 20;
-
-
-    pub fn get_epAborted(&self) -> &EpAborted {
-        self.epAborted.as_ref().unwrap_or_else(|| EpAborted::default_instance())
-    }
-    pub fn clear_epAborted(&mut self) {
-        self.epAborted.clear();
-    }
-
-    pub fn has_epAborted(&self) -> bool {
-        self.epAborted.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epAborted(&mut self, v: EpAborted) {
-        self.epAborted = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epAborted(&mut self) -> &mut EpAborted {
-        if self.epAborted.is_none() {
-            self.epAborted.set_default();
-        }
-        self.epAborted.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epAborted(&mut self) -> EpAborted {
-        self.epAborted.take().unwrap_or_else(|| EpAborted::new())
-    }
-
-    // .EpAccept_ epAccept_ = 21;
-
-
-    pub fn get_epAccept_(&self) -> &EpAccept_ {
-        self.epAccept_.as_ref().unwrap_or_else(|| EpAccept_::default_instance())
-    }
-    pub fn clear_epAccept_(&mut self) {
-        self.epAccept_.clear();
-    }
-
-    pub fn has_epAccept_(&self) -> bool {
-        self.epAccept_.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epAccept_(&mut self, v: EpAccept_) {
-        self.epAccept_ = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epAccept_(&mut self) -> &mut EpAccept_ {
-        if self.epAccept_.is_none() {
-            self.epAccept_.set_default();
-        }
-        self.epAccept_.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epAccept_(&mut self) -> EpAccept_ {
-        self.epAccept_.take().unwrap_or_else(|| EpAccept_::new())
-    }
-
-    // .EpDecide epDecide = 22;
-
-
-    pub fn get_epDecide(&self) -> &EpDecide {
-        self.epDecide.as_ref().unwrap_or_else(|| EpDecide::default_instance())
-    }
-    pub fn clear_epDecide(&mut self) {
-        self.epDecide.clear();
-    }
-
-    pub fn has_epDecide(&self) -> bool {
-        self.epDecide.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epDecide(&mut self, v: EpDecide) {
-        self.epDecide = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epDecide(&mut self) -> &mut EpDecide {
-        if self.epDecide.is_none() {
-            self.epDecide.set_default();
-        }
-        self.epDecide.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epDecide(&mut self) -> EpDecide {
-        self.epDecide.take().unwrap_or_else(|| EpDecide::new())
-    }
-
-    // .EpDecided_ epDecided_ = 23;
-
-
-    pub fn get_epDecided_(&self) -> &EpDecided_ {
-        self.epDecided_.as_ref().unwrap_or_else(|| EpDecided_::default_instance())
-    }
-    pub fn clear_epDecided_(&mut self) {
-        self.epDecided_.clear();
-    }
-
-    pub fn has_epDecided_(&self) -> bool {
-        self.epDecided_.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epDecided_(&mut self, v: EpDecided_) {
-        self.epDecided_ = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epDecided_(&mut self) -> &mut EpDecided_ {
-        if self.epDecided_.is_none() {
-            self.epDecided_.set_default();
-        }
-        self.epDecided_.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epDecided_(&mut self) -> EpDecided_ {
-        self.epDecided_.take().unwrap_or_else(|| EpDecided_::new())
-    }
-
-    // .EpInit epInit = 24;
-
-
-    pub fn get_epInit(&self) -> &EpInit {
-        self.epInit.as_ref().unwrap_or_else(|| EpInit::default_instance())
-    }
-    pub fn clear_epInit(&mut self) {
-        self.epInit.clear();
-    }
-
-    pub fn has_epInit(&self) -> bool {
-        self.epInit.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epInit(&mut self, v: EpInit) {
-        self.epInit = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epInit(&mut self) -> &mut EpInit {
-        if self.epInit.is_none() {
-            self.epInit.set_default();
-        }
-        self.epInit.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epInit(&mut self) -> EpInit {
-        self.epInit.take().unwrap_or_else(|| EpInit::new())
-    }
-
-    // .EpPropose epPropose = 25;
-
-
-    pub fn get_epPropose(&self) -> &EpPropose {
-        self.epPropose.as_ref().unwrap_or_else(|| EpPropose::default_instance())
-    }
-    pub fn clear_epPropose(&mut self) {
-        self.epPropose.clear();
-    }
-
-    pub fn has_epPropose(&self) -> bool {
-        self.epPropose.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epPropose(&mut self, v: EpPropose) {
-        self.epPropose = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epPropose(&mut self) -> &mut EpPropose {
-        if self.epPropose.is_none() {
-            self.epPropose.set_default();
-        }
-        self.epPropose.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epPropose(&mut self) -> EpPropose {
-        self.epPropose.take().unwrap_or_else(|| EpPropose::new())
-    }
-
-    // .EpRead_ epRead_ = 26;
-
-
-    pub fn get_epRead_(&self) -> &EpRead_ {
-        self.epRead_.as_ref().unwrap_or_else(|| EpRead_::default_instance())
-    }
-    pub fn clear_epRead_(&mut self) {
-        self.epRead_.clear();
-    }
-
-    pub fn has_epRead_(&self) -> bool {
-        self.epRead_.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epRead_(&mut self, v: EpRead_) {
-        self.epRead_ = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epRead_(&mut self) -> &mut EpRead_ {
-        if self.epRead_.is_none() {
-            self.epRead_.set_default();
-        }
-        self.epRead_.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epRead_(&mut self) -> EpRead_ {
-        self.epRead_.take().unwrap_or_else(|| EpRead_::new())
-    }
-
-    // .EpState_ epState_ = 27;
-
-
-    pub fn get_epState_(&self) -> &EpState_ {
-        self.epState_.as_ref().unwrap_or_else(|| EpState_::default_instance())
-    }
-    pub fn clear_epState_(&mut self) {
-        self.epState_.clear();
-    }
-
-    pub fn has_epState_(&self) -> bool {
-        self.epState_.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epState_(&mut self, v: EpState_) {
-        self.epState_ = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epState_(&mut self) -> &mut EpState_ {
-        if self.epState_.is_none() {
-            self.epState_.set_default();
-        }
-        self.epState_.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epState_(&mut self) -> EpState_ {
-        self.epState_.take().unwrap_or_else(|| EpState_::new())
-    }
-
-    // .EpWrite_ epWrite_ = 28;
-
-
-    pub fn get_epWrite_(&self) -> &EpWrite_ {
-        self.epWrite_.as_ref().unwrap_or_else(|| EpWrite_::default_instance())
-    }
-    pub fn clear_epWrite_(&mut self) {
-        self.epWrite_.clear();
-    }
-
-    pub fn has_epWrite_(&self) -> bool {
-        self.epWrite_.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_epWrite_(&mut self, v: EpWrite_) {
-        self.epWrite_ = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_epWrite_(&mut self) -> &mut EpWrite_ {
-        if self.epWrite_.is_none() {
-            self.epWrite_.set_default();
-        }
-        self.epWrite_.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_epWrite_(&mut self) -> EpWrite_ {
-        self.epWrite_.take().unwrap_or_else(|| EpWrite_::new())
-    }
-
-    // .PlDeliver plDeliver = 29;
-
-
-    pub fn get_plDeliver(&self) -> &PlDeliver {
-        self.plDeliver.as_ref().unwrap_or_else(|| PlDeliver::default_instance())
-    }
-    pub fn clear_plDeliver(&mut self) {
-        self.plDeliver.clear();
-    }
-
-    pub fn has_plDeliver(&self) -> bool {
-        self.plDeliver.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_plDeliver(&mut self, v: PlDeliver) {
-        self.plDeliver = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_plDeliver(&mut self) -> &mut PlDeliver {
-        if self.plDeliver.is_none() {
-            self.plDeliver.set_default();
-        }
-        self.plDeliver.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_plDeliver(&mut self) -> PlDeliver {
-        self.plDeliver.take().unwrap_or_else(|| PlDeliver::new())
-    }
-
-    // .PlSend plSend = 30;
-
-
-    pub fn get_plSend(&self) -> &PlSend {
-        self.plSend.as_ref().unwrap_or_else(|| PlSend::default_instance())
-    }
-    pub fn clear_plSend(&mut self) {
-        self.plSend.clear();
-    }
-
-    pub fn has_plSend(&self) -> bool {
-        self.plSend.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_plSend(&mut self, v: PlSend) {
-        self.plSend = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_plSend(&mut self) -> &mut PlSend {
-        if self.plSend.is_none() {
-            self.plSend.set_default();
-        }
-        self.plSend.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_plSend(&mut self) -> PlSend {
-        self.plSend.take().unwrap_or_else(|| PlSend::new())
-    }
-
-    // .UcDecide ucDecide = 31;
+    // .main.UcDecide ucDecide = 10;
 
 
     pub fn get_ucDecide(&self) -> &UcDecide {
@@ -5656,7 +6005,7 @@ impl Message {
         self.ucDecide.take().unwrap_or_else(|| UcDecide::new())
     }
 
-    // .UcPropose ucPropose = 32;
+    // .main.UcPropose ucPropose = 11;
 
 
     pub fn get_ucPropose(&self) -> &UcPropose {
@@ -5689,42 +6038,773 @@ impl Message {
         self.ucPropose.take().unwrap_or_else(|| UcPropose::new())
     }
 
-    // .ProcessId sender = 33;
+    // .main.EpAbort epAbort = 20;
 
 
-    pub fn get_sender(&self) -> &ProcessId {
-        self.sender.as_ref().unwrap_or_else(|| ProcessId::default_instance())
+    pub fn get_epAbort(&self) -> &EpAbort {
+        self.epAbort.as_ref().unwrap_or_else(|| EpAbort::default_instance())
     }
-    pub fn clear_sender(&mut self) {
-        self.sender.clear();
+    pub fn clear_epAbort(&mut self) {
+        self.epAbort.clear();
     }
 
-    pub fn has_sender(&self) -> bool {
-        self.sender.is_some()
+    pub fn has_epAbort(&self) -> bool {
+        self.epAbort.is_some()
     }
 
     // Param is passed by value, moved
-    pub fn set_sender(&mut self, v: ProcessId) {
-        self.sender = ::protobuf::SingularPtrField::some(v);
+    pub fn set_epAbort(&mut self, v: EpAbort) {
+        self.epAbort = ::protobuf::SingularPtrField::some(v);
     }
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_sender(&mut self) -> &mut ProcessId {
-        if self.sender.is_none() {
-            self.sender.set_default();
+    pub fn mut_epAbort(&mut self) -> &mut EpAbort {
+        if self.epAbort.is_none() {
+            self.epAbort.set_default();
         }
-        self.sender.as_mut().unwrap()
+        self.epAbort.as_mut().unwrap()
     }
 
     // Take field
-    pub fn take_sender(&mut self) -> ProcessId {
-        self.sender.take().unwrap_or_else(|| ProcessId::new())
+    pub fn take_epAbort(&mut self) -> EpAbort {
+        self.epAbort.take().unwrap_or_else(|| EpAbort::new())
+    }
+
+    // .main.EpAborted epAborted = 21;
+
+
+    pub fn get_epAborted(&self) -> &EpAborted {
+        self.epAborted.as_ref().unwrap_or_else(|| EpAborted::default_instance())
+    }
+    pub fn clear_epAborted(&mut self) {
+        self.epAborted.clear();
+    }
+
+    pub fn has_epAborted(&self) -> bool {
+        self.epAborted.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epAborted(&mut self, v: EpAborted) {
+        self.epAborted = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epAborted(&mut self) -> &mut EpAborted {
+        if self.epAborted.is_none() {
+            self.epAborted.set_default();
+        }
+        self.epAborted.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epAborted(&mut self) -> EpAborted {
+        self.epAborted.take().unwrap_or_else(|| EpAborted::new())
+    }
+
+    // .main.EpAccept_ epAccept_ = 22;
+
+
+    pub fn get_epAccept_(&self) -> &EpAccept_ {
+        self.epAccept_.as_ref().unwrap_or_else(|| EpAccept_::default_instance())
+    }
+    pub fn clear_epAccept_(&mut self) {
+        self.epAccept_.clear();
+    }
+
+    pub fn has_epAccept_(&self) -> bool {
+        self.epAccept_.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epAccept_(&mut self, v: EpAccept_) {
+        self.epAccept_ = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epAccept_(&mut self) -> &mut EpAccept_ {
+        if self.epAccept_.is_none() {
+            self.epAccept_.set_default();
+        }
+        self.epAccept_.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epAccept_(&mut self) -> EpAccept_ {
+        self.epAccept_.take().unwrap_or_else(|| EpAccept_::new())
+    }
+
+    // .main.EpDecide epDecide = 23;
+
+
+    pub fn get_epDecide(&self) -> &EpDecide {
+        self.epDecide.as_ref().unwrap_or_else(|| EpDecide::default_instance())
+    }
+    pub fn clear_epDecide(&mut self) {
+        self.epDecide.clear();
+    }
+
+    pub fn has_epDecide(&self) -> bool {
+        self.epDecide.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epDecide(&mut self, v: EpDecide) {
+        self.epDecide = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epDecide(&mut self) -> &mut EpDecide {
+        if self.epDecide.is_none() {
+            self.epDecide.set_default();
+        }
+        self.epDecide.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epDecide(&mut self) -> EpDecide {
+        self.epDecide.take().unwrap_or_else(|| EpDecide::new())
+    }
+
+    // .main.EpDecided_ epDecided_ = 24;
+
+
+    pub fn get_epDecided_(&self) -> &EpDecided_ {
+        self.epDecided_.as_ref().unwrap_or_else(|| EpDecided_::default_instance())
+    }
+    pub fn clear_epDecided_(&mut self) {
+        self.epDecided_.clear();
+    }
+
+    pub fn has_epDecided_(&self) -> bool {
+        self.epDecided_.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epDecided_(&mut self, v: EpDecided_) {
+        self.epDecided_ = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epDecided_(&mut self) -> &mut EpDecided_ {
+        if self.epDecided_.is_none() {
+            self.epDecided_.set_default();
+        }
+        self.epDecided_.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epDecided_(&mut self) -> EpDecided_ {
+        self.epDecided_.take().unwrap_or_else(|| EpDecided_::new())
+    }
+
+    // .main.EpPropose epPropose = 25;
+
+
+    pub fn get_epPropose(&self) -> &EpPropose {
+        self.epPropose.as_ref().unwrap_or_else(|| EpPropose::default_instance())
+    }
+    pub fn clear_epPropose(&mut self) {
+        self.epPropose.clear();
+    }
+
+    pub fn has_epPropose(&self) -> bool {
+        self.epPropose.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epPropose(&mut self, v: EpPropose) {
+        self.epPropose = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epPropose(&mut self) -> &mut EpPropose {
+        if self.epPropose.is_none() {
+            self.epPropose.set_default();
+        }
+        self.epPropose.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epPropose(&mut self) -> EpPropose {
+        self.epPropose.take().unwrap_or_else(|| EpPropose::new())
+    }
+
+    // .main.EpRead_ epRead_ = 26;
+
+
+    pub fn get_epRead_(&self) -> &EpRead_ {
+        self.epRead_.as_ref().unwrap_or_else(|| EpRead_::default_instance())
+    }
+    pub fn clear_epRead_(&mut self) {
+        self.epRead_.clear();
+    }
+
+    pub fn has_epRead_(&self) -> bool {
+        self.epRead_.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epRead_(&mut self, v: EpRead_) {
+        self.epRead_ = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epRead_(&mut self) -> &mut EpRead_ {
+        if self.epRead_.is_none() {
+            self.epRead_.set_default();
+        }
+        self.epRead_.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epRead_(&mut self) -> EpRead_ {
+        self.epRead_.take().unwrap_or_else(|| EpRead_::new())
+    }
+
+    // .main.EpState_ epState_ = 27;
+
+
+    pub fn get_epState_(&self) -> &EpState_ {
+        self.epState_.as_ref().unwrap_or_else(|| EpState_::default_instance())
+    }
+    pub fn clear_epState_(&mut self) {
+        self.epState_.clear();
+    }
+
+    pub fn has_epState_(&self) -> bool {
+        self.epState_.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epState_(&mut self, v: EpState_) {
+        self.epState_ = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epState_(&mut self) -> &mut EpState_ {
+        if self.epState_.is_none() {
+            self.epState_.set_default();
+        }
+        self.epState_.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epState_(&mut self) -> EpState_ {
+        self.epState_.take().unwrap_or_else(|| EpState_::new())
+    }
+
+    // .main.EpWrite_ epWrite_ = 28;
+
+
+    pub fn get_epWrite_(&self) -> &EpWrite_ {
+        self.epWrite_.as_ref().unwrap_or_else(|| EpWrite_::default_instance())
+    }
+    pub fn clear_epWrite_(&mut self) {
+        self.epWrite_.clear();
+    }
+
+    pub fn has_epWrite_(&self) -> bool {
+        self.epWrite_.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epWrite_(&mut self, v: EpWrite_) {
+        self.epWrite_ = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epWrite_(&mut self) -> &mut EpWrite_ {
+        if self.epWrite_.is_none() {
+            self.epWrite_.set_default();
+        }
+        self.epWrite_.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epWrite_(&mut self) -> EpWrite_ {
+        self.epWrite_.take().unwrap_or_else(|| EpWrite_::new())
+    }
+
+    // .main.EcNack_ ecNack_ = 31;
+
+
+    pub fn get_ecNack_(&self) -> &EcNack_ {
+        self.ecNack_.as_ref().unwrap_or_else(|| EcNack_::default_instance())
+    }
+    pub fn clear_ecNack_(&mut self) {
+        self.ecNack_.clear();
+    }
+
+    pub fn has_ecNack_(&self) -> bool {
+        self.ecNack_.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_ecNack_(&mut self, v: EcNack_) {
+        self.ecNack_ = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_ecNack_(&mut self) -> &mut EcNack_ {
+        if self.ecNack_.is_none() {
+            self.ecNack_.set_default();
+        }
+        self.ecNack_.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_ecNack_(&mut self) -> EcNack_ {
+        self.ecNack_.take().unwrap_or_else(|| EcNack_::new())
+    }
+
+    // .main.EcNewEpoch_ ecNewEpoch_ = 32;
+
+
+    pub fn get_ecNewEpoch_(&self) -> &EcNewEpoch_ {
+        self.ecNewEpoch_.as_ref().unwrap_or_else(|| EcNewEpoch_::default_instance())
+    }
+    pub fn clear_ecNewEpoch_(&mut self) {
+        self.ecNewEpoch_.clear();
+    }
+
+    pub fn has_ecNewEpoch_(&self) -> bool {
+        self.ecNewEpoch_.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_ecNewEpoch_(&mut self, v: EcNewEpoch_) {
+        self.ecNewEpoch_ = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_ecNewEpoch_(&mut self) -> &mut EcNewEpoch_ {
+        if self.ecNewEpoch_.is_none() {
+            self.ecNewEpoch_.set_default();
+        }
+        self.ecNewEpoch_.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_ecNewEpoch_(&mut self) -> EcNewEpoch_ {
+        self.ecNewEpoch_.take().unwrap_or_else(|| EcNewEpoch_::new())
+    }
+
+    // .main.EcStartEpoch ecStartEpoch = 33;
+
+
+    pub fn get_ecStartEpoch(&self) -> &EcStartEpoch {
+        self.ecStartEpoch.as_ref().unwrap_or_else(|| EcStartEpoch::default_instance())
+    }
+    pub fn clear_ecStartEpoch(&mut self) {
+        self.ecStartEpoch.clear();
+    }
+
+    pub fn has_ecStartEpoch(&self) -> bool {
+        self.ecStartEpoch.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_ecStartEpoch(&mut self, v: EcStartEpoch) {
+        self.ecStartEpoch = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_ecStartEpoch(&mut self) -> &mut EcStartEpoch {
+        if self.ecStartEpoch.is_none() {
+            self.ecStartEpoch.set_default();
+        }
+        self.ecStartEpoch.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_ecStartEpoch(&mut self) -> EcStartEpoch {
+        self.ecStartEpoch.take().unwrap_or_else(|| EcStartEpoch::new())
+    }
+
+    // .main.BebBroadcast bebBroadcast = 40;
+
+
+    pub fn get_bebBroadcast(&self) -> &BebBroadcast {
+        self.bebBroadcast.as_ref().unwrap_or_else(|| BebBroadcast::default_instance())
+    }
+    pub fn clear_bebBroadcast(&mut self) {
+        self.bebBroadcast.clear();
+    }
+
+    pub fn has_bebBroadcast(&self) -> bool {
+        self.bebBroadcast.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_bebBroadcast(&mut self, v: BebBroadcast) {
+        self.bebBroadcast = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_bebBroadcast(&mut self) -> &mut BebBroadcast {
+        if self.bebBroadcast.is_none() {
+            self.bebBroadcast.set_default();
+        }
+        self.bebBroadcast.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_bebBroadcast(&mut self) -> BebBroadcast {
+        self.bebBroadcast.take().unwrap_or_else(|| BebBroadcast::new())
+    }
+
+    // .main.BebDeliver bebDeliver = 41;
+
+
+    pub fn get_bebDeliver(&self) -> &BebDeliver {
+        self.bebDeliver.as_ref().unwrap_or_else(|| BebDeliver::default_instance())
+    }
+    pub fn clear_bebDeliver(&mut self) {
+        self.bebDeliver.clear();
+    }
+
+    pub fn has_bebDeliver(&self) -> bool {
+        self.bebDeliver.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_bebDeliver(&mut self, v: BebDeliver) {
+        self.bebDeliver = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_bebDeliver(&mut self) -> &mut BebDeliver {
+        if self.bebDeliver.is_none() {
+            self.bebDeliver.set_default();
+        }
+        self.bebDeliver.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_bebDeliver(&mut self) -> BebDeliver {
+        self.bebDeliver.take().unwrap_or_else(|| BebDeliver::new())
+    }
+
+    // .main.EldTimeout eldTimeout = 50;
+
+
+    pub fn get_eldTimeout(&self) -> &EldTimeout {
+        self.eldTimeout.as_ref().unwrap_or_else(|| EldTimeout::default_instance())
+    }
+    pub fn clear_eldTimeout(&mut self) {
+        self.eldTimeout.clear();
+    }
+
+    pub fn has_eldTimeout(&self) -> bool {
+        self.eldTimeout.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_eldTimeout(&mut self, v: EldTimeout) {
+        self.eldTimeout = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_eldTimeout(&mut self) -> &mut EldTimeout {
+        if self.eldTimeout.is_none() {
+            self.eldTimeout.set_default();
+        }
+        self.eldTimeout.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_eldTimeout(&mut self) -> EldTimeout {
+        self.eldTimeout.take().unwrap_or_else(|| EldTimeout::new())
+    }
+
+    // .main.EldTrust eldTrust = 51;
+
+
+    pub fn get_eldTrust(&self) -> &EldTrust {
+        self.eldTrust.as_ref().unwrap_or_else(|| EldTrust::default_instance())
+    }
+    pub fn clear_eldTrust(&mut self) {
+        self.eldTrust.clear();
+    }
+
+    pub fn has_eldTrust(&self) -> bool {
+        self.eldTrust.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_eldTrust(&mut self, v: EldTrust) {
+        self.eldTrust = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_eldTrust(&mut self) -> &mut EldTrust {
+        if self.eldTrust.is_none() {
+            self.eldTrust.set_default();
+        }
+        self.eldTrust.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_eldTrust(&mut self) -> EldTrust {
+        self.eldTrust.take().unwrap_or_else(|| EldTrust::new())
+    }
+
+    // .main.EpfdTimeout epfdTimeout = 60;
+
+
+    pub fn get_epfdTimeout(&self) -> &EpfdTimeout {
+        self.epfdTimeout.as_ref().unwrap_or_else(|| EpfdTimeout::default_instance())
+    }
+    pub fn clear_epfdTimeout(&mut self) {
+        self.epfdTimeout.clear();
+    }
+
+    pub fn has_epfdTimeout(&self) -> bool {
+        self.epfdTimeout.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epfdTimeout(&mut self, v: EpfdTimeout) {
+        self.epfdTimeout = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epfdTimeout(&mut self) -> &mut EpfdTimeout {
+        if self.epfdTimeout.is_none() {
+            self.epfdTimeout.set_default();
+        }
+        self.epfdTimeout.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epfdTimeout(&mut self) -> EpfdTimeout {
+        self.epfdTimeout.take().unwrap_or_else(|| EpfdTimeout::new())
+    }
+
+    // .main.EpfdHeartbeatRequest_ epfdHeartbeatRequest_ = 61;
+
+
+    pub fn get_epfdHeartbeatRequest_(&self) -> &EpfdHeartbeatRequest_ {
+        self.epfdHeartbeatRequest_.as_ref().unwrap_or_else(|| EpfdHeartbeatRequest_::default_instance())
+    }
+    pub fn clear_epfdHeartbeatRequest_(&mut self) {
+        self.epfdHeartbeatRequest_.clear();
+    }
+
+    pub fn has_epfdHeartbeatRequest_(&self) -> bool {
+        self.epfdHeartbeatRequest_.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epfdHeartbeatRequest_(&mut self, v: EpfdHeartbeatRequest_) {
+        self.epfdHeartbeatRequest_ = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epfdHeartbeatRequest_(&mut self) -> &mut EpfdHeartbeatRequest_ {
+        if self.epfdHeartbeatRequest_.is_none() {
+            self.epfdHeartbeatRequest_.set_default();
+        }
+        self.epfdHeartbeatRequest_.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epfdHeartbeatRequest_(&mut self) -> EpfdHeartbeatRequest_ {
+        self.epfdHeartbeatRequest_.take().unwrap_or_else(|| EpfdHeartbeatRequest_::new())
+    }
+
+    // .main.EpfdHeartbeatReply_ epfdHeartbeatReply_ = 62;
+
+
+    pub fn get_epfdHeartbeatReply_(&self) -> &EpfdHeartbeatReply_ {
+        self.epfdHeartbeatReply_.as_ref().unwrap_or_else(|| EpfdHeartbeatReply_::default_instance())
+    }
+    pub fn clear_epfdHeartbeatReply_(&mut self) {
+        self.epfdHeartbeatReply_.clear();
+    }
+
+    pub fn has_epfdHeartbeatReply_(&self) -> bool {
+        self.epfdHeartbeatReply_.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epfdHeartbeatReply_(&mut self, v: EpfdHeartbeatReply_) {
+        self.epfdHeartbeatReply_ = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epfdHeartbeatReply_(&mut self) -> &mut EpfdHeartbeatReply_ {
+        if self.epfdHeartbeatReply_.is_none() {
+            self.epfdHeartbeatReply_.set_default();
+        }
+        self.epfdHeartbeatReply_.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epfdHeartbeatReply_(&mut self) -> EpfdHeartbeatReply_ {
+        self.epfdHeartbeatReply_.take().unwrap_or_else(|| EpfdHeartbeatReply_::new())
+    }
+
+    // .main.EpfdSuspect epfdSuspect = 63;
+
+
+    pub fn get_epfdSuspect(&self) -> &EpfdSuspect {
+        self.epfdSuspect.as_ref().unwrap_or_else(|| EpfdSuspect::default_instance())
+    }
+    pub fn clear_epfdSuspect(&mut self) {
+        self.epfdSuspect.clear();
+    }
+
+    pub fn has_epfdSuspect(&self) -> bool {
+        self.epfdSuspect.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epfdSuspect(&mut self, v: EpfdSuspect) {
+        self.epfdSuspect = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epfdSuspect(&mut self) -> &mut EpfdSuspect {
+        if self.epfdSuspect.is_none() {
+            self.epfdSuspect.set_default();
+        }
+        self.epfdSuspect.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epfdSuspect(&mut self) -> EpfdSuspect {
+        self.epfdSuspect.take().unwrap_or_else(|| EpfdSuspect::new())
+    }
+
+    // .main.EpfdRestore epfdRestore = 64;
+
+
+    pub fn get_epfdRestore(&self) -> &EpfdRestore {
+        self.epfdRestore.as_ref().unwrap_or_else(|| EpfdRestore::default_instance())
+    }
+    pub fn clear_epfdRestore(&mut self) {
+        self.epfdRestore.clear();
+    }
+
+    pub fn has_epfdRestore(&self) -> bool {
+        self.epfdRestore.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_epfdRestore(&mut self, v: EpfdRestore) {
+        self.epfdRestore = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_epfdRestore(&mut self) -> &mut EpfdRestore {
+        if self.epfdRestore.is_none() {
+            self.epfdRestore.set_default();
+        }
+        self.epfdRestore.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_epfdRestore(&mut self) -> EpfdRestore {
+        self.epfdRestore.take().unwrap_or_else(|| EpfdRestore::new())
+    }
+
+    // .main.PlDeliver plDeliver = 70;
+
+
+    pub fn get_plDeliver(&self) -> &PlDeliver {
+        self.plDeliver.as_ref().unwrap_or_else(|| PlDeliver::default_instance())
+    }
+    pub fn clear_plDeliver(&mut self) {
+        self.plDeliver.clear();
+    }
+
+    pub fn has_plDeliver(&self) -> bool {
+        self.plDeliver.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_plDeliver(&mut self, v: PlDeliver) {
+        self.plDeliver = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_plDeliver(&mut self) -> &mut PlDeliver {
+        if self.plDeliver.is_none() {
+            self.plDeliver.set_default();
+        }
+        self.plDeliver.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_plDeliver(&mut self) -> PlDeliver {
+        self.plDeliver.take().unwrap_or_else(|| PlDeliver::new())
+    }
+
+    // .main.PlSend plSend = 71;
+
+
+    pub fn get_plSend(&self) -> &PlSend {
+        self.plSend.as_ref().unwrap_or_else(|| PlSend::default_instance())
+    }
+    pub fn clear_plSend(&mut self) {
+        self.plSend.clear();
+    }
+
+    pub fn has_plSend(&self) -> bool {
+        self.plSend.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_plSend(&mut self, v: PlSend) {
+        self.plSend = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_plSend(&mut self) -> &mut PlSend {
+        if self.plSend.is_none() {
+            self.plSend.set_default();
+        }
+        self.plSend.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_plSend(&mut self) -> PlSend {
+        self.plSend.take().unwrap_or_else(|| PlSend::new())
     }
 }
 
 impl ::protobuf::Message for Message {
     fn is_initialized(&self) -> bool {
+        for v in &self.networkMessage {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
         for v in &self.appRegistration {
             if !v.is_initialized() {
                 return false;
@@ -5740,47 +6820,12 @@ impl ::protobuf::Message for Message {
                 return false;
             }
         };
-        for v in &self.bebBroadcast {
+        for v in &self.ucDecide {
             if !v.is_initialized() {
                 return false;
             }
         };
-        for v in &self.bebDeliver {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.ecNack_ {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.ecNewEpoch_ {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.ecStartEpoch {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.eldHeartbeat_ {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.eldRecovery {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.eldTimeout {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.eldTrust {
+        for v in &self.ucPropose {
             if !v.is_initialized() {
                 return false;
             }
@@ -5810,11 +6855,6 @@ impl ::protobuf::Message for Message {
                 return false;
             }
         };
-        for v in &self.epInit {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
         for v in &self.epPropose {
             if !v.is_initialized() {
                 return false;
@@ -5835,27 +6875,72 @@ impl ::protobuf::Message for Message {
                 return false;
             }
         };
+        for v in &self.ecNack_ {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.ecNewEpoch_ {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.ecStartEpoch {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.bebBroadcast {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.bebDeliver {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.eldTimeout {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.eldTrust {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.epfdTimeout {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.epfdHeartbeatRequest_ {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.epfdHeartbeatReply_ {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.epfdSuspect {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.epfdRestore {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
         for v in &self.plDeliver {
             if !v.is_initialized() {
                 return false;
             }
         };
         for v in &self.plSend {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.ucDecide {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.ucPropose {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.sender {
             if !v.is_initialized() {
                 return false;
             }
@@ -5880,58 +6965,37 @@ impl ::protobuf::Message for Message {
                     ::protobuf::rt::read_singular_proto3_string_into(wire_type, is, &mut self.systemId)?;
                 },
                 5 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.appRegistration)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.networkMessage)?;
                 },
                 6 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.appPropose)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.appRegistration)?;
                 },
                 7 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.appPropose)?;
+                },
+                8 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.appDecide)?;
                 },
                 10 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.bebBroadcast)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ucDecide)?;
                 },
                 11 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.bebDeliver)?;
-                },
-                12 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecNack_)?;
-                },
-                13 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecNewEpoch_)?;
-                },
-                14 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecStartEpoch)?;
-                },
-                15 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.eldHeartbeat_)?;
-                },
-                16 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.eldRecovery)?;
-                },
-                17 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.eldTimeout)?;
-                },
-                18 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.eldTrust)?;
-                },
-                19 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epAbort)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ucPropose)?;
                 },
                 20 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epAborted)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epAbort)?;
                 },
                 21 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epAccept_)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epAborted)?;
                 },
                 22 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epDecide)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epAccept_)?;
                 },
                 23 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epDecided_)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epDecide)?;
                 },
                 24 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epInit)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epDecided_)?;
                 },
                 25 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epPropose)?;
@@ -5945,20 +7009,47 @@ impl ::protobuf::Message for Message {
                 28 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epWrite_)?;
                 },
-                29 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.plDeliver)?;
-                },
-                30 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.plSend)?;
-                },
                 31 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ucDecide)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecNack_)?;
                 },
                 32 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ucPropose)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecNewEpoch_)?;
                 },
                 33 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.sender)?;
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ecStartEpoch)?;
+                },
+                40 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.bebBroadcast)?;
+                },
+                41 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.bebDeliver)?;
+                },
+                50 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.eldTimeout)?;
+                },
+                51 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.eldTrust)?;
+                },
+                60 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epfdTimeout)?;
+                },
+                61 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epfdHeartbeatRequest_)?;
+                },
+                62 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epfdHeartbeatReply_)?;
+                },
+                63 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epfdSuspect)?;
+                },
+                64 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.epfdRestore)?;
+                },
+                70 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.plDeliver)?;
+                },
+                71 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.plSend)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -5972,7 +7063,7 @@ impl ::protobuf::Message for Message {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        if self.field_type != Message_Type::NONE {
+        if self.field_type != Message_Type::NETWORK_MESSAGE {
             my_size += ::protobuf::rt::enum_size(1, self.field_type);
         }
         if !self.messageUuid.is_empty() {
@@ -5983,6 +7074,10 @@ impl ::protobuf::Message for Message {
         }
         if !self.systemId.is_empty() {
             my_size += ::protobuf::rt::string_size(4, &self.systemId);
+        }
+        if let Some(ref v) = self.networkMessage.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         if let Some(ref v) = self.appRegistration.as_ref() {
             let len = v.compute_size();
@@ -5996,41 +7091,13 @@ impl ::protobuf::Message for Message {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
-        if let Some(ref v) = self.bebBroadcast.as_ref() {
+        if let Some(ref v) = self.ucDecide.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
-        if let Some(ref v) = self.bebDeliver.as_ref() {
+        if let Some(ref v) = self.ucPropose.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.ecNack_.as_ref() {
-            let len = v.compute_size();
-            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.ecNewEpoch_.as_ref() {
-            let len = v.compute_size();
-            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.ecStartEpoch.as_ref() {
-            let len = v.compute_size();
-            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.eldHeartbeat_.as_ref() {
-            let len = v.compute_size();
-            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.eldRecovery.as_ref() {
-            let len = v.compute_size();
-            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.eldTimeout.as_ref() {
-            let len = v.compute_size();
-            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.eldTrust.as_ref() {
-            let len = v.compute_size();
-            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         if let Some(ref v) = self.epAbort.as_ref() {
             let len = v.compute_size();
@@ -6049,10 +7116,6 @@ impl ::protobuf::Message for Message {
             my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         if let Some(ref v) = self.epDecided_.as_ref() {
-            let len = v.compute_size();
-            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.epInit.as_ref() {
             let len = v.compute_size();
             my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
@@ -6072,23 +7135,59 @@ impl ::protobuf::Message for Message {
             let len = v.compute_size();
             my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
+        if let Some(ref v) = self.ecNack_.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.ecNewEpoch_.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.ecStartEpoch.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.bebBroadcast.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.bebDeliver.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.eldTimeout.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.eldTrust.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.epfdTimeout.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.epfdHeartbeatRequest_.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.epfdHeartbeatReply_.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.epfdSuspect.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.epfdRestore.as_ref() {
+            let len = v.compute_size();
+            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
         if let Some(ref v) = self.plDeliver.as_ref() {
             let len = v.compute_size();
             my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
         if let Some(ref v) = self.plSend.as_ref() {
-            let len = v.compute_size();
-            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.ucDecide.as_ref() {
-            let len = v.compute_size();
-            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.ucPropose.as_ref() {
-            let len = v.compute_size();
-            my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
-        if let Some(ref v) = self.sender.as_ref() {
             let len = v.compute_size();
             my_size += 2 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
@@ -6098,7 +7197,7 @@ impl ::protobuf::Message for Message {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.field_type != Message_Type::NONE {
+        if self.field_type != Message_Type::NETWORK_MESSAGE {
             os.write_enum(1, self.field_type.value())?;
         }
         if !self.messageUuid.is_empty() {
@@ -6110,92 +7209,57 @@ impl ::protobuf::Message for Message {
         if !self.systemId.is_empty() {
             os.write_string(4, &self.systemId)?;
         }
-        if let Some(ref v) = self.appRegistration.as_ref() {
+        if let Some(ref v) = self.networkMessage.as_ref() {
             os.write_tag(5, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.appPropose.as_ref() {
+        if let Some(ref v) = self.appRegistration.as_ref() {
             os.write_tag(6, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.appDecide.as_ref() {
+        if let Some(ref v) = self.appPropose.as_ref() {
             os.write_tag(7, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.bebBroadcast.as_ref() {
+        if let Some(ref v) = self.appDecide.as_ref() {
+            os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.ucDecide.as_ref() {
             os.write_tag(10, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.bebDeliver.as_ref() {
+        if let Some(ref v) = self.ucPropose.as_ref() {
             os.write_tag(11, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.ecNack_.as_ref() {
-            os.write_tag(12, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.ecNewEpoch_.as_ref() {
-            os.write_tag(13, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.ecStartEpoch.as_ref() {
-            os.write_tag(14, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.eldHeartbeat_.as_ref() {
-            os.write_tag(15, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.eldRecovery.as_ref() {
-            os.write_tag(16, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.eldTimeout.as_ref() {
-            os.write_tag(17, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.eldTrust.as_ref() {
-            os.write_tag(18, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
         if let Some(ref v) = self.epAbort.as_ref() {
-            os.write_tag(19, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.epAborted.as_ref() {
             os.write_tag(20, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.epAccept_.as_ref() {
+        if let Some(ref v) = self.epAborted.as_ref() {
             os.write_tag(21, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.epDecide.as_ref() {
+        if let Some(ref v) = self.epAccept_.as_ref() {
             os.write_tag(22, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.epDecided_.as_ref() {
+        if let Some(ref v) = self.epDecide.as_ref() {
             os.write_tag(23, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.epInit.as_ref() {
+        if let Some(ref v) = self.epDecided_.as_ref() {
             os.write_tag(24, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
@@ -6220,28 +7284,73 @@ impl ::protobuf::Message for Message {
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.plDeliver.as_ref() {
-            os.write_tag(29, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.plSend.as_ref() {
-            os.write_tag(30, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.ucDecide.as_ref() {
+        if let Some(ref v) = self.ecNack_.as_ref() {
             os.write_tag(31, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.ucPropose.as_ref() {
+        if let Some(ref v) = self.ecNewEpoch_.as_ref() {
             os.write_tag(32, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
-        if let Some(ref v) = self.sender.as_ref() {
+        if let Some(ref v) = self.ecStartEpoch.as_ref() {
             os.write_tag(33, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.bebBroadcast.as_ref() {
+            os.write_tag(40, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.bebDeliver.as_ref() {
+            os.write_tag(41, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.eldTimeout.as_ref() {
+            os.write_tag(50, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.eldTrust.as_ref() {
+            os.write_tag(51, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.epfdTimeout.as_ref() {
+            os.write_tag(60, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.epfdHeartbeatRequest_.as_ref() {
+            os.write_tag(61, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.epfdHeartbeatReply_.as_ref() {
+            os.write_tag(62, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.epfdSuspect.as_ref() {
+            os.write_tag(63, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.epfdRestore.as_ref() {
+            os.write_tag(64, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.plDeliver.as_ref() {
+            os.write_tag(70, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.plSend.as_ref() {
+            os.write_tag(71, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
@@ -6304,6 +7413,11 @@ impl ::protobuf::Message for Message {
                     |m: &Message| { &m.systemId },
                     |m: &mut Message| { &mut m.systemId },
                 ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<NetworkMessage>>(
+                    "networkMessage",
+                    |m: &Message| { &m.networkMessage },
+                    |m: &mut Message| { &mut m.networkMessage },
+                ));
                 fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<AppRegistration>>(
                     "appRegistration",
                     |m: &Message| { &m.appRegistration },
@@ -6319,50 +7433,15 @@ impl ::protobuf::Message for Message {
                     |m: &Message| { &m.appDecide },
                     |m: &mut Message| { &mut m.appDecide },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<BebBroadcast>>(
-                    "bebBroadcast",
-                    |m: &Message| { &m.bebBroadcast },
-                    |m: &mut Message| { &mut m.bebBroadcast },
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<UcDecide>>(
+                    "ucDecide",
+                    |m: &Message| { &m.ucDecide },
+                    |m: &mut Message| { &mut m.ucDecide },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<BebDeliver>>(
-                    "bebDeliver",
-                    |m: &Message| { &m.bebDeliver },
-                    |m: &mut Message| { &mut m.bebDeliver },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EcNack_>>(
-                    "ecNack_",
-                    |m: &Message| { &m.ecNack_ },
-                    |m: &mut Message| { &mut m.ecNack_ },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EcNewEpoch_>>(
-                    "ecNewEpoch_",
-                    |m: &Message| { &m.ecNewEpoch_ },
-                    |m: &mut Message| { &mut m.ecNewEpoch_ },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EcStartEpoch>>(
-                    "ecStartEpoch",
-                    |m: &Message| { &m.ecStartEpoch },
-                    |m: &mut Message| { &mut m.ecStartEpoch },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EldHeartbeat_>>(
-                    "eldHeartbeat_",
-                    |m: &Message| { &m.eldHeartbeat_ },
-                    |m: &mut Message| { &mut m.eldHeartbeat_ },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EldRecovery>>(
-                    "eldRecovery",
-                    |m: &Message| { &m.eldRecovery },
-                    |m: &mut Message| { &mut m.eldRecovery },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EldTimeout>>(
-                    "eldTimeout",
-                    |m: &Message| { &m.eldTimeout },
-                    |m: &mut Message| { &mut m.eldTimeout },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EldTrust>>(
-                    "eldTrust",
-                    |m: &Message| { &m.eldTrust },
-                    |m: &mut Message| { &mut m.eldTrust },
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<UcPropose>>(
+                    "ucPropose",
+                    |m: &Message| { &m.ucPropose },
+                    |m: &mut Message| { &mut m.ucPropose },
                 ));
                 fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpAbort>>(
                     "epAbort",
@@ -6389,11 +7468,6 @@ impl ::protobuf::Message for Message {
                     |m: &Message| { &m.epDecided_ },
                     |m: &mut Message| { &mut m.epDecided_ },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpInit>>(
-                    "epInit",
-                    |m: &Message| { &m.epInit },
-                    |m: &mut Message| { &mut m.epInit },
-                ));
                 fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpPropose>>(
                     "epPropose",
                     |m: &Message| { &m.epPropose },
@@ -6414,6 +7488,66 @@ impl ::protobuf::Message for Message {
                     |m: &Message| { &m.epWrite_ },
                     |m: &mut Message| { &mut m.epWrite_ },
                 ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EcNack_>>(
+                    "ecNack_",
+                    |m: &Message| { &m.ecNack_ },
+                    |m: &mut Message| { &mut m.ecNack_ },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EcNewEpoch_>>(
+                    "ecNewEpoch_",
+                    |m: &Message| { &m.ecNewEpoch_ },
+                    |m: &mut Message| { &mut m.ecNewEpoch_ },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EcStartEpoch>>(
+                    "ecStartEpoch",
+                    |m: &Message| { &m.ecStartEpoch },
+                    |m: &mut Message| { &mut m.ecStartEpoch },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<BebBroadcast>>(
+                    "bebBroadcast",
+                    |m: &Message| { &m.bebBroadcast },
+                    |m: &mut Message| { &mut m.bebBroadcast },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<BebDeliver>>(
+                    "bebDeliver",
+                    |m: &Message| { &m.bebDeliver },
+                    |m: &mut Message| { &mut m.bebDeliver },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EldTimeout>>(
+                    "eldTimeout",
+                    |m: &Message| { &m.eldTimeout },
+                    |m: &mut Message| { &mut m.eldTimeout },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EldTrust>>(
+                    "eldTrust",
+                    |m: &Message| { &m.eldTrust },
+                    |m: &mut Message| { &mut m.eldTrust },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpfdTimeout>>(
+                    "epfdTimeout",
+                    |m: &Message| { &m.epfdTimeout },
+                    |m: &mut Message| { &mut m.epfdTimeout },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpfdHeartbeatRequest_>>(
+                    "epfdHeartbeatRequest_",
+                    |m: &Message| { &m.epfdHeartbeatRequest_ },
+                    |m: &mut Message| { &mut m.epfdHeartbeatRequest_ },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpfdHeartbeatReply_>>(
+                    "epfdHeartbeatReply_",
+                    |m: &Message| { &m.epfdHeartbeatReply_ },
+                    |m: &mut Message| { &mut m.epfdHeartbeatReply_ },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpfdSuspect>>(
+                    "epfdSuspect",
+                    |m: &Message| { &m.epfdSuspect },
+                    |m: &mut Message| { &mut m.epfdSuspect },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<EpfdRestore>>(
+                    "epfdRestore",
+                    |m: &Message| { &m.epfdRestore },
+                    |m: &mut Message| { &mut m.epfdRestore },
+                ));
                 fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<PlDeliver>>(
                     "plDeliver",
                     |m: &Message| { &m.plDeliver },
@@ -6423,21 +7557,6 @@ impl ::protobuf::Message for Message {
                     "plSend",
                     |m: &Message| { &m.plSend },
                     |m: &mut Message| { &mut m.plSend },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<UcDecide>>(
-                    "ucDecide",
-                    |m: &Message| { &m.ucDecide },
-                    |m: &mut Message| { &mut m.ucDecide },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<UcPropose>>(
-                    "ucPropose",
-                    |m: &Message| { &m.ucPropose },
-                    |m: &mut Message| { &mut m.ucPropose },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ProcessId>>(
-                    "sender",
-                    |m: &Message| { &m.sender },
-                    |m: &mut Message| { &mut m.sender },
                 ));
                 ::protobuf::reflect::MessageDescriptor::new::<Message>(
                     "Message",
@@ -6458,37 +7577,39 @@ impl ::protobuf::Message for Message {
 
 impl ::protobuf::Clear for Message {
     fn clear(&mut self) {
-        self.field_type = Message_Type::NONE;
+        self.field_type = Message_Type::NETWORK_MESSAGE;
         self.messageUuid.clear();
         self.abstractionId.clear();
         self.systemId.clear();
+        self.networkMessage.clear();
         self.appRegistration.clear();
         self.appPropose.clear();
         self.appDecide.clear();
-        self.bebBroadcast.clear();
-        self.bebDeliver.clear();
-        self.ecNack_.clear();
-        self.ecNewEpoch_.clear();
-        self.ecStartEpoch.clear();
-        self.eldHeartbeat_.clear();
-        self.eldRecovery.clear();
-        self.eldTimeout.clear();
-        self.eldTrust.clear();
+        self.ucDecide.clear();
+        self.ucPropose.clear();
         self.epAbort.clear();
         self.epAborted.clear();
         self.epAccept_.clear();
         self.epDecide.clear();
         self.epDecided_.clear();
-        self.epInit.clear();
         self.epPropose.clear();
         self.epRead_.clear();
         self.epState_.clear();
         self.epWrite_.clear();
+        self.ecNack_.clear();
+        self.ecNewEpoch_.clear();
+        self.ecStartEpoch.clear();
+        self.bebBroadcast.clear();
+        self.bebDeliver.clear();
+        self.eldTimeout.clear();
+        self.eldTrust.clear();
+        self.epfdTimeout.clear();
+        self.epfdHeartbeatRequest_.clear();
+        self.epfdHeartbeatReply_.clear();
+        self.epfdSuspect.clear();
+        self.epfdRestore.clear();
         self.plDeliver.clear();
         self.plSend.clear();
-        self.ucDecide.clear();
-        self.ucPropose.clear();
-        self.sender.clear();
         self.unknown_fields.clear();
     }
 }
@@ -6507,33 +7628,35 @@ impl ::protobuf::reflect::ProtobufValue for Message {
 
 #[derive(Clone,PartialEq,Eq,Debug,Hash)]
 pub enum Message_Type {
-    NONE = 0,
+    NETWORK_MESSAGE = 0,
     APP_REGISTRATION = 5,
     APP_PROPOSE = 6,
     APP_DECIDE = 7,
-    BEB_BROADCAST = 10,
-    BEB_DELIVER = 11,
-    EC_NACK_ = 12,
-    EC_NEW_EPOCH_ = 13,
-    EC_START_EPOCH = 14,
-    ELD_HEARTBEAT_ = 15,
-    ELD_RECOVERY = 16,
-    ELD_TIMEOUT = 17,
-    ELD_TRUST = 18,
-    EP_ABORT = 19,
-    EP_ABORTED = 20,
-    EP_ACCEPT_ = 21,
-    EP_DECIDE = 22,
-    EP_DECIDED_ = 23,
-    EP_INIT = 24,
+    UC_DECIDE = 10,
+    UC_PROPOSE = 11,
+    EP_ABORT = 20,
+    EP_ABORTED = 21,
+    EP_ACCEPT_ = 22,
+    EP_DECIDE = 23,
+    EP_DECIDED_ = 24,
     EP_PROPOSE = 25,
     EP_READ_ = 26,
     EP_STATE_ = 27,
     EP_WRITE_ = 28,
-    PL_DELIVER = 29,
-    PL_SEND = 30,
-    UC_DECIDE = 31,
-    UC_PROPOSE = 32,
+    EC_NACK_ = 30,
+    EC_NEW_EPOCH_ = 31,
+    EC_START_EPOCH = 32,
+    BEB_BROADCAST = 40,
+    BEB_DELIVER = 41,
+    ELD_TIMEOUT = 50,
+    ELD_TRUST = 51,
+    EPFD_TIMEOUT = 60,
+    EPFD_HEARTBEAT_REQUEST = 61,
+    EPFD_HEARTBEAT_REPLY = 62,
+    EPFD_SUSPECT = 63,
+    EPFD_RESTORE = 64,
+    PL_DELIVER = 70,
+    PL_SEND = 71,
 }
 
 impl ::protobuf::ProtobufEnum for Message_Type {
@@ -6543,66 +7666,70 @@ impl ::protobuf::ProtobufEnum for Message_Type {
 
     fn from_i32(value: i32) -> ::std::option::Option<Message_Type> {
         match value {
-            0 => ::std::option::Option::Some(Message_Type::NONE),
+            0 => ::std::option::Option::Some(Message_Type::NETWORK_MESSAGE),
             5 => ::std::option::Option::Some(Message_Type::APP_REGISTRATION),
             6 => ::std::option::Option::Some(Message_Type::APP_PROPOSE),
             7 => ::std::option::Option::Some(Message_Type::APP_DECIDE),
-            10 => ::std::option::Option::Some(Message_Type::BEB_BROADCAST),
-            11 => ::std::option::Option::Some(Message_Type::BEB_DELIVER),
-            12 => ::std::option::Option::Some(Message_Type::EC_NACK_),
-            13 => ::std::option::Option::Some(Message_Type::EC_NEW_EPOCH_),
-            14 => ::std::option::Option::Some(Message_Type::EC_START_EPOCH),
-            15 => ::std::option::Option::Some(Message_Type::ELD_HEARTBEAT_),
-            16 => ::std::option::Option::Some(Message_Type::ELD_RECOVERY),
-            17 => ::std::option::Option::Some(Message_Type::ELD_TIMEOUT),
-            18 => ::std::option::Option::Some(Message_Type::ELD_TRUST),
-            19 => ::std::option::Option::Some(Message_Type::EP_ABORT),
-            20 => ::std::option::Option::Some(Message_Type::EP_ABORTED),
-            21 => ::std::option::Option::Some(Message_Type::EP_ACCEPT_),
-            22 => ::std::option::Option::Some(Message_Type::EP_DECIDE),
-            23 => ::std::option::Option::Some(Message_Type::EP_DECIDED_),
-            24 => ::std::option::Option::Some(Message_Type::EP_INIT),
+            10 => ::std::option::Option::Some(Message_Type::UC_DECIDE),
+            11 => ::std::option::Option::Some(Message_Type::UC_PROPOSE),
+            20 => ::std::option::Option::Some(Message_Type::EP_ABORT),
+            21 => ::std::option::Option::Some(Message_Type::EP_ABORTED),
+            22 => ::std::option::Option::Some(Message_Type::EP_ACCEPT_),
+            23 => ::std::option::Option::Some(Message_Type::EP_DECIDE),
+            24 => ::std::option::Option::Some(Message_Type::EP_DECIDED_),
             25 => ::std::option::Option::Some(Message_Type::EP_PROPOSE),
             26 => ::std::option::Option::Some(Message_Type::EP_READ_),
             27 => ::std::option::Option::Some(Message_Type::EP_STATE_),
             28 => ::std::option::Option::Some(Message_Type::EP_WRITE_),
-            29 => ::std::option::Option::Some(Message_Type::PL_DELIVER),
-            30 => ::std::option::Option::Some(Message_Type::PL_SEND),
-            31 => ::std::option::Option::Some(Message_Type::UC_DECIDE),
-            32 => ::std::option::Option::Some(Message_Type::UC_PROPOSE),
+            30 => ::std::option::Option::Some(Message_Type::EC_NACK_),
+            31 => ::std::option::Option::Some(Message_Type::EC_NEW_EPOCH_),
+            32 => ::std::option::Option::Some(Message_Type::EC_START_EPOCH),
+            40 => ::std::option::Option::Some(Message_Type::BEB_BROADCAST),
+            41 => ::std::option::Option::Some(Message_Type::BEB_DELIVER),
+            50 => ::std::option::Option::Some(Message_Type::ELD_TIMEOUT),
+            51 => ::std::option::Option::Some(Message_Type::ELD_TRUST),
+            60 => ::std::option::Option::Some(Message_Type::EPFD_TIMEOUT),
+            61 => ::std::option::Option::Some(Message_Type::EPFD_HEARTBEAT_REQUEST),
+            62 => ::std::option::Option::Some(Message_Type::EPFD_HEARTBEAT_REPLY),
+            63 => ::std::option::Option::Some(Message_Type::EPFD_SUSPECT),
+            64 => ::std::option::Option::Some(Message_Type::EPFD_RESTORE),
+            70 => ::std::option::Option::Some(Message_Type::PL_DELIVER),
+            71 => ::std::option::Option::Some(Message_Type::PL_SEND),
             _ => ::std::option::Option::None
         }
     }
 
     fn values() -> &'static [Self] {
         static values: &'static [Message_Type] = &[
-            Message_Type::NONE,
+            Message_Type::NETWORK_MESSAGE,
             Message_Type::APP_REGISTRATION,
             Message_Type::APP_PROPOSE,
             Message_Type::APP_DECIDE,
-            Message_Type::BEB_BROADCAST,
-            Message_Type::BEB_DELIVER,
-            Message_Type::EC_NACK_,
-            Message_Type::EC_NEW_EPOCH_,
-            Message_Type::EC_START_EPOCH,
-            Message_Type::ELD_HEARTBEAT_,
-            Message_Type::ELD_RECOVERY,
-            Message_Type::ELD_TIMEOUT,
-            Message_Type::ELD_TRUST,
+            Message_Type::UC_DECIDE,
+            Message_Type::UC_PROPOSE,
             Message_Type::EP_ABORT,
             Message_Type::EP_ABORTED,
             Message_Type::EP_ACCEPT_,
             Message_Type::EP_DECIDE,
             Message_Type::EP_DECIDED_,
-            Message_Type::EP_INIT,
             Message_Type::EP_PROPOSE,
             Message_Type::EP_READ_,
             Message_Type::EP_STATE_,
             Message_Type::EP_WRITE_,
+            Message_Type::EC_NACK_,
+            Message_Type::EC_NEW_EPOCH_,
+            Message_Type::EC_START_EPOCH,
+            Message_Type::BEB_BROADCAST,
+            Message_Type::BEB_DELIVER,
+            Message_Type::ELD_TIMEOUT,
+            Message_Type::ELD_TRUST,
+            Message_Type::EPFD_TIMEOUT,
+            Message_Type::EPFD_HEARTBEAT_REQUEST,
+            Message_Type::EPFD_HEARTBEAT_REPLY,
+            Message_Type::EPFD_SUSPECT,
+            Message_Type::EPFD_RESTORE,
             Message_Type::PL_DELIVER,
             Message_Type::PL_SEND,
-            Message_Type::UC_DECIDE,
-            Message_Type::UC_PROPOSE,
         ];
         values
     }
@@ -6622,7 +7749,7 @@ impl ::std::marker::Copy for Message_Type {
 
 impl ::std::default::Default for Message_Type {
     fn default() -> Self {
-        Message_Type::NONE
+        Message_Type::NETWORK_MESSAGE
     }
 }
 
@@ -6633,81 +7760,97 @@ impl ::protobuf::reflect::ProtobufValue for Message_Type {
 }
 
 static file_descriptor_proto_data: &'static [u8] = b"\
-    \n\rmessage.proto\"s\n\tProcessId\x12\x12\n\x04host\x18\x01\x20\x01(\tR\
-    \x04host\x12\x12\n\x04port\x18\x02\x20\x01(\x05R\x04port\x12\x14\n\x05ow\
-    ner\x18\x03\x20\x01(\tR\x05owner\x12\x14\n\x05index\x18\x04\x20\x01(\x05\
-    R\x05index\x12\x12\n\x04rank\x18\x05\x20\x01(\x05R\x04rank\"!\n\tUcPropo\
-    se\x12\x14\n\x05value\x18\x01\x20\x01(\x05R\x05value\"\\\n\x0cEcStartEpo\
-    ch\x12\"\n\x0cnewTimestamp\x18\x01\x20\x01(\x05R\x0cnewTimestamp\x12(\n\
-    \tnewLeader\x18\x02\x20\x01(\x0b2\n.ProcessIdR\tnewLeader\"\t\n\x07EpAbo\
-    rt\"F\n\x06EpInit\x12&\n\x0evalueTimestamp\x18\x01\x20\x01(\x05R\x0evalu\
-    eTimestamp\x12\x14\n\x05value\x18\x02\x20\x01(\x05R\x05value\"I\n\tEpAbo\
-    rted\x12&\n\x0evalueTimestamp\x18\x01\x20\x01(\x05R\x0evalueTimestamp\
-    \x12\x14\n\x05value\x18\x02\x20\x01(\x05R\x05value\"!\n\tEpPropose\x12\
-    \x14\n\x05value\x18\x01\x20\x01(\x05R\x05value\"\x20\n\x08EpDecide\x12\
-    \x14\n\x05value\x18\x01\x20\x01(\x05R\x05value\"\x20\n\x08UcDecide\x12\
-    \x14\n\x05value\x18\x01\x20\x01(\x05R\x05value\"\t\n\x07EpRead_\"H\n\x08\
-    EpState_\x12&\n\x0evalueTimestamp\x18\x01\x20\x01(\x05R\x0evalueTimestam\
-    p\x12\x14\n\x05value\x18\x02\x20\x01(\x05R\x05value\"\x20\n\x08EpWrite_\
-    \x12\x14\n\x05value\x18\x01\x20\x01(\x05R\x05value\"\x0b\n\tEpAccept_\"\
-    \"\n\nEpDecided_\x12\x14\n\x05value\x18\x01\x20\x01(\x05R\x05value\"+\n\
-    \x0bEcNewEpoch_\x12\x1c\n\ttimestamp\x18\x01\x20\x01(\x05R\ttimestamp\"\
-    \t\n\x07EcNack_\"2\n\x0cBebBroadcast\x12\"\n\x07message\x18\x01\x20\x01(\
-    \x0b2\x08.MessageR\x07message\"T\n\nBebDeliver\x12\"\n\x07message\x18\
-    \x01\x20\x01(\x0b2\x08.MessageR\x07message\x12\"\n\x06sender\x18\x02\x20\
-    \x01(\x0b2\n.ProcessIdR\x06sender\"\r\n\x0bEldRecovery\"\x0c\n\nEldTimeo\
-    ut\"4\n\x08EldTrust\x12(\n\tprocessId\x18\x01\x20\x01(\x0b2\n.ProcessIdR\
-    \tprocessId\"%\n\rEldHeartbeat_\x12\x14\n\x05epoch\x18\x01\x20\x01(\x05R\
-    \x05epoch\",\n\x06PlSend\x12\"\n\x07message\x18\x01\x20\x01(\x0b2\x08.Me\
-    ssageR\x07message\"S\n\tPlDeliver\x12\"\n\x07message\x18\x01\x20\x01(\
-    \x0b2\x08.MessageR\x07message\x12\"\n\x06sender\x18\x02\x20\x01(\x0b2\n.\
-    ProcessIdR\x06sender\"Q\n\x0fAppRegistration\x12\x14\n\x05owner\x18\x01\
-    \x20\x01(\tR\x05owner\x12\x14\n\x05index\x18\x02\x20\x01(\x05R\x05index\
-    \x12\x12\n\x04port\x18\x03\x20\x01(\x05R\x04port\"L\n\nAppPropose\x12\
-    \x14\n\x05value\x18\x01\x20\x01(\x05R\x05value\x12(\n\tprocesses\x18\x02\
-    \x20\x03(\x0b2\n.ProcessIdR\tprocesses\"!\n\tAppDecide\x12\x14\n\x05valu\
-    e\x18\x01\x20\x01(\x05R\x05value\"\xc1\r\n\x07Message\x12!\n\x04type\x18\
-    \x01\x20\x01(\x0e2\r.Message.TypeR\x04type\x12\x20\n\x0bmessageUuid\x18\
-    \x02\x20\x01(\tR\x0bmessageUuid\x12$\n\rabstractionId\x18\x03\x20\x01(\t\
-    R\rabstractionId\x12\x1a\n\x08systemId\x18\x04\x20\x01(\tR\x08systemId\
-    \x12:\n\x0fappRegistration\x18\x05\x20\x01(\x0b2\x10.AppRegistrationR\
-    \x0fappRegistration\x12+\n\nappPropose\x18\x06\x20\x01(\x0b2\x0b.AppProp\
-    oseR\nappPropose\x12(\n\tappDecide\x18\x07\x20\x01(\x0b2\n.AppDecideR\ta\
-    ppDecide\x121\n\x0cbebBroadcast\x18\n\x20\x01(\x0b2\r.BebBroadcastR\x0cb\
-    ebBroadcast\x12+\n\nbebDeliver\x18\x0b\x20\x01(\x0b2\x0b.BebDeliverR\nbe\
-    bDeliver\x12!\n\x07ecNack_\x18\x0c\x20\x01(\x0b2\x08.EcNack_R\x06ecNack\
-    \x12-\n\x0becNewEpoch_\x18\r\x20\x01(\x0b2\x0c.EcNewEpoch_R\necNewEpoch\
-    \x121\n\x0cecStartEpoch\x18\x0e\x20\x01(\x0b2\r.EcStartEpochR\x0cecStart\
-    Epoch\x123\n\reldHeartbeat_\x18\x0f\x20\x01(\x0b2\x0e.EldHeartbeat_R\x0c\
-    eldHeartbeat\x12.\n\x0beldRecovery\x18\x10\x20\x01(\x0b2\x0c.EldRecovery\
-    R\x0beldRecovery\x12+\n\neldTimeout\x18\x11\x20\x01(\x0b2\x0b.EldTimeout\
-    R\neldTimeout\x12%\n\x08eldTrust\x18\x12\x20\x01(\x0b2\t.EldTrustR\x08el\
-    dTrust\x12\"\n\x07epAbort\x18\x13\x20\x01(\x0b2\x08.EpAbortR\x07epAbort\
-    \x12(\n\tepAborted\x18\x14\x20\x01(\x0b2\n.EpAbortedR\tepAborted\x12'\n\
-    \tepAccept_\x18\x15\x20\x01(\x0b2\n.EpAccept_R\x08epAccept\x12%\n\x08epD\
-    ecide\x18\x16\x20\x01(\x0b2\t.EpDecideR\x08epDecide\x12*\n\nepDecided_\
-    \x18\x17\x20\x01(\x0b2\x0b.EpDecided_R\tepDecided\x12\x1f\n\x06epInit\
-    \x18\x18\x20\x01(\x0b2\x07.EpInitR\x06epInit\x12(\n\tepPropose\x18\x19\
-    \x20\x01(\x0b2\n.EpProposeR\tepPropose\x12!\n\x07epRead_\x18\x1a\x20\x01\
-    (\x0b2\x08.EpRead_R\x06epRead\x12$\n\x08epState_\x18\x1b\x20\x01(\x0b2\t\
-    .EpState_R\x07epState\x12$\n\x08epWrite_\x18\x1c\x20\x01(\x0b2\t.EpWrite\
-    _R\x07epWrite\x12(\n\tplDeliver\x18\x1d\x20\x01(\x0b2\n.PlDeliverR\tplDe\
-    liver\x12\x1f\n\x06plSend\x18\x1e\x20\x01(\x0b2\x07.PlSendR\x06plSend\
-    \x12%\n\x08ucDecide\x18\x1f\x20\x01(\x0b2\t.UcDecideR\x08ucDecide\x12(\n\
-    \tucPropose\x18\x20\x20\x01(\x0b2\n.UcProposeR\tucPropose\x12\"\n\x06sen\
-    der\x18!\x20\x01(\x0b2\n.ProcessIdR\x06sender\"\xb9\x03\n\x04Type\x12\
-    \x08\n\x04NONE\x10\0\x12\x14\n\x10APP_REGISTRATION\x10\x05\x12\x0f\n\x0b\
-    APP_PROPOSE\x10\x06\x12\x0e\n\nAPP_DECIDE\x10\x07\x12\x11\n\rBEB_BROADCA\
-    ST\x10\n\x12\x0f\n\x0bBEB_DELIVER\x10\x0b\x12\x0c\n\x08EC_NACK_\x10\x0c\
-    \x12\x11\n\rEC_NEW_EPOCH_\x10\r\x12\x12\n\x0eEC_START_EPOCH\x10\x0e\x12\
-    \x12\n\x0eELD_HEARTBEAT_\x10\x0f\x12\x10\n\x0cELD_RECOVERY\x10\x10\x12\
-    \x0f\n\x0bELD_TIMEOUT\x10\x11\x12\r\n\tELD_TRUST\x10\x12\x12\x0c\n\x08EP\
-    _ABORT\x10\x13\x12\x0e\n\nEP_ABORTED\x10\x14\x12\x0e\n\nEP_ACCEPT_\x10\
-    \x15\x12\r\n\tEP_DECIDE\x10\x16\x12\x0f\n\x0bEP_DECIDED_\x10\x17\x12\x0b\
-    \n\x07EP_INIT\x10\x18\x12\x0e\n\nEP_PROPOSE\x10\x19\x12\x0c\n\x08EP_READ\
-    _\x10\x1a\x12\r\n\tEP_STATE_\x10\x1b\x12\r\n\tEP_WRITE_\x10\x1c\x12\x0e\
-    \n\nPL_DELIVER\x10\x1d\x12\x0b\n\x07PL_SEND\x10\x1e\x12\r\n\tUC_DECIDE\
-    \x10\x1f\x12\x0e\n\nUC_PROPOSE\x10\x20b\x06proto3\
+    \n\rmessage.proto\x12\x04main\"s\n\tProcessId\x12\x12\n\x04host\x18\x01\
+    \x20\x01(\tR\x04host\x12\x12\n\x04port\x18\x02\x20\x01(\x05R\x04port\x12\
+    \x14\n\x05owner\x18\x03\x20\x01(\tR\x05owner\x12\x14\n\x05index\x18\x04\
+    \x20\x01(\x05R\x05index\x12\x12\n\x04rank\x18\x05\x20\x01(\x05R\x04rank\
+    \"/\n\x05Value\x12\x18\n\x07defined\x18\x01\x20\x01(\x08R\x07defined\x12\
+    \x0c\n\x01v\x18\x02\x20\x01(\x05R\x01v\"=\n\x0fAppRegistration\x12\x14\n\
+    \x05owner\x18\x01\x20\x01(\tR\x05owner\x12\x14\n\x05index\x18\x02\x20\
+    \x01(\x05R\x05index\"^\n\nAppPropose\x12!\n\x05value\x18\x01\x20\x01(\
+    \x0b2\x0b.main.ValueR\x05value\x12-\n\tprocesses\x18\x02\x20\x03(\x0b2\
+    \x0f.main.ProcessIdR\tprocesses\".\n\tAppDecide\x12!\n\x05value\x18\x01\
+    \x20\x01(\x0b2\x0b.main.ValueR\x05value\".\n\tUcPropose\x12!\n\x05value\
+    \x18\x01\x20\x01(\x0b2\x0b.main.ValueR\x05value\"-\n\x08UcDecide\x12!\n\
+    \x05value\x18\x01\x20\x01(\x0b2\x0b.main.ValueR\x05value\"\t\n\x07EpAbor\
+    t\"h\n\tEpAborted\x12\x10\n\x03ets\x18\x01\x20\x01(\x05R\x03ets\x12&\n\
+    \x0evalueTimestamp\x18\x02\x20\x01(\x05R\x0evalueTimestamp\x12!\n\x05val\
+    ue\x18\x03\x20\x01(\x0b2\x0b.main.ValueR\x05value\".\n\tEpPropose\x12!\n\
+    \x05value\x18\x01\x20\x01(\x0b2\x0b.main.ValueR\x05value\"?\n\x08EpDecid\
+    e\x12\x10\n\x03ets\x18\x01\x20\x01(\x05R\x03ets\x12!\n\x05value\x18\x02\
+    \x20\x01(\x0b2\x0b.main.ValueR\x05value\"\t\n\x07EpRead_\"U\n\x08EpState\
+    _\x12&\n\x0evalueTimestamp\x18\x01\x20\x01(\x05R\x0evalueTimestamp\x12!\
+    \n\x05value\x18\x02\x20\x01(\x0b2\x0b.main.ValueR\x05value\"-\n\x08EpWri\
+    te_\x12!\n\x05value\x18\x01\x20\x01(\x0b2\x0b.main.ValueR\x05value\"\x0b\
+    \n\tEpAccept_\"/\n\nEpDecided_\x12!\n\x05value\x18\x01\x20\x01(\x0b2\x0b\
+    .main.ValueR\x05value\"\t\n\x07EcNack_\"a\n\x0cEcStartEpoch\x12\"\n\x0cn\
+    ewTimestamp\x18\x01\x20\x01(\x05R\x0cnewTimestamp\x12-\n\tnewLeader\x18\
+    \x02\x20\x01(\x0b2\x0f.main.ProcessIdR\tnewLeader\"+\n\x0bEcNewEpoch_\
+    \x12\x1c\n\ttimestamp\x18\x01\x20\x01(\x05R\ttimestamp\"7\n\x0cBebBroadc\
+    ast\x12'\n\x07message\x18\x01\x20\x01(\x0b2\r.main.MessageR\x07message\"\
+    ^\n\nBebDeliver\x12'\n\x07message\x18\x01\x20\x01(\x0b2\r.main.MessageR\
+    \x07message\x12'\n\x06sender\x18\x02\x20\x01(\x0b2\x0f.main.ProcessIdR\
+    \x06sender\"\x0c\n\nEldTimeout\"5\n\x08EldTrust\x12)\n\x07process\x18\
+    \x01\x20\x01(\x0b2\x0f.main.ProcessIdR\x07process\"\r\n\x0bEpfdTimeout\"\
+    \x17\n\x15EpfdHeartbeatRequest_\"\x15\n\x13EpfdHeartbeatReply_\"8\n\x0bE\
+    pfdSuspect\x12)\n\x07process\x18\x01\x20\x01(\x0b2\x0f.main.ProcessIdR\
+    \x07process\"8\n\x0bEpfdRestore\x12)\n\x07process\x18\x01\x20\x01(\x0b2\
+    \x0f.main.ProcessIdR\x07process\"d\n\x06PlSend\x121\n\x0bdestination\x18\
+    \x01\x20\x01(\x0b2\x0f.main.ProcessIdR\x0bdestination\x12'\n\x07message\
+    \x18\x02\x20\x01(\x0b2\r.main.MessageR\x07message\"]\n\tPlDeliver\x12'\n\
+    \x06sender\x18\x01\x20\x01(\x0b2\x0f.main.ProcessIdR\x06sender\x12'\n\
+    \x07message\x18\x02\x20\x01(\x0b2\r.main.MessageR\x07message\"\x8b\x01\n\
+    \x0eNetworkMessage\x12\x1e\n\nsenderHost\x18\x01\x20\x01(\tR\nsenderHost\
+    \x120\n\x13senderListeningPort\x18\x02\x20\x01(\x05R\x13senderListeningP\
+    ort\x12'\n\x07message\x18\x03\x20\x01(\x0b2\r.main.MessageR\x07message\"\
+    \xce\x10\n\x07Message\x12&\n\x04type\x18\x01\x20\x01(\x0e2\x12.main.Mess\
+    age.TypeR\x04type\x12\x20\n\x0bmessageUuid\x18\x02\x20\x01(\tR\x0bmessag\
+    eUuid\x12$\n\rabstractionId\x18\x03\x20\x01(\tR\rabstractionId\x12\x1a\n\
+    \x08systemId\x18\x04\x20\x01(\tR\x08systemId\x12<\n\x0enetworkMessage\
+    \x18\x05\x20\x01(\x0b2\x14.main.NetworkMessageR\x0enetworkMessage\x12?\n\
+    \x0fappRegistration\x18\x06\x20\x01(\x0b2\x15.main.AppRegistrationR\x0fa\
+    ppRegistration\x120\n\nappPropose\x18\x07\x20\x01(\x0b2\x10.main.AppProp\
+    oseR\nappPropose\x12-\n\tappDecide\x18\x08\x20\x01(\x0b2\x0f.main.AppDec\
+    ideR\tappDecide\x12*\n\x08ucDecide\x18\n\x20\x01(\x0b2\x0e.main.UcDecide\
+    R\x08ucDecide\x12-\n\tucPropose\x18\x0b\x20\x01(\x0b2\x0f.main.UcPropose\
+    R\tucPropose\x12'\n\x07epAbort\x18\x14\x20\x01(\x0b2\r.main.EpAbortR\x07\
+    epAbort\x12-\n\tepAborted\x18\x15\x20\x01(\x0b2\x0f.main.EpAbortedR\tepA\
+    borted\x12,\n\tepAccept_\x18\x16\x20\x01(\x0b2\x0f.main.EpAccept_R\x08ep\
+    Accept\x12*\n\x08epDecide\x18\x17\x20\x01(\x0b2\x0e.main.EpDecideR\x08ep\
+    Decide\x12/\n\nepDecided_\x18\x18\x20\x01(\x0b2\x10.main.EpDecided_R\tep\
+    Decided\x12-\n\tepPropose\x18\x19\x20\x01(\x0b2\x0f.main.EpProposeR\tepP\
+    ropose\x12&\n\x07epRead_\x18\x1a\x20\x01(\x0b2\r.main.EpRead_R\x06epRead\
+    \x12)\n\x08epState_\x18\x1b\x20\x01(\x0b2\x0e.main.EpState_R\x07epState\
+    \x12)\n\x08epWrite_\x18\x1c\x20\x01(\x0b2\x0e.main.EpWrite_R\x07epWrite\
+    \x12&\n\x07ecNack_\x18\x1f\x20\x01(\x0b2\r.main.EcNack_R\x06ecNack\x122\
+    \n\x0becNewEpoch_\x18\x20\x20\x01(\x0b2\x11.main.EcNewEpoch_R\necNewEpoc\
+    h\x126\n\x0cecStartEpoch\x18!\x20\x01(\x0b2\x12.main.EcStartEpochR\x0cec\
+    StartEpoch\x126\n\x0cbebBroadcast\x18(\x20\x01(\x0b2\x12.main.BebBroadca\
+    stR\x0cbebBroadcast\x120\n\nbebDeliver\x18)\x20\x01(\x0b2\x10.main.BebDe\
+    liverR\nbebDeliver\x120\n\neldTimeout\x182\x20\x01(\x0b2\x10.main.EldTim\
+    eoutR\neldTimeout\x12*\n\x08eldTrust\x183\x20\x01(\x0b2\x0e.main.EldTrus\
+    tR\x08eldTrust\x123\n\x0bepfdTimeout\x18<\x20\x01(\x0b2\x11.main.EpfdTim\
+    eoutR\x0bepfdTimeout\x12P\n\x15epfdHeartbeatRequest_\x18=\x20\x01(\x0b2\
+    \x1b.main.EpfdHeartbeatRequest_R\x14epfdHeartbeatRequest\x12J\n\x13epfdH\
+    eartbeatReply_\x18>\x20\x01(\x0b2\x19.main.EpfdHeartbeatReply_R\x12epfdH\
+    eartbeatReply\x123\n\x0bepfdSuspect\x18?\x20\x01(\x0b2\x11.main.EpfdSusp\
+    ectR\x0bepfdSuspect\x123\n\x0bepfdRestore\x18@\x20\x01(\x0b2\x11.main.Ep\
+    fdRestoreR\x0bepfdRestore\x12-\n\tplDeliver\x18F\x20\x01(\x0b2\x0f.main.\
+    PlDeliverR\tplDeliver\x12$\n\x06plSend\x18G\x20\x01(\x0b2\x0c.main.PlSen\
+    dR\x06plSend\"\xfd\x03\n\x04Type\x12\x13\n\x0fNETWORK_MESSAGE\x10\0\x12\
+    \x14\n\x10APP_REGISTRATION\x10\x05\x12\x0f\n\x0bAPP_PROPOSE\x10\x06\x12\
+    \x0e\n\nAPP_DECIDE\x10\x07\x12\r\n\tUC_DECIDE\x10\n\x12\x0e\n\nUC_PROPOS\
+    E\x10\x0b\x12\x0c\n\x08EP_ABORT\x10\x14\x12\x0e\n\nEP_ABORTED\x10\x15\
+    \x12\x0e\n\nEP_ACCEPT_\x10\x16\x12\r\n\tEP_DECIDE\x10\x17\x12\x0f\n\x0bE\
+    P_DECIDED_\x10\x18\x12\x0e\n\nEP_PROPOSE\x10\x19\x12\x0c\n\x08EP_READ_\
+    \x10\x1a\x12\r\n\tEP_STATE_\x10\x1b\x12\r\n\tEP_WRITE_\x10\x1c\x12\x0c\n\
+    \x08EC_NACK_\x10\x1e\x12\x11\n\rEC_NEW_EPOCH_\x10\x1f\x12\x12\n\x0eEC_ST\
+    ART_EPOCH\x10\x20\x12\x11\n\rBEB_BROADCAST\x10(\x12\x0f\n\x0bBEB_DELIVER\
+    \x10)\x12\x0f\n\x0bELD_TIMEOUT\x102\x12\r\n\tELD_TRUST\x103\x12\x10\n\
+    \x0cEPFD_TIMEOUT\x10<\x12\x1a\n\x16EPFD_HEARTBEAT_REQUEST\x10=\x12\x18\n\
+    \x14EPFD_HEARTBEAT_REPLY\x10>\x12\x10\n\x0cEPFD_SUSPECT\x10?\x12\x10\n\
+    \x0cEPFD_RESTORE\x10@\x12\x0e\n\nPL_DELIVER\x10F\x12\x0b\n\x07PL_SEND\
+    \x10Gb\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy::INIT;

@@ -1,0 +1,1 @@
+powershell $env:RUST_LOG="distributed_consensus"; .\target\debug\distributed_consensus.exe %1 --config nodes.json --hub hub.json
